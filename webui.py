@@ -149,7 +149,7 @@ with shared.gradio_root:
             with gr.Row(elem_classes='advanced_check_row'):
                 input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
                 advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
-                inswapper_enabled = gr.Checkbox(label="Enabled", value=False)
+                inswapper_enabled = gr.Checkbox(label="Enabled", value=False, container=False, elem_classes='min_check')
                 # with gr.Column(scale=1, min_width=0, visible=inswapper_enabled.value):
                 #     with gr.Tabs():
                 #         with gr.TabItem(label="Inswapper") as inswapper_tab:
@@ -161,8 +161,12 @@ with shared.gradio_root:
                 #                 with gr.Column():
                 #                     inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
 
-            with gr.Row(visible=False) as image_input_panel:
-                with gr.Column(scale=1, min_width=0, visible=inswapper_enabled.value):
+            # input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
+            #                             outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
+              # inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
+              #                           outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
+          with gr.Column(scale=1, min_width=0, visible=False), as inswapper_panel:
+                with gr.Row(visible=True):
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Row():
@@ -172,7 +176,10 @@ with shared.gradio_root:
                                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                 with gr.Column():
                                     inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
-                with gr.Column(scale=3, min_width=0):
+
+            with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
+                with gr.Row(visible=True):
+                # with gr.Row(visible=False) as image_input_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
@@ -329,6 +336,8 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
+            inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
+                                        outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
                                         outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
             ip_advanced.change(lambda: None, queue=False, show_progress=False, _js=down_js)
