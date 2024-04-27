@@ -121,6 +121,9 @@ with shared.gradio_root:
                     #                     container=False, autofocus=True, elem_classes='type_row', lines=1024)
                     prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
+                    negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
+                                     lines=2, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
+                                     value=modules.config.default_prompt_negative)
 
                     default_prompt = modules.config.default_prompt
                     if isinstance(default_prompt, str) and default_prompt != '':
@@ -158,17 +161,12 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
-                with gr.Column(scale=17, min_width=0):
-                    negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here.",
-                                     info='Describing what you do not want to see.', lines=2,
-                                     elem_id='negative_prompt',
-                                     value=modules.config.default_prompt_negative)
-
             with gr.Row(elem_classes='advanced_check_row'):
                 with gr.Column():
-                    input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
+                    image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False, elem_classes='min_check')
+                    input_image_checkbox = gr.Checkbox(label='Input Image', value=True, container=False, elem_classes='min_check')
+                    inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False, elem_classes='min_check')
                     advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
-                    inswapper_enabled = gr.Checkbox(label="Inswapper", value=False, container=False, elem_classes='min_check')
                 with gr.Column():
                     overwrite_step = gr.Slider(label='Overwrite of Sampling Step',
                                                minimum=-1, maximum=200, step=1,
@@ -204,6 +202,53 @@ with shared.gradio_root:
               # inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
               #                           outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             with gr.Row():
+                with gr.Column(scale=1, min_width=0, visible=False) as image_prompt_panel:
+                    with gr.TabItem(label='Image Prompt') as ip_tab:
+                        with gr.Row():
+                            ip_images = []
+                            ip_types = []
+                            ip_stops = []
+                            ip_weights = []
+                            ip_ctrls = []
+                            ip_ad_cols = []
+                            for _ in range(flags.controlnet_image_count):
+                                with gr.Column():
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                    ip_images.append(ip_image)
+                                    ip_ctrls.append(ip_image)
+                                    with gr.Column(visible=False) as ad_col:
+                                        with gr.Row():
+                                            default_end, default_weight = flags.default_parameters[flags.default_ip]
+
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                            ip_stops.append(ip_stop)
+                                            ip_ctrls.append(ip_stop)
+
+                                            ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                            ip_weights.append(ip_weight)
+                                            ip_ctrls.append(ip_weight)
+
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.default_ip, container=False)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
+
+                                        ip_type.change(lambda x: flags.default_parameters[x], inputs=[ip_type], outputs=[ip_stop, ip_weight], queue=False, show_progress=False)
+                                    ip_ad_cols.append(ad_col)
+                        ip_advanced = gr.Checkbox(label='Advanced', value=True, container=False)
+                        gr.HTML('* \"Image Prompt\" is powered by Fooocus Image Mixture Engine (v1.0.1). <a href="https://github.com/lllyasviel/Fooocus/discussions/557" target="_blank">\U0001F4D4 Document</a>')
+
+                        def ip_advance_checked(x):
+                            return [gr.update(visible=x)] * len(ip_ad_cols) + \
+                                [flags.default_ip] * len(ip_types) + \
+                                [flags.default_parameters[flags.default_ip][0]] * len(ip_stops) + \
+                                [flags.default_parameters[flags.default_ip][1]] * len(ip_weights)
+
+                        ip_advanced.change(ip_advance_checked, inputs=ip_advanced,
+                                           outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
+                                           queue=False, show_progress=False)
+
+                
+            
                 with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
                     with gr.Row(visible=True):
                 # with gr.Row(visible=False) as image_input_panel:
@@ -215,50 +260,52 @@ with shared.gradio_root:
                                         uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
                                     with gr.Column():
                                         uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                        mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',
+                                                                                           value=False)
                                         gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
-                            with gr.TabItem(label='Image Prompt') as ip_tab:
-                                with gr.Row():
-                                    ip_images = []
-                                    ip_types = []
-                                    ip_stops = []
-                                    ip_weights = []
-                                    ip_ctrls = []
-                                    ip_ad_cols = []
-                                    for _ in range(flags.controlnet_image_count):
-                                        with gr.Column():
-                                            ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                            ip_images.append(ip_image)
-                                            ip_ctrls.append(ip_image)
-                                            with gr.Column(visible=False) as ad_col:
-                                                with gr.Row():
-                                                    default_end, default_weight = flags.default_parameters[flags.default_ip]
+                            # with gr.TabItem(label='Image Prompt') as ip_tab:
+                            #     with gr.Row():
+                            #         ip_images = []
+                            #         ip_types = []
+                            #         ip_stops = []
+                            #         ip_weights = []
+                            #         ip_ctrls = []
+                            #         ip_ad_cols = []
+                            #         for _ in range(flags.controlnet_image_count):
+                            #             with gr.Column():
+                            #                 ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                            #                 ip_images.append(ip_image)
+                            #                 ip_ctrls.append(ip_image)
+                            #                 with gr.Column(visible=False) as ad_col:
+                            #                     with gr.Row():
+                            #                         default_end, default_weight = flags.default_parameters[flags.default_ip]
         
-                                                    ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                                    ip_stops.append(ip_stop)
-                                                    ip_ctrls.append(ip_stop)
+                            #                         ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                            #                         ip_stops.append(ip_stop)
+                            #                         ip_ctrls.append(ip_stop)
         
-                                                    ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                                    ip_weights.append(ip_weight)
-                                                    ip_ctrls.append(ip_weight)
+                            #                         ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                            #                         ip_weights.append(ip_weight)
+                            #                         ip_ctrls.append(ip_weight)
         
-                                                ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.default_ip, container=False)
-                                                ip_types.append(ip_type)
-                                                ip_ctrls.append(ip_type)
+                            #                     ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.default_ip, container=False)
+                            #                     ip_types.append(ip_type)
+                            #                     ip_ctrls.append(ip_type)
         
-                                                ip_type.change(lambda x: flags.default_parameters[x], inputs=[ip_type], outputs=[ip_stop, ip_weight], queue=False, show_progress=False)
-                                            ip_ad_cols.append(ad_col)
-                                ip_advanced = gr.Checkbox(label='Advanced', value=True, container=False)
-                                gr.HTML('* \"Image Prompt\" is powered by Fooocus Image Mixture Engine (v1.0.1). <a href="https://github.com/lllyasviel/Fooocus/discussions/557" target="_blank">\U0001F4D4 Document</a>')
+                            #                     ip_type.change(lambda x: flags.default_parameters[x], inputs=[ip_type], outputs=[ip_stop, ip_weight], queue=False, show_progress=False)
+                            #                 ip_ad_cols.append(ad_col)
+                            #     ip_advanced = gr.Checkbox(label='Advanced', value=True, container=False)
+                            #     gr.HTML('* \"Image Prompt\" is powered by Fooocus Image Mixture Engine (v1.0.1). <a href="https://github.com/lllyasviel/Fooocus/discussions/557" target="_blank">\U0001F4D4 Document</a>')
         
-                                def ip_advance_checked(x):
-                                    return [gr.update(visible=x)] * len(ip_ad_cols) + \
-                                        [flags.default_ip] * len(ip_types) + \
-                                        [flags.default_parameters[flags.default_ip][0]] * len(ip_stops) + \
-                                        [flags.default_parameters[flags.default_ip][1]] * len(ip_weights)
+                                # def ip_advance_checked(x):
+                                #     return [gr.update(visible=x)] * len(ip_ad_cols) + \
+                                #         [flags.default_ip] * len(ip_types) + \
+                                #         [flags.default_parameters[flags.default_ip][0]] * len(ip_stops) + \
+                                #         [flags.default_parameters[flags.default_ip][1]] * len(ip_weights)
         
-                                ip_advanced.change(ip_advance_checked, inputs=ip_advanced,
-                                                   outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
-                                                   queue=False, show_progress=False)
+                                # ip_advanced.change(ip_advance_checked, inputs=ip_advanced,
+                                #                    outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
+                                #                    queue=False, show_progress=False)
                             with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                                 with gr.Row():
                                     inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
@@ -273,6 +320,8 @@ with shared.gradio_root:
                                 example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
 
                                 with gr.Row():
+                                    mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint',
+                                                                                  value=False)
                                     inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
                                     inpaint_engine = gr.Dropdown(label='Inpaint Engine',
                                                                  value=modules.config.default_inpaint_engine_version,
@@ -298,17 +347,17 @@ with shared.gradio_root:
                                     inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                     invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
 
-                            with gr.TabItem(label='Describe') as desc_tab:
-                                with gr.Row():
-                                    with gr.Column():
-                                        desc_input_image = grh.Image(label='Drag any image to here', source='upload', type='numpy')
-                                    with gr.Column():
-                                        desc_method = gr.Radio(
-                                            label='Content Type',
-                                            choices=[flags.desc_type_photo, flags.desc_type_anime],
-                                            value=flags.desc_type_photo)
-                                        desc_btn = gr.Button(value='Describe this Image into Prompt')
-                                        gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/1363" target="_blank">\U0001F4D4 Document</a>')
+                            # with gr.TabItem(label='Describe') as desc_tab:
+                            #     with gr.Row():
+                            #         with gr.Column():
+                            #             desc_input_image = grh.Image(label='Drag any image to here', source='upload', type='numpy')
+                            #         with gr.Column():
+                            #             desc_method = gr.Radio(
+                            #                 label='Content Type',
+                            #                 choices=[flags.desc_type_photo, flags.desc_type_anime],
+                            #                 value=flags.desc_type_photo)
+                            #             desc_btn = gr.Button(value='Describe this Image into Prompt')
+                            #             gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/1363" target="_blank">\U0001F4D4 Document</a>')
                             # with gr.TabItem(label="Inswapper") as inswapper_tab:
                             #     with gr.Row():
                             #         with gr.Column():
@@ -317,76 +366,76 @@ with shared.gradio_root:
                             #             inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                             #         with gr.Column():
                             #             inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
-                            with gr.TabItem(label="PhotoMaker") as photomaker_tab:
-                                with gr.Row():
-                                    with gr.Column():
-                                        photomaker_enabled = gr.Checkbox(label="Enabled", value=False)
-                                        def handle_model(value):
-                                            if value is False:                                        
-                                                pm.unload_model()
-                                        photomaker_enabled.change(fn=handle_model, inputs=[photomaker_enabled])
-                                with gr.Row():
-                                    with gr.Column():
-                                        def swap_to_gallery(images):
-                                            pil_images = []
-                                            for image in images:
-                                                print(f"image path: {image.name}")
-                                                pil_images.append(Image.open(image.name))                                        
-                                            return gr.update(value=pil_images, visible=True), gr.update(visible=True), gr.update(visible=False)
+                            # with gr.TabItem(label="PhotoMaker") as photomaker_tab:
+                            #     with gr.Row():
+                            #         with gr.Column():
+                            #             photomaker_enabled = gr.Checkbox(label="Enabled", value=False)
+                            #             def handle_model(value):
+                            #                 if value is False:                                        
+                            #                     pm.unload_model()
+                            #             photomaker_enabled.change(fn=handle_model, inputs=[photomaker_enabled])
+                            #     with gr.Row():
+                            #         with gr.Column():
+                            #             def swap_to_gallery(images):
+                            #                 pil_images = []
+                            #                 for image in images:
+                            #                     print(f"image path: {image.name}")
+                            #                     pil_images.append(Image.open(image.name))                                        
+                            #                 return gr.update(value=pil_images, visible=True), gr.update(visible=True), gr.update(visible=False)
         
-                                        photomaker_images = gr.Files(label="Drag (Select) 1 or more photos of your face", file_types=["image"])
-                                        photomaker_gallery_images = gr.Gallery(label="Source Face Images", columns=5, rows=1, height=200)
-                                        photomaker_images.upload(fn=swap_to_gallery, inputs=photomaker_images, outputs=[photomaker_gallery_images, photomaker_images])
+                            #             photomaker_images = gr.Files(label="Drag (Select) 1 or more photos of your face", file_types=["image"])
+                            #             photomaker_gallery_images = gr.Gallery(label="Source Face Images", columns=5, rows=1, height=200)
+                            #             photomaker_images.upload(fn=swap_to_gallery, inputs=photomaker_images, outputs=[photomaker_gallery_images, photomaker_images])
         
-                            with gr.TabItem(label="InstantID") as instantid_tab:
-                                with gr.Row():
-                                    with gr.Column():
-                                        instantid_enabled = gr.Checkbox(label="Enabled", value=False)
-                                        def handle_model(value):
-                                            if value is False:
-                                                instantid.unload_model()
-                                        instantid_enabled.change(fn=handle_model, inputs=[instantid_enabled])
-                                    with gr.Column():
-                                        instantid_identitynet_strength_ratio = gr.Slider(
-                                            label="IdentityNet strength (for fidelity)",
-                                            minimum=0,
-                                            maximum=1.5,
-                                            step=0.05,
-                                            value=0.80,
-                                        )
-                                        instantid_adapter_strength_ratio = gr.Slider(
-                                            label="Image adapter strength (for detail)",
-                                            minimum=0,
-                                            maximum=1.5,
-                                            step=0.05,
-                                            value=0.80,
-                                        )                                
-                                with gr.Row():
-                                    with gr.Column():                            
-                                        instantid_source_image_path = grh.Image(label='Source Face Image', source='upload', type='filepath')
-                                    with gr.Column():
-                                        instantid_pose_image_path = grh.Image(label='Source Pose Image', source='upload', type='pil', tool='sketch', brush_color="#FFFFFF", elem_id='instantid_inpaint_canvas')
+                            # with gr.TabItem(label="InstantID") as instantid_tab:
+                            #     with gr.Row():
+                            #         with gr.Column():
+                            #             instantid_enabled = gr.Checkbox(label="Enabled", value=False)
+                            #             def handle_model(value):
+                            #                 if value is False:
+                            #                     instantid.unload_model()
+                            #             instantid_enabled.change(fn=handle_model, inputs=[instantid_enabled])
+                            #         with gr.Column():
+                            #             instantid_identitynet_strength_ratio = gr.Slider(
+                            #                 label="IdentityNet strength (for fidelity)",
+                            #                 minimum=0,
+                            #                 maximum=1.5,
+                            #                 step=0.05,
+                            #                 value=0.80,
+                            #             )
+                            #             instantid_adapter_strength_ratio = gr.Slider(
+                            #                 label="Image adapter strength (for detail)",
+                            #                 minimum=0,
+                            #                 maximum=1.5,
+                            #                 step=0.05,
+                            #                 value=0.80,
+                            #             )                                
+                            #     with gr.Row():
+                            #         with gr.Column():                            
+                            #             instantid_source_image_path = grh.Image(label='Source Face Image', source='upload', type='filepath')
+                            #         with gr.Column():
+                            #             instantid_pose_image_path = grh.Image(label='Source Pose Image', source='upload', type='pil', tool='sketch', brush_color="#FFFFFF", elem_id='instantid_inpaint_canvas')
         
-                            with gr.TabItem(label='Metadata') as load_tab:
-                                with gr.Column():
-                                    metadata_input_image = grh.Image(label='Drag any image generated by Fooocus here', source='upload', type='filepath')
-                                    metadata_json = gr.JSON(label='Metadata')
-                                    metadata_import_button = gr.Button(value='Apply Metadata')
+                            # with gr.TabItem(label='Metadata') as load_tab:
+                            #     with gr.Column():
+                            #         metadata_input_image = grh.Image(label='Drag any image generated by Fooocus here', source='upload', type='filepath')
+                            #         metadata_json = gr.JSON(label='Metadata')
+                            #         metadata_import_button = gr.Button(value='Apply Metadata')
         
-                                def trigger_metadata_preview(filepath):
-                                    parameters, metadata_scheme = modules.meta_parser.read_info_from_image(filepath)
+                            #     def trigger_metadata_preview(filepath):
+                            #         parameters, metadata_scheme = modules.meta_parser.read_info_from_image(filepath)
         
-                                    results = {}
-                                    if parameters is not None:
-                                        results['parameters'] = parameters
+                            #         results = {}
+                            #         if parameters is not None:
+                            #             results['parameters'] = parameters
         
-                                    if isinstance(metadata_scheme, flags.MetadataScheme):
-                                        results['metadata_scheme'] = metadata_scheme.value
+                            #         if isinstance(metadata_scheme, flags.MetadataScheme):
+                            #             results['metadata_scheme'] = metadata_scheme.value
         
-                                    return results
+                            #         return results
         
-                                metadata_input_image.upload(trigger_metadata_preview, inputs=metadata_input_image,
-                                                            outputs=metadata_json, queue=False, show_progress=True)
+                            #     metadata_input_image.upload(trigger_metadata_preview, inputs=metadata_input_image,
+                            #                                 outputs=metadata_json, queue=False, show_progress=True)
     
                 with gr.Column(scale=1, min_width=0, visible=False) as inswapper_panel:
                     with gr.Tabs():
@@ -403,6 +452,8 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
+            negative_box.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=image_prompt_panel, queue=False, show_progress=False, _js=switch_js)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
@@ -445,6 +496,13 @@ with shared.gradio_root:
 
                 # seed_random = gr.Checkbox(label='Random', value=True)
                 # image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                with gr.Tab(label='FreeU'):
+                    freeu_enabled = gr.Checkbox(label='Enabled', value=False)
+                    freeu_b1 = gr.Slider(label='B1', minimum=0, maximum=2, step=0.01, value=1.01)
+                    freeu_b2 = gr.Slider(label='B2', minimum=0, maximum=2, step=0.01, value=1.02)
+                    freeu_s1 = gr.Slider(label='S1', minimum=0, maximum=4, step=0.01, value=0.99)
+                    freeu_s2 = gr.Slider(label='S2', minimum=0, maximum=4, step=0.01, value=0.95)
+                    freeu_ctrls = [freeu_enabled, freeu_b1, freeu_b2, freeu_s1, freeu_s2]
 
                 def random_checked(r):
                     return gr.update(visible=not r)
@@ -463,7 +521,91 @@ with shared.gradio_root:
 
                 seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
                                    queue=False, show_progress=False)
+                    with gr.TabItem(label='Describe') as desc_tab:
+                        with gr.Row():
+                            with gr.Column():
+                                desc_input_image = grh.Image(label='Drag any image to here', source='upload', type='numpy')
+                            with gr.Column():
+                                desc_method = gr.Radio(
+                                    label='Content Type',
+                                    choices=[flags.desc_type_photo, flags.desc_type_anime],
+                                    value=flags.desc_type_photo)
+                                desc_btn = gr.Button(value='Describe this Image into Prompt')
+                                gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/1363" target="_blank">\U0001F4D4 Document</a>')
+    
+                    with gr.TabItem(label="PhotoMaker") as photomaker_tab:
+                        with gr.Row():
+                            with gr.Column():
+                                photomaker_enabled = gr.Checkbox(label="Enabled", value=False)
+                                def handle_model(value):
+                                    if value is False:                                        
+                                        pm.unload_model()
+                                photomaker_enabled.change(fn=handle_model, inputs=[photomaker_enabled])
+                        with gr.Row():
+                            with gr.Column():
+                                def swap_to_gallery(images):
+                                    pil_images = []
+                                    for image in images:
+                                        print(f"image path: {image.name}")
+                                        pil_images.append(Image.open(image.name))                                        
+                                    return gr.update(value=pil_images, visible=True), gr.update(visible=True), gr.update(visible=False)
+    
+                                photomaker_images = gr.Files(label="Drag (Select) 1 or more photos of your face", file_types=["image"])
+                                photomaker_gallery_images = gr.Gallery(label="Source Face Images", columns=5, rows=1, height=200)
+                                photomaker_images.upload(fn=swap_to_gallery, inputs=photomaker_images, outputs=[photomaker_gallery_images, photomaker_images])
+    
+                    with gr.TabItem(label="InstantID") as instantid_tab:
+                        with gr.Row():
+                            with gr.Column():
+                                instantid_enabled = gr.Checkbox(label="Enabled", value=False)
+                                def handle_model(value):
+                                    if value is False:
+                                        instantid.unload_model()
+                                instantid_enabled.change(fn=handle_model, inputs=[instantid_enabled])
+                            with gr.Column():
+                                instantid_identitynet_strength_ratio = gr.Slider(
+                                    label="IdentityNet strength (for fidelity)",
+                                    minimum=0,
+                                    maximum=1.5,
+                                    step=0.05,
+                                    value=0.80,
+                                )
+                                instantid_adapter_strength_ratio = gr.Slider(
+                                    label="Image adapter strength (for detail)",
+                                    minimum=0,
+                                    maximum=1.5,
+                                    step=0.05,
+                                    value=0.80,
+                                )                                
+                        with gr.Row():
+                            with gr.Column():                            
+                                instantid_source_image_path = grh.Image(label='Source Face Image', source='upload', type='filepath')
+                            with gr.Column():
+                                instantid_pose_image_path = grh.Image(label='Source Pose Image', source='upload', type='pil', tool='sketch', brush_color="#FFFFFF", elem_id='instantid_inpaint_canvas')
+    
+                    with gr.TabItem(label='Metadata') as load_tab:
+                        with gr.Column():
+                            metadata_input_image = grh.Image(label='Drag any image generated by Fooocus here', source='upload', type='filepath')
+                            metadata_json = gr.JSON(label='Metadata')
+                            metadata_import_button = gr.Button(value='Apply Metadata')
+    
+                        def trigger_metadata_preview(filepath):
+                            parameters, metadata_scheme = modules.meta_parser.read_info_from_image(filepath)
+    
+                            results = {}
+                            if parameters is not None:
+                                results['parameters'] = parameters
+    
+                            if isinstance(metadata_scheme, flags.MetadataScheme):
+                                results['metadata_scheme'] = metadata_scheme.value
+    
+                            return results
+    
+                        metadata_input_image.upload(trigger_metadata_preview, inputs=metadata_input_image,
+                                                    outputs=metadata_json, queue=False, show_progress=True)
 
+            
+            
                 # def update_history_link():
                 #     if args_manager.args.disable_image_log:
                 #         return gr.update(value='')
@@ -627,10 +769,10 @@ with shared.gradio_root:
                         skipping_cn_preprocessor = gr.Checkbox(label='Skip Preprocessors', value=False,
                                                                info='Do not preprocess images. (Inputs are already canny/depth/cropped-face/etc.)')
 
-                        mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',
-                                                                           value=False)
-                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint',
-                                                                      value=False)
+                        # mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',
+                        #                                                    value=False)
+                        # mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint',
+                        #                                               value=False)
 
                         controlnet_softness = gr.Slider(label='Softness of ControlNet', minimum=0.0, maximum=1.0,
                                                         step=0.001, value=0.25,
@@ -677,13 +819,13 @@ with shared.gradio_root:
                                                            inputs=inpaint_mask_upload_checkbox,
                                                            outputs=inpaint_mask_image, queue=False, show_progress=False)
 
-                    with gr.Tab(label='FreeU'):
-                        freeu_enabled = gr.Checkbox(label='Enabled', value=False)
-                        freeu_b1 = gr.Slider(label='B1', minimum=0, maximum=2, step=0.01, value=1.01)
-                        freeu_b2 = gr.Slider(label='B2', minimum=0, maximum=2, step=0.01, value=1.02)
-                        freeu_s1 = gr.Slider(label='S1', minimum=0, maximum=4, step=0.01, value=0.99)
-                        freeu_s2 = gr.Slider(label='S2', minimum=0, maximum=4, step=0.01, value=0.95)
-                        freeu_ctrls = [freeu_enabled, freeu_b1, freeu_b2, freeu_s1, freeu_s2]
+                    # with gr.Tab(label='FreeU'):
+                    #     freeu_enabled = gr.Checkbox(label='Enabled', value=False)
+                    #     freeu_b1 = gr.Slider(label='B1', minimum=0, maximum=2, step=0.01, value=1.01)
+                    #     freeu_b2 = gr.Slider(label='B2', minimum=0, maximum=2, step=0.01, value=1.02)
+                    #     freeu_s1 = gr.Slider(label='S1', minimum=0, maximum=4, step=0.01, value=0.99)
+                    #     freeu_s2 = gr.Slider(label='S2', minimum=0, maximum=4, step=0.01, value=0.95)
+                    #     freeu_ctrls = [freeu_enabled, freeu_b1, freeu_b2, freeu_s1, freeu_s2]
 
                 def dev_mode_checked(r):
                     return gr.update(visible=r)
