@@ -847,9 +847,9 @@ threading.Thread(target=iframe_thread, daemon=True, args=(port,)).start()
 # )
 
 shared.gradio_root.launch(
-inbrowser=args_manager.args.in_browser,
-server_name=args_manager.args.listen,
-server_port=args_manager.args.port,
-allowed_paths=[modules.config.path_outputs],
-blocked_paths=[constants.AUTH_FILENAME]
+    inbrowser=args_manager.args.in_browser,
+    server_name=args_manager.args.listen,
+    server_port=args_manager.args.port,
+    allowed_paths=[modules.config.path_outputs],
+    blocked_paths=[constants.AUTH_FILENAME]
 )
