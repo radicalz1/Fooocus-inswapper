@@ -898,7 +898,8 @@ def worker():
                 if inpaint_worker.current_task is not None:
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
-                if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
+                # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
+                if inswapper_enabled:
                     imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
 
                 img_paths = []
