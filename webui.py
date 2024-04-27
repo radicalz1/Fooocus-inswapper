@@ -452,8 +452,6 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
-            negative_box.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=image_prompt_panel, queue=False, show_progress=False, _js=switch_js)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
