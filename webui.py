@@ -127,12 +127,12 @@ with shared.gradio_root:
                         shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
 
                 with gr.Column(scale=3, min_width=0):
-                    gr.Row():
+                    with gr.Row():
                         generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                         load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                         skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                         stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
-                    gr.Row():
+                    with gr.Row():
                         performance_selection = gr.Accordion(label='Performance',
                                                          choices=flags.Performance.list(),
                                                          value=modules.config.default_performance)
@@ -165,21 +165,21 @@ with shared.gradio_root:
                                      value=modules.config.default_prompt_negative)
 
             with gr.Row(elem_classes='advanced_check_row'):
-                gr.Column():
+                with gr.Column():
                     input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
                     advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
                     inswapper_enabled = gr.Checkbox(label="Inswapper", value=False, container=False, elem_classes='min_check')
-                gr.Column():
+                with gr.Column():
                     overwrite_step = gr.Slider(label='Overwrite of Sampling Step',
                                                minimum=-1, maximum=200, step=1,
                                                value=modules.config.default_overwrite_step,
                                                info='Set as -1 to disable. For developer debugging.')
-                gr.Column():
+                with gr.Column():
                     image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                gr.Column():
+                with gr.Column():
                     seed_random = gr.Checkbox(label='Random', value=True)
                     image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                gr.Column():
+                with gr.Column():
                     def update_history_link():
                         if args_manager.args.disable_image_log:
                             return gr.update(value='')
