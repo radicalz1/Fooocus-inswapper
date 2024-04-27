@@ -154,7 +154,7 @@ with shared.gradio_root:
                     with gr.TabItem(label='Upscale or Variation') as uov_tab:
                         with gr.Row():
                             with gr.Column():
-                                uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                                uov_input_image = grh.Image(label='Drag above image to here', source=['upload', 'clipboard'], type='numpy')
                             with gr.Column():
                                 uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
                                 gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
@@ -168,7 +168,7 @@ with shared.gradio_root:
                             ip_ad_cols = []
                             for _ in range(flags.controlnet_image_count):
                                 with gr.Column():
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                    ip_image = grh.Image(label='Image', source=['upload', 'clipboard'], type='numpy', show_label=False, height=300)
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
                                     with gr.Column(visible=False) as ad_col:
@@ -203,8 +203,8 @@ with shared.gradio_root:
                                            queue=False, show_progress=False)
                     with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                         with gr.Row():
-                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source=['upload', 'clipboard'], type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                            inpaint_mask_image = grh.Image(label='Mask Upload', source=['upload', 'clipboard'], type='numpy', height=500, visible=False)
 
                         with gr.Row():
                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
@@ -216,7 +216,7 @@ with shared.gradio_root:
                     with gr.TabItem(label='Describe') as desc_tab:
                         with gr.Row():
                             with gr.Column():
-                                desc_input_image = grh.Image(label='Drag any image to here', source='upload', type='numpy')
+                                desc_input_image = grh.Image(label='Drag any image to here', source=['upload', 'clipboard'], type='numpy')
                             with gr.Column():
                                 desc_method = gr.Radio(
                                     label='Content Type',
@@ -231,7 +231,7 @@ with shared.gradio_root:
                                 inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                 inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                             with gr.Column():
-                                inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
+                                inswapper_source_image = grh.Image(label='Source Face Image', source=['upload', 'clipboard'], type='numpy')
                     with gr.TabItem(label="PhotoMaker") as photomaker_tab:
                         with gr.Row():
                             with gr.Column():
@@ -278,13 +278,13 @@ with shared.gradio_root:
                                 )                                
                         with gr.Row():
                             with gr.Column():                            
-                                instantid_source_image_path = grh.Image(label='Source Face Image', source='upload', type='filepath')
+                                instantid_source_image_path = grh.Image(label='Source Face Image', source=['upload', 'clipboard'], type='filepath')
                             with gr.Column():
-                                instantid_pose_image_path = grh.Image(label='Source Pose Image', source='upload', type='pil', tool='sketch', brush_color="#FFFFFF", elem_id='instantid_inpaint_canvas')
+                                instantid_pose_image_path = grh.Image(label='Source Pose Image', source=['upload', 'clipboard'], type='pil', tool='sketch', brush_color="#FFFFFF", elem_id='instantid_inpaint_canvas')
 
                     with gr.TabItem(label='Metadata') as load_tab:
                         with gr.Column():
-                            metadata_input_image = grh.Image(label='Drag any image generated by Fooocus here', source='upload', type='filepath')
+                            metadata_input_image = grh.Image(label='Drag any image generated by Fooocus here', source=['upload', 'clipboard'], type='filepath')
                             metadata_json = gr.JSON(label='Metadata')
                             metadata_import_button = gr.Button(value='Apply Metadata')
 
