@@ -133,10 +133,10 @@ with shared.gradio_root:
                         skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                         stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
                     with gr.Row():
-                        performance_selection = gr.Accordion(label='Performance',
+                        performance_selection = gr.Dropdown(label='Performance',
                                                          choices=flags.Performance.list(),
                                                          value=modules.config.default_performance)
-                        aspect_ratios_selection = gr.Accordion(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
+                        aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                                            value=modules.config.default_aspect_ratio, info='width × height',
                                                            elem_classes='aspect_ratios')
 
