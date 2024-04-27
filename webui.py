@@ -165,9 +165,10 @@ with shared.gradio_root:
             #                             outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
               # inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
               #                           outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
-              with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
-                # with gr.Row(visible=True):
-                # with gr.Row(visible=False) as image_input_panel:
+            with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
+                with gr.Row(visible=True):
+            # with gr.Row(visible=False) as image_input_panel:
+                # with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
