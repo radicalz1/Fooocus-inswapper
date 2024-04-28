@@ -154,8 +154,9 @@ with shared.gradio_root:
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
                 with gr.Column():
                     image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                    seed_random = gr.Checkbox(label='Random', value=True)
-                    image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                    with gr.Row():
+                        seed_random = gr.Checkbox(label='Random', value=True)
+                        image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
 
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
@@ -232,7 +233,7 @@ with shared.gradio_root:
                 with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
-                            with gr.Row(visible=True) as mixing_panel:
+                            with gr.Row(visible=True) as mixinguov_panel:
                                     mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
@@ -295,6 +296,8 @@ with shared.gradio_root:
                                         outputs=image_prompt_panel, queue=False, show_progress=False)
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
                                         outputs=mixing_panel, queue=False, show_progress=False)
+            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
