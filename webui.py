@@ -117,25 +117,33 @@ with shared.gradio_root:
                     gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                          elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                          elem_id='final_gallery')
+                    with gr.Row():
+                        image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
+                        input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
+                        inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                        advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
+                        def update_history_link():
+                            if args_manager.args.disable_image_log:
+                                return gr.update(value='')                            
+                            return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
+                        history_link = gr.HTML()
+                        shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+
                 with gr.Column():
                     html_block = gr.HTML("""
                     <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
                     """, visible=True)
 
             with gr.Row():
-                with gr.Column():
+                with gr.Row():
                     performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                     overwrite_step = gr.Slider(label='Step',
                                            minimum=-1, maximum=200, step=1,
                                            value=modules.config.default_overwrite_step,
                                            info='Default = -1')
                     aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
-                    def update_history_link():
-                        if args_manager.args.disable_image_log:
-                            return gr.update(value='')                            
-                        return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
-                    history_link = gr.HTML()
-                    shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+
+
                 with gr.Row():
                     prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
@@ -152,7 +160,7 @@ with shared.gradio_root:
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
-                with gr.Column():
+                with gr.Row():
                     image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
                     with gr.Row():
                         seed_random = gr.Checkbox(label='Random', value=True)
@@ -174,12 +182,6 @@ with shared.gradio_root:
 
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
-
-            with gr.Row():
-                image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
-                input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
-                advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
 
             with gr.Row():
                 with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
