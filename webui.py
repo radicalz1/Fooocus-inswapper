@@ -110,22 +110,37 @@ with shared.gradio_root:
                                             elem_classes=['main_view'])
                 progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
                                               height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
-            progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
-                                    elem_id='progress-bar', elem_classes='progress-bar')
-            gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                 elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                 elem_id='final_gallery')
-            html_block = gr.HTML("""
-            <iframe src="https://www.photopea.com" height="768" title="Photopea"></iframe>
-            """, visible=True)
+            with gr.Row():
+                with gr.Column():
+                    performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
+                    overwrite_step = gr.Slider(label='Step',
+                                           minimum=-1, maximum=200, step=1,
+                                           value=modules.config.default_overwrite_step,
+                                           info='Default = -1')
+                    aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
+                    def update_history_link():
+                        if args_manager.args.disable_image_log:
+                            return gr.update(value='')                            
+                        return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
+                    history_link = gr.HTML()
+                    shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+                with gr.Column():
+                    progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
+                                            elem_id='progress-bar', elem_classes='progress-bar')
+                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                                         elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
+                                         elem_id='final_gallery')
+                    html_block = gr.HTML("""
+                    <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
+                    """, visible=True)
 
-            with gr.Row(elem_classes='type_row'):
-                with gr.Column(elem_classes='advanced_check_row'):
+            with gr.Row():
+                with gr.Column():
                     image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                     input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
                     inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
                     advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
-                with gr.Column(scale=17):
+                with gr.Row():
                     prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
                     negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
@@ -136,34 +151,16 @@ with shared.gradio_root:
                     if isinstance(default_prompt, str) and default_prompt != '':
                         shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
 
-                with gr.Column(scale=3, min_width=0):
-                    with gr.Row():
-                        with gr.Column():
-                            generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
-                            load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
-                            skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
-                            stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
+                with gr.Column():
+                    generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                    load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
+                    skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
+                    stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
                 with gr.Column():
                     image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
                     seed_random = gr.Checkbox(label='Random', value=True)
                     image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                with gr.Column():
-                    performance_selection = gr.Dropdown(label='Performance',
-                                                     choices=flags.Performance.list(),
-                                                     value=modules.config.default_performance)
-                    overwrite_step = gr.Slider(label='Step',
-                                           minimum=-1, maximum=200, step=1,
-                                           value=modules.config.default_overwrite_step,
-                                           info='def = -1')
-                    aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
-                                                       value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
-                    def update_history_link():
-                        if args_manager.args.disable_image_log:
-                            return gr.update(value='')                            
-                        return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
-                    history_link = gr.HTML()
-                    shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
-                        
+
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
                         currentTask.last_stop = 'stop'
