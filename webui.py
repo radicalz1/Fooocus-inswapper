@@ -115,9 +115,9 @@ with shared.gradio_root:
             gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                  elem_id='final_gallery')
-        html_block = gr.HTML("""
-        <iframe src="https://www.photopea.com" height="768" title="Photopea"></iframe>
-        """, visible=True)
+            html_block = gr.HTML("""
+            <iframe src="https://www.photopea.com" height="768" title="Photopea"></iframe>
+            """, visible=True)
 
             with gr.Row(elem_classes='type_row'):
                 with gr.Column(elem_classes='advanced_check_row'):
