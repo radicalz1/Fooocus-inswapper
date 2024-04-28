@@ -269,12 +269,12 @@ with shared.gradio_root:
                                     uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
-                            with gr.Column:
-                                with gr.Row:
+                            with gr.Column():
+                                with gr.Row():
                                     with gr.Row(visible=True) as mixing_panel:
                                         mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
-                                inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
-                                invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
+                                    inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
+                                    invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                 with gr.Row():
                                     inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                     inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
