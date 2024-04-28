@@ -281,7 +281,7 @@ with shared.gradio_root:
                                 inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
                                 outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
                                 inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
-                                                                inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
+                                inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
                                 with gr.Row():
                                     inpaint_engine = gr.Dropdown(label='Inpaint Engine',
                                                                  value=modules.config.default_inpaint_engine_version,
