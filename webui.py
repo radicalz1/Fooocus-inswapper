@@ -138,29 +138,30 @@ with shared.gradio_root:
 
 
             with gr.Row():
-                with gr.Row(scale=1):
-                    performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
-                    overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
-                with gr.Row(scale=17):
-                    prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
-                                        container=False, autofocus=True, elem_classes='type_row', lines=1024)
-                    negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
-                                     lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
-                                     value=modules.config.default_prompt_negative)
-
-                    default_prompt = modules.config.default_prompt
-                    if isinstance(default_prompt, str) and default_prompt != '':
-                        shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
-
+                with gr.Column(scale=1):
+                    with gr.Row():
+                        performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
+                        overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
+                with gr.Column(scale=17):
+                    with gr.Row(scale=17):
+                        prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
+                                            container=False, autofocus=True, elem_classes='type_row', lines=1024)
+                        negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
+                                         lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
+                                         value=modules.config.default_prompt_negative)
+                        default_prompt = modules.config.default_prompt
+                        if isinstance(default_prompt, str) and default_prompt != '':
+                            shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
                 with gr.Column(scale=3):
                     generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
-                with gr.Row(scale=1):
-                    image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                    seed_random = gr.Checkbox(label='Random', value=True)
-                    image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                with gr.Column(scale=1):
+                    with gr.Row():
+                        image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+                        seed_random = gr.Checkbox(label='Random', value=True)
+                        image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
 
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
@@ -179,8 +180,9 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
+# Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=1, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -228,59 +230,60 @@ with shared.gradio_root:
     
                     
             
-                with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
+                with gr.Column(scale=8, min_width=0, visible=False) as mid_panel:
                     with gr.Column(visible=False) as photopea_panel:
                         html_block = gr.HTML("""
                         <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
                         """, visible=True)
-                    with gr.Tabs():
-                        with gr.TabItem(label='Upscale or Variation') as uov_tab:
-                            with gr.Row():
-                                with gr.Row(visible=True) as mixinguov_panel:
-                                        mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
-                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
-                            with gr.Column():
-                                    uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
-                                    gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
-
-                        with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
-                            with gr.Column():
+                    with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
+                        with gr.Tabs():
+                            with gr.TabItem(label='Upscale or Variation') as uov_tab:
                                 with gr.Row():
-                                    with gr.Row(visible=True) as mixing_panel:
-                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
-                                    inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
-                                    invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
+                                    with gr.Row(visible=True) as mixinguov_panel:
+                                            mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
+                                    uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
                                 with gr.Column():
-                                    inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                    inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                                        uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                                        gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
+    
+                            with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
+                                with gr.Column():
                                     with gr.Row():
-                                        inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
-                                        outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
-                                        inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
+                                        with gr.Row(visible=True) as mixing_panel:
+                                            mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
+                                        inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
+                                        invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
+                                    with gr.Column():
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                                        with gr.Row():
+                                            inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
+                                            outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
+                                            inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
+                                        with gr.Row():
+                                            inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
+                                            inpaint_engine = gr.Dropdown(label='Inpaint Engine',
+                                                                         value=modules.config.default_inpaint_engine_version,
+                                                                         choices=flags.inpaint_engine_versions,
+                                                                         info='Version of Fooocus inpaint model')
+                                    example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
+                                    example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
                                     with gr.Row():
-                                        inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
-                                        inpaint_engine = gr.Dropdown(label='Inpaint Engine',
-                                                                     value=modules.config.default_inpaint_engine_version,
-                                                                     choices=flags.inpaint_engine_versions,
-                                                                     info='Version of Fooocus inpaint model')
-                                example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
-                                example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
-                                with gr.Row():
-                                    inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
-                                    inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
-                                                                         minimum=0.0, maximum=1.0, step=0.001, value=0.618,
-                                                                         info='The area to inpaint. '
-                                                                              'Value 0 is same as "Only Masked" in A1111. '
-                                                                              'Value 1 is same as "Whole Image" in A1111. '
-                                                                              'Only used in inpaint, not used in outpaint. '
-                                                                              '(Outpaint always use 1.0)')
-                                    inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
-                                                                        minimum=-64, maximum=64, step=1, value=0,
-                                                                        info='Positive value will make white area in the mask larger, '
-                                                                             'negative value will make white area smaller.'
-                                                                             '(default is 0, always process before any mask invert)')
-                            gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
-
+                                        inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
+                                        inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
+                                                                             minimum=0.0, maximum=1.0, step=0.001, value=0.618,
+                                                                             info='The area to inpaint. '
+                                                                                  'Value 0 is same as "Only Masked" in A1111. '
+                                                                                  'Value 1 is same as "Whole Image" in A1111. '
+                                                                                  'Only used in inpaint, not used in outpaint. '
+                                                                                  '(Outpaint always use 1.0)')
+                                        inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
+                                                                            minimum=-64, maximum=64, step=1, value=0,
+                                                                            info='Positive value will make white area in the mask larger, '
+                                                                                 'negative value will make white area smaller.'
+                                                                                 '(default is 0, always process before any mask invert)')
+                                gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+    
                 with gr.Column(scale=1, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
@@ -294,18 +297,46 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
-            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=image_prompt_panel, queue=False, show_progress=False)
-            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=mixing_panel, queue=False, show_progress=False)
-            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=mixinguov_panel, queue=False, show_progress=False)
+            
+            def handle_photopea_checkbox(selected_data: gr.SelectData):
+                if selected_data.selected:
+                    mid_panel.visible = True
+                    photopea_panel.visible = True
+                else:
+                    mid_panel.visible = False
+                    photopea_panel.visible = False
+            photopea_checkbox.select(handle_photopea_checkbox)
+
+            def handle_image_prompt_enabled(selected_data: gr.SelectData):
+                if selected_data.selected:
+                    mixinguov_panel.visible = True
+                    mixing_panel.visible = True
+                    image_prompt_panel.visible = True
+                else:
+                    mixinguov_panel.visible = False
+                    mixing_panel.visible = False
+                    image_prompt_panel.visible = False
+            image_prompt_enabled.select(handle_image_prompt_enabled)
+
+            def handle_input_image_checkbox(selected_data: gr.SelectData):
+                if selected_data.selected:
+                    mid_panel.visible = True
+                    input_image_panel.visible = True
+                else:
+                    mid_panel.visible = False
+                    input_image_panel.visible = False
+            input_image_checkbox.select(handle_input_image_checkbox)
+            
+            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+            #                             outputs=image_prompt_panel, queue=False, show_progress=False)
+            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+            #                             outputs=mixing_panel, queue=False, show_progress=False)
+            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+            #                             outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
-            photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
-                                        outputs=photopea_panel, queue=False, show_progress=False)
-            input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
-                                        outputs=input_image_panel, queue=False, show_progress=False)
+            # input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
+            #                             outputs=input_image_panel, queue=False, show_progress=False)
             ip_advanced.change(lambda: None, queue=False, show_progress=False)
 
             current_tab = gr.Textbox(value='uov', visible=False)
