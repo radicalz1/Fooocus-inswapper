@@ -142,7 +142,18 @@ with shared.gradio_root:
                         aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                                            value=modules.config.default_aspect_ratio, info='width × height',
                                                            elem_classes='aspect_ratios')
-
+                        overwrite_step = gr.Slider(label='Overwrite of Sampling Step',
+                                               minimum=-1, maximum=200, step=1,
+                                               value=modules.config.default_overwrite_step,
+                                               info='Set as -1 to disable. For developer debugging.')
+                        image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+                        seed_random = gr.Checkbox(label='Random', value=True)
+                        image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                    with gr.Row():
+                        def update_history_link():
+                            if args_manager.args.disable_image_log:
+                                return gr.update(value='')
+                        
 
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
@@ -164,24 +175,13 @@ with shared.gradio_root:
             with gr.Row(elem_classes='advanced_check_row'):
                 with gr.Column():
                     image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False, elem_classes='min_check')
+                with gr.Column():
                     input_image_checkbox = gr.Checkbox(label='Input Image', value=True, container=False, elem_classes='min_check')
+                with gr.Column():
                     inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False, elem_classes='min_check')
+                with gr.Column():
                     advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
-                with gr.Column():
-                    overwrite_step = gr.Slider(label='Overwrite of Sampling Step',
-                                               minimum=-1, maximum=200, step=1,
-                                               value=modules.config.default_overwrite_step,
-                                               info='Set as -1 to disable. For developer debugging.')
-                with gr.Column():
-                    image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                with gr.Column():
-                    seed_random = gr.Checkbox(label='Random', value=True)
-                    image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                with gr.Column():
-                    def update_history_link():
-                        if args_manager.args.disable_image_log:
-                            return gr.update(value='')
-                        
+
                         return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                     history_link = gr.HTML()
                     shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
@@ -202,7 +202,7 @@ with shared.gradio_root:
               # inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
               #                           outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             with gr.Row():
-                with gr.Column(scale=1, min_width=0, visible=False) as image_prompt_panel:
+                with gr.Column(scale=1, min_width=0, visible=True) as image_prompt_panel:
                     with gr.TabItem(label='Image Prompt') as ip_tab:
                         with gr.Row():
                             ip_images = []
@@ -249,7 +249,7 @@ with shared.gradio_root:
 
                 
             
-                with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
+                with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
                     with gr.Row(visible=True):
                 # with gr.Row(visible=False) as image_input_panel:
                     # with gr.Column(scale=3, min_width=0, visible=False) as image_input_panel:
@@ -437,7 +437,7 @@ with shared.gradio_root:
                             #     metadata_input_image.upload(trigger_metadata_preview, inputs=metadata_input_image,
                             #                                 outputs=metadata_json, queue=False, show_progress=True)
     
-                with gr.Column(scale=1, min_width=0, visible=False) as inswapper_panel:
+                with gr.Column(scale=1, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Row():
@@ -452,10 +452,12 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
+            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=image_prompt_panel, queue=False, show_progress=False, _js=switch_js)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
-                                        outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
+                                        outputs=input_image_panel, queue=False, show_progress=False, _js=switch_js)
             ip_advanced.change(lambda: None, queue=False, show_progress=False, _js=down_js)
 
             current_tab = gr.Textbox(value='uov', visible=False)
