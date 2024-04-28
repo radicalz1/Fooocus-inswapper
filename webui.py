@@ -179,7 +179,7 @@ with shared.gradio_root:
                 with gr.Column():
                     image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False, elem_classes='min_check')
                 with gr.Column():
-                    input_image_checkbox = gr.Checkbox(label='Input Image', value=True, container=False, elem_classes='min_check')
+                    input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
                 with gr.Column():
                     inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False, elem_classes='min_check')
                 with gr.Column():
@@ -216,7 +216,7 @@ with shared.gradio_root:
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
-                                    with gr.Column(visible=False) as ad_col:
+                                    with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.default_ip]
 
@@ -256,10 +256,9 @@ with shared.gradio_root:
                         with gr.Tabs():
                             with gr.TabItem(label='Upscale or Variation') as uov_tab:
                                 with gr.Row():
-                                    with gr.Column():
                                         uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
-                                    with gr.Column():
                                         uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                with gr.Row(visible=True) as mixing_panel:
                                         mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',
                                                                                            value=False)
                                         gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
@@ -312,6 +311,9 @@ with shared.gradio_root:
                                     inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
         
                                 with gr.Row():
+                                    with gr.Row(visible=True) as mixing_panel:
+                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint',
+                                                                                      value=False)
                                     inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
                                     outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
                                     inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
@@ -320,8 +322,6 @@ with shared.gradio_root:
                                 example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
 
                                 with gr.Row():
-                                    mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint',
-                                                                                  value=False)
                                     inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
                                     inpaint_engine = gr.Dropdown(label='Inpaint Engine',
                                                                  value=modules.config.default_inpaint_engine_version,
@@ -453,7 +453,7 @@ with shared.gradio_root:
             down_js = "() => {viewer_to_bottom();}"
 
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=image_prompt_panel, queue=False, show_progress=False, _js=switch_js)
+                                        outputs=[image_prompt_panel, mixing_panel], queue=False, show_progress=False, _js=switch_js)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
