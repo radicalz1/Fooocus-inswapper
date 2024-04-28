@@ -112,6 +112,18 @@ with shared.gradio_root:
                                               height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
             with gr.Row():
                 with gr.Column():
+                    progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
+                                            elem_id='progress-bar', elem_classes='progress-bar')
+                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                                         elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
+                                         elem_id='final_gallery')
+                with gr.Column():
+                    html_block = gr.HTML("""
+                    <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
+                    """, visible=True)
+
+            with gr.Row():
+                with gr.Column():
                     performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                     overwrite_step = gr.Slider(label='Step',
                                            minimum=-1, maximum=200, step=1,
@@ -124,22 +136,6 @@ with shared.gradio_root:
                         return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                     history_link = gr.HTML()
                     shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
-                with gr.Column():
-                    progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
-                                            elem_id='progress-bar', elem_classes='progress-bar')
-                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                         elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                         elem_id='final_gallery')
-                    html_block = gr.HTML("""
-                    <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
-                    """, visible=True)
-
-            with gr.Row():
-                with gr.Column():
-                    image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
-                    input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                    inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
-                    advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
                 with gr.Row():
                     prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
@@ -178,6 +174,11 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
+            with gr.Row():
+                image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
+                input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
+                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
 
             with gr.Row():
                 with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
