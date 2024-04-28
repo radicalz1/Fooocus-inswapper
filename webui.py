@@ -134,16 +134,11 @@ with shared.gradio_root:
                             return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                         history_link = gr.HTML()
                         shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
-                        aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
 
 
             with gr.Row():
-                with gr.Column(scale=1):
-                    with gr.Row():
-                        performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
-                        overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 with gr.Column(scale=17):
-                    with gr.Row(scale=17):
+                    with gr.Row():
                         prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
                         negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
@@ -157,11 +152,13 @@ with shared.gradio_root:
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
-                with gr.Column(scale=1):
-                    with gr.Row():
-                        image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                        seed_random = gr.Checkbox(label='Random', value=True)
-                        image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+            with gr.Row():
+                aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
+                performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
+                overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
+                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+                seed_random = gr.Checkbox(label='Random', value=True)
+                image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
 
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
@@ -228,9 +225,7 @@ with shared.gradio_root:
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
     
-                    
-            
-                with gr.Column(scale=8, min_width=0, visible=False) as mid_panel:
+                with gr.Column(scale=8, min_width=0, visible=True):
                     with gr.Column(visible=False) as photopea_panel:
                         html_block = gr.HTML("""
                         <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
@@ -298,45 +293,34 @@ with shared.gradio_root:
             down_js = "() => {viewer_to_bottom();}"
 
             
-            def handle_photopea_checkbox(selected_data: gr.SelectData):
-                if selected_data.selected:
-                    mid_panel.visible = True
-                    photopea_panel.visible = True
-                else:
-                    mid_panel.visible = False
-                    photopea_panel.visible = False
-            photopea_checkbox.select(handle_photopea_checkbox)
+            # def handle_photopea_checkbox(selected_data: gr.SelectData):
+            #     mid_panel.visible = selected_data.selected
+            #     photopea_panel.visible = selected_data.selected
+            # photopea_checkbox.select(handle_photopea_checkbox)
 
-            def handle_image_prompt_enabled(selected_data: gr.SelectData):
-                if selected_data.selected:
-                    mixinguov_panel.visible = True
-                    mixing_panel.visible = True
-                    image_prompt_panel.visible = True
-                else:
-                    mixinguov_panel.visible = False
-                    mixing_panel.visible = False
-                    image_prompt_panel.visible = False
-            image_prompt_enabled.select(handle_image_prompt_enabled)
+            # def handle_image_prompt_enabled(selected_data: gr.SelectData):
+            #     mixinguov_panel.visible = selected_data.selected
+            #     mixing_panel.visible = selected_data.selected
+            #     image_prompt_panel.visible = selected_data.selected
+            # image_prompt_enabled.select(handle_image_prompt_enabled)
 
-            def handle_input_image_checkbox(selected_data: gr.SelectData):
-                if selected_data.selected:
-                    mid_panel.visible = True
-                    input_image_panel.visible = True
-                else:
-                    mid_panel.visible = False
-                    input_image_panel.visible = False
-            input_image_checkbox.select(handle_input_image_checkbox)
+            # def handle_input_image_checkbox(selected_data: gr.SelectData):
+            #     mid_panel.visible = selected_data.selected
+            #     input_image_panel.visible = selected_data.selected
+            # input_image_checkbox.select(handle_input_image_checkbox)
             
-            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-            #                             outputs=image_prompt_panel, queue=False, show_progress=False)
-            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-            #                             outputs=mixing_panel, queue=False, show_progress=False)
-            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-            #                             outputs=mixinguov_panel, queue=False, show_progress=False)
+            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=image_prompt_panel, queue=False, show_progress=False)
+            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=mixing_panel, queue=False, show_progress=False)
+            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+                                        outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
-            # input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
-            #                             outputs=input_image_panel, queue=False, show_progress=False)
+            photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
+                                        outputs=photopea_panel, queue=False, show_progress=False)
+            input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
+                                        outputs=input_image_panel, queue=False, show_progress=False)
             ip_advanced.change(lambda: None, queue=False, show_progress=False)
 
             current_tab = gr.Textbox(value='uov', visible=False)
