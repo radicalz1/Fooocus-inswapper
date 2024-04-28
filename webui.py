@@ -110,23 +110,26 @@ with shared.gradio_root:
                                             elem_classes=['main_view'])
                 progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
                                               height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
-                html_block = gr.HTML("""
-                <iframe src="https://www.photopea.com" height="768" title="Photopea"></iframe>
-                """, visible=True)
             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
                                     elem_id='progress-bar', elem_classes='progress-bar')
             gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                  elem_id='final_gallery')
+        html_block = gr.HTML("""
+        <iframe src="https://www.photopea.com" height="768" title="Photopea"></iframe>
+        """, visible=True)
 
             with gr.Row(elem_classes='type_row'):
+                with gr.Column(elem_classes='advanced_check_row'):
+                    image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
+                    input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
+                    inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                    advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
                 with gr.Column(scale=17):
-                    # prompt = gr.Textbox(show_label=False, placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
-                    #                     container=False, autofocus=True, elem_classes='type_row', lines=1024)
                     prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
                                         container=False, autofocus=True, elem_classes='type_row', lines=1024)
                     negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
-                                     lines=2, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
+                                     lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
                                      value=modules.config.default_prompt_negative)
 
                     default_prompt = modules.config.default_prompt
@@ -140,26 +143,26 @@ with shared.gradio_root:
                             load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                             skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                             stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
-                        with gr.Column():
-                            image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                            seed_random = gr.Checkbox(label='Random', value=True)
-                            image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                        with gr.Column():
-                            performance_selection = gr.Dropdown(label='Performance',
-                                                             choices=flags.Performance.list(),
-                                                             value=modules.config.default_performance)
-                            overwrite_step = gr.Slider(label='Step',
-                                                   minimum=-1, maximum=200, step=1,
-                                                   value=modules.config.default_overwrite_step,
-                                                   info='def = -1')
-                            aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
-                                                               value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
-                            def update_history_link():
-                                if args_manager.args.disable_image_log:
-                                    return gr.update(value='')                            
-                                return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
-                            history_link = gr.HTML()
-                            shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+                with gr.Column():
+                    image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+                    seed_random = gr.Checkbox(label='Random', value=True)
+                    image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                with gr.Column():
+                    performance_selection = gr.Dropdown(label='Performance',
+                                                     choices=flags.Performance.list(),
+                                                     value=modules.config.default_performance)
+                    overwrite_step = gr.Slider(label='Step',
+                                           minimum=-1, maximum=200, step=1,
+                                           value=modules.config.default_overwrite_step,
+                                           info='def = -1')
+                    aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
+                                                       value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
+                    def update_history_link():
+                        if args_manager.args.disable_image_log:
+                            return gr.update(value='')                            
+                        return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
+                    history_link = gr.HTML()
+                    shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                         
                     def stop_clicked(currentTask):
                         import ldm_patched.modules.model_management as model_management
@@ -178,36 +181,7 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
-            with gr.Row(elem_classes='advanced_check_row'):
-                image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
-                input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
-                advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
-                # with gr.Column():
-                #     image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False, elem_classes='min_check')
-                # with gr.Column():
-                #     input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False, elem_classes='min_check')
-                # with gr.Column():
-                #     inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False, elem_classes='min_check')
-                # with gr.Column():
-                #     advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
 
-
-                # with gr.Column(scale=1, min_width=0, visible=inswapper_enabled.value):
-                #     with gr.Tabs():
-                #         with gr.TabItem(label="Inswapper") as inswapper_tab:
-                #             with gr.Row():
-                #                 with gr.Column():
-                #                     # inswapper_enabled = gr.Checkbox(label="Enabled", value=False)
-                #                     inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
-                #                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
-                #                 with gr.Column():
-                #                     inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
-
-            # input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
-            #                             outputs=image_input_panel, queue=False, show_progress=False, _js=switch_js)
-              # inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
-              #                           outputs=inswapper_panel, queue=False, show_progress=False, _js=switch_js)
             with gr.Row():
                 with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
@@ -260,13 +234,12 @@ with shared.gradio_root:
                 with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
-                            with gr.Column(visible=True) as mixing_panel:
-                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',
-                                                                                       value=False)
-                                    gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
+                            with gr.Row(visible=True) as mixing_panel:
+                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
                                     uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                    gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                             with gr.Column():
