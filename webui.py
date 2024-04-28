@@ -14,8 +14,8 @@ import modules.flags as flags
 import modules.gradio_hijack as grh
 import modules.style_sorter as style_sorter
 import modules.meta_parser
-import modules.pm as pm
-import modules.instantid as instantid
+# import modules.pm as pm
+# import modules.instantid as instantid
 import args_manager
 import copy
 import launch
@@ -152,6 +152,21 @@ with shared.gradio_root:
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
+                    def stop_clicked(currentTask):
+                        import ldm_patched.modules.model_management as model_management
+                        currentTask.last_stop = 'stop'
+                        if (currentTask.processing):
+                            model_management.interrupt_current_processing()
+                        return currentTask
+                    def skip_clicked(currentTask):
+                        import ldm_patched.modules.model_management as model_management
+                        currentTask.last_stop = 'skip'
+                        if (currentTask.processing):
+                            model_management.interrupt_current_processing()
+                        return currentTask
+                    stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
+                    skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
+
             with gr.Row():
                 aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
@@ -160,22 +175,6 @@ with shared.gradio_root:
                 seed_random = gr.Checkbox(label='Random', value=True)
                 image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
 
-                    def stop_clicked(currentTask):
-                        import ldm_patched.modules.model_management as model_management
-                        currentTask.last_stop = 'stop'
-                        if (currentTask.processing):
-                            model_management.interrupt_current_processing()
-                        return currentTask
-
-                    def skip_clicked(currentTask):
-                        import ldm_patched.modules.model_management as model_management
-                        currentTask.last_stop = 'skip'
-                        if (currentTask.processing):
-                            model_management.interrupt_current_processing()
-                        return currentTask
-
-                    stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
-                    skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
 # Image Pompt's Row
             with gr.Row():
