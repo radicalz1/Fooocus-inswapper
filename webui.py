@@ -152,7 +152,10 @@ with shared.gradio_root:
                     with gr.Row():
                         def update_history_link():
                             if args_manager.args.disable_image_log:
-                                return gr.update(value='')
+                                return gr.update(value='')                            
+                            return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
+                        history_link = gr.HTML()
+                        shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                         
 
                     def stop_clicked(currentTask):
@@ -182,9 +185,6 @@ with shared.gradio_root:
                 with gr.Column():
                     advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False, elem_classes='min_check')
 
-                        return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
-                    history_link = gr.HTML()
-                    shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
 
                 # with gr.Column(scale=1, min_width=0, visible=inswapper_enabled.value):
                 #     with gr.Tabs():
