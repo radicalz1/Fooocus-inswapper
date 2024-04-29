@@ -112,6 +112,11 @@ with shared.gradio_root:
                             with gr.Row():
                                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                                         elem_classes=['main_view'])
+                                with gr.Column(visible=False) as imagepaint_panel:
+                                    imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
+                                    gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
+                                    imgp_btn = gr.Button(value='Raster to Inpaint')
+
                                 progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
                                                           height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
                             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
@@ -271,11 +276,11 @@ with shared.gradio_root:
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
-                                        with gr.Row():
-                                            with gr.Column(visible=False) as imagepaint_panel:
-                                                imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", interactive=True)
-                                                gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
-                                                imgp_btn = gr.Button(value='Raster to Inpaint')
+                                        # with gr.Row():
+                                        #     with gr.Column(visible=False) as imagepaint_panel:
+                                        #         imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
+                                        #         gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
+                                        #         imgp_btn = gr.Button(value='Raster to Inpaint')
                                                 # imgp_output = gr.Image(label='Rastered Output')
                                             inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                             inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
