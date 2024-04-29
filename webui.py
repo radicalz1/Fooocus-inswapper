@@ -896,9 +896,8 @@ with shared.gradio_root:
             return img
         # Attach the click event to the button
         imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
-        imgp_btn2.click((lambda: gr.update(visible=True), trigger_imagepaint), inputs=[imgp], outputs=[imgpo,imgpo], show_progress=True, queue=True)
-        # imgp_btn2.click(lambda: gr.update(visible=True), outputs=[imgpo])
-        # imgp_btn2.click(trigger_imagepaint, inputs=[imgp], outputs=[imgpo], show_progress=True, queue=True)
+        imgp_btn2.click(lambda: gr.update(visible=True), outputs=[imgpo])
+        imgp_btn2.click(trigger_imagepaint, inputs=[imgp], outputs=[imgpo], show_progress=True, queue=True)
 
     
 
