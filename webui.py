@@ -201,6 +201,9 @@ with shared.gradio_root:
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
                                 ip_images = []
+                                ip_images0 = []
+                                ip_images1 = []
+                                ip_images2 = []
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
@@ -209,9 +212,13 @@ with shared.gradio_root:
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
                                         ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                        ip_images.append(ip_image)
+                                        ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value=https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/width=450/ComfyUI_00002_.jpeg")
+                                        ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        mip_images = ip_images0.append(ip_image)
+                                        mip_images = ip_images1.append(ip_image1)
+                                        mip_images = ip_images2.append(ip_image2)
+                                        ip_images.append(mip_images)
+                                        # ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
                                             with gr.Row():
@@ -268,7 +275,7 @@ with shared.gradio_root:
                                                    queue=False, show_progress=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
-                                    generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                    generate_button_uv = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
@@ -292,7 +299,7 @@ with shared.gradio_root:
                                             imgpo = grh.Image(label='Output', type='numpy', elem_id='imgp_canvas', visible=False)
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
-                                        generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                        generate_button_io = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     with gr.Row():
                                         inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                         inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
@@ -723,7 +730,7 @@ with shared.gradio_root:
                              overwrite_width, overwrite_height, guidance_scale, sharpness, adm_scaler_positive,
                              adm_scaler_negative, adm_scaler_end, refiner_swap_method, adaptive_cfg, base_model,
                              refiner_model, refiner_switch, sampler_name, scheduler_name, seed_random, image_seed,
-                             generate_button, load_parameter_button] + freeu_ctrls + lora_ctrls
+                             generate_button, generate_button_uv, generate_button_io, load_parameter_button] + freeu_ctrls + lora_ctrls
 
         if not args_manager.args.disable_preset_selection:
             def preset_selection_change(preset, is_generating):
@@ -856,13 +863,29 @@ with shared.gradio_root:
         metadata_import_button.click(trigger_metadata_import, inputs=[metadata_input_image, state_is_generating], outputs=load_data_outputs, queue=False, show_progress=True) \
             .then(style_sorter.sort_styles, inputs=style_selections, outputs=style_selections, queue=False, show_progress=False)
 
-        generate_button.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), [], True),
-                              outputs=[stop_button, skip_button, generate_button, gallery, state_is_generating]) \
+        generate_button.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
+                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
-                  outputs=[generate_button, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
+                  outputs=[generate_button, generate_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(fn=update_history_link, outputs=history_link)
+        generate_button_uv.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
+                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
+            .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
+            .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
+            .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
+            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
+                  outputs=[generate_button, generate_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(fn=update_history_link, outputs=history_link)
+        generate_button_io.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
+                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
+            .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
+            .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
+            .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
+            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
+                  outputs=[generate_button, generate_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
 
         for notification_file in ['notification.ogg', 'notification.mp3']:
