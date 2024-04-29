@@ -289,11 +289,12 @@ with shared.gradio_root:
                                 gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
 
-                            with gr.TabItem(label='Painting'):
+                            with gr.TabItem(label='Image Paint'):
                                 with gr.Row():
                                     with gr.Column():
                                         imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
                                         imgp_btn = gr.Button(value='Raster')
+                                        imgp_btn1 = gr.Button(value='Raster1')
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
@@ -864,13 +865,23 @@ with shared.gradio_root:
             from PIL import Image
             import numpy as np
             # Convert the numpy array to a PIL Image
-            pil_image = Image.fromarray(modified_img)
+            pil_image = Image.fromarray(img)
             # Save the PIL Image as a PNG file
             pil_image.save("rastered_output.png")
             # You can also return the modified_img if needed for further processing
-            return modified_img
+            return img
         # Attach the click event to the button
         imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
+        def trigger_imagepaint1(img):
+            from PIL import Image
+            import numpy as np
+            # Convert the numpy array to a PIL Image
+            pil_image = Image.fromarray(img)
+            # Save the PIL Image as a PNG file
+            pil_image.save("rastered_output.png")
+            # You can also return the modified_img if needed for further processing
+            return "rastered_output.png"
+        imgp1_btn.click(trigger_imagepaint1, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
 
 
 
