@@ -290,13 +290,7 @@ with shared.gradio_root:
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
 
                             with gr.TabItem(label='Painting'):
-                                with gr.Column():
-                                    paintint= gr.Interface(
-                                        lambda x: [x["mask"], x["image"]],
-                                        gr.Image(source="upload", tool="color-sketch"),
-                                        [gr.Image(), gr.Image()],
-                                    )
-                                    trypaint=gr.Paint()
+                                trypaint=gr.Paint()
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
