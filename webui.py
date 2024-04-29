@@ -334,10 +334,10 @@ with shared.gradio_root:
             
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
                                         outputs=image_prompt_panel, queue=False, show_progress=False)
-            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=mixing_panel, queue=False, show_progress=False)
-            image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-                                        outputs=mixinguov_panel, queue=False, show_progress=False)
+            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+            #                             outputs=mixing_panel, queue=False, show_progress=False)
+            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
+            #                             outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
             photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
