@@ -277,6 +277,8 @@ with shared.gradio_root:
                                                 gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
                                                 imgp_btn = gr.Button(value='Raster to Inpaint')
                                                 # imgp_output = gr.Image(label='Rastered Output')
+                                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                                 def trigger_imagepaint(img):
                                                     from PIL import Image
                                                     import numpy as np
@@ -295,9 +297,6 @@ with shared.gradio_root:
                                                     return img
                                                 # Attach the click event to the button
                                                 imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
-
-                                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
