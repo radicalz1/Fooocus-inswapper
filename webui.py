@@ -263,7 +263,7 @@ with shared.gradio_root:
                                 with gr.Column():
                                     with gr.Row():
                                         mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
-                                        imagepaint_checkbox = gr.Checkbox(label='Paint Image', value=False)
+                                        imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                         def ip_checked(r):
@@ -272,10 +272,11 @@ with shared.gradio_root:
                                                            queue=False, show_progress=False)
                                     with gr.Column():
                                         with gr.Row():
-                                            with gr.Column() as imagepaint_panel:
-                                                imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
-                                                imgp_btn = gr.Button(value='Raster')
-                                                imgp_output = gr.Image(label='Rastered Output')
+                                            with gr.Column(visible=False) as imagepaint_panel:
+                                                imgp = grh.ImagePaint(label='Drag any image here', type='numpy')
+                                                gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
+                                                imgp_btn = gr.Button(value='Raster to Inpaint')
+                                                # imgp_output = gr.Image(label='Rastered Output')
                                                 def trigger_imagepaint(img):
                                                     from PIL import Image
                                                     import numpy as np
@@ -285,7 +286,7 @@ with shared.gradio_root:
                                                     # Get the current date and time (down to the second)
                                                     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
                                                     # Define the output file path & file name
-                                                    output_folder = "/content/Fooocus-inswapper/ImagePaint"
+                                                    output_folder = "/content/Fooocus-inswapper/output_ImagePaint"
                                                     os.makedirs(output_folder, exist_ok=True)
                                                     output_path = os.path.join(output_folder, f"{timestamp}.png")
                                                     # Save the PIL Image as a PNG file
@@ -293,7 +294,7 @@ with shared.gradio_root:
                                                     # You can also return the modified_img if needed for further processing
                                                     return img
                                                 # Attach the click event to the button
-                                                imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[imgp_output], show_progress=True, queue=True)
+                                                imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
 
                                             inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                             inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
