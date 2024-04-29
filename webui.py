@@ -893,7 +893,7 @@ def dump_default_english_config():
 #     server_port=args_manager.args.port,
 #     allowed_paths=[modules.config.path_outputs],
 #     blocked_paths=[constants.AUTH_FILENAME]
-)
+# )
 # === END ===
 
 shared.gradio_root.launch(
