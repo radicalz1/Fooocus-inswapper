@@ -209,9 +209,9 @@ with shared.gradio_root:
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
                                         ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                        ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                        ip_images.append(ip_image, ip_image1, ip_image2)
+                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
                                             with gr.Row():
