@@ -201,9 +201,9 @@ with shared.gradio_root:
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
                                 ip_images = []
-                                ip_images0 = []
-                                ip_images1 = []
-                                ip_images2 = []
+                                # ip_images0 = []
+                                # ip_images1 = []
+                                # ip_images2 = []
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
@@ -212,13 +212,13 @@ with shared.gradio_root:
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
                                         ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                        ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                        mip_images = ip_images0.append(ip_image)
-                                        mip_images = ip_images1.append(ip_image1)
-                                        mip_images = ip_images2.append(ip_image2)
-                                        ip_images.append(mip_images)
-                                        # ip_images.append(ip_image)
+                                        # ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                        # ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        # mip_images = ip_images0.append(ip_image)
+                                        # mip_images = ip_images1.append(ip_image1)
+                                        # mip_images = ip_images2.append(ip_image2)
+                                        # ip_images.append(mip_images)
+                                        ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
                                             with gr.Row():
@@ -299,7 +299,6 @@ with shared.gradio_root:
                                             imgpo = grh.Image(label='Output', type='numpy', elem_id='imgp_canvas', visible=False)
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
-                                        generate_button_io = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     with gr.Row():
                                         inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                         inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
@@ -314,8 +313,11 @@ with shared.gradio_root:
 
                                 example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
                                 example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
-                            gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
-                            gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+                            with gr.row():
+                                with gr.column():
+                                    gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
+                                    gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+                                generate_button_io = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
 
 
     
