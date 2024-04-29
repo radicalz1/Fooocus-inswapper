@@ -198,7 +198,7 @@ with shared.gradio_root:
                 refresh_button = gr.Button("Refresh")
                 # Define the callback function for each button
                 def callback(file_name):
-                    text_box.update(f"__{file_name}__")
+                    prompt.update(f"__{file_name}__")
                 # Define the callback function for the refresh button
                 def refresh():
                     global files
@@ -208,7 +208,7 @@ with shared.gradio_root:
                         file_name = file[:-4]  # Remove the .txt extension
                         buttons.append(gr.Button(file_name))
                     for i, button in enumerate(buttons):
-                        button.click(callback, inputs=[button], outputs=[text_box])
+                        button.click(callback, inputs=[button], outputs=[prompt])
                 # Add the buttons to the interface
                 for i, button in enumerate(buttons):
                     button.click(callback, inputs=[button], outputs=[prompt])
