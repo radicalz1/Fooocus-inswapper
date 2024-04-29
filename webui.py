@@ -174,7 +174,7 @@ with shared.gradio_root:
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
                 with gr.Column():
                     seed_random = gr.Checkbox(label='Random Seed', value=True)
-                    image_seed = gr.Textbox(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                    image_seed = gr.Slider(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
                     def random_checked(r):
                         return gr.update(visible=not r)
                     def refresh_seed(r, seed_string):
@@ -271,8 +271,7 @@ with shared.gradio_root:
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
-                                        # inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas', interactive=True)
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
@@ -290,6 +289,15 @@ with shared.gradio_root:
                                     example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
                                 gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+
+                            with gr.TabItem(label='Painting'):
+                                with gr.Column():
+                                    paintint= gr.Interface(
+                                        lambda x: [x["mask"], x["image"]],
+                                        gr.Image(source="upload", tool="color-sketch"),
+                                        [gr.Image(), gr.Image()],
+                                    )
+                                    trypaint=gr.Paint()
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
