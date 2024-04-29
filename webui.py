@@ -195,7 +195,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=1, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -302,7 +302,7 @@ with shared.gradio_root:
                                     example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
     
-                with gr.Column(scale=1, min_width=0, visible=True) as inswapper_panel:
+                with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
