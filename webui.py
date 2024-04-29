@@ -130,8 +130,9 @@ with shared.gradio_root:
                         image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                         input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
                         inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                        imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
                         aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
-                        photopea_checkbox = gr.Checkbox(label='Photopea', value=False, container=False)
+                        # photopea_checkbox = gr.Checkbox(label='Photopea', value=False, container=False)
                         advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
                         def update_history_link():
                             if args_manager.args.disable_image_log:
@@ -268,7 +269,6 @@ with shared.gradio_root:
                                 with gr.Column():
                                     with gr.Row():
                                         mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
-                                        imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                         def ip_checked(r):
