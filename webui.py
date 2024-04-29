@@ -263,6 +263,7 @@ with shared.gradio_root:
                                 with gr.Column():
                                     with gr.Row():
                                         mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
+                                        imagepaint_checkbox = gr.Checkbox(label='Paint Image', value=False)
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                         def ip_checked(r):
@@ -270,8 +271,31 @@ with shared.gradio_root:
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
-                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                                        with.gr.Row():
+                                            with gr.Column() as imagepaint_panel:
+                                                imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
+                                                imgp_btn = gr.Button(value='Raster')
+                                                imgp_output = gr.Image(label='Rastered Output')
+                                                def trigger_imagepaint(img):
+                                                    from PIL import Image
+                                                    import numpy as np
+                                                    # Convert the numpy array to a PIL Image
+                                                    pil_image = Image.fromarray(img)
+                                                    # Get the current date and time (down to the second)
+                                                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                                                    # Define the output file path & file name
+                                                    output_folder = "/content/Fooocus-inswapper/ImagePaint"
+                                                    os.makedirs(output_folder, exist_ok=True)
+                                                    output_path = os.path.join(output_folder, f"{timestamp}.png")
+                                                    # Save the PIL Image as a PNG file
+                                                    pil_image.save(output_path)
+                                                    # You can also return the modified_img if needed for further processing
+                                                    return img
+                                                # Attach the click event to the button
+                                                imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[imgp_output], show_progress=True, queue=True)
+
+                                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
@@ -289,12 +313,7 @@ with shared.gradio_root:
                                 gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
 
-                            with gr.TabItem(label='Image Paint'):
-                                with gr.Row():
-                                    with gr.Column():
-                                        imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
-                                        imgp_btn = gr.Button(value='Raster')
-                                        imgp_btn1 = gr.Button(value='Raster1')
+
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
@@ -325,7 +344,9 @@ with shared.gradio_root:
             #     mid_panel.visible = selected_data.selected
             #     input_image_panel.visible = selected_data.selected
             # input_image_checkbox.select(handle_input_image_checkbox)
-            
+
+            imagepaint_checkbox.change(lambda x: gr.update(visible=x), inputs=imagepaint_checkbox,
+                                        outputs=imagepaimt_panel, queue=False, show_progress=False)
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
                                         outputs=image_prompt_panel, queue=False, show_progress=False)
             # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
@@ -860,28 +881,10 @@ with shared.gradio_root:
 
         desc_btn.click(trigger_describe, inputs=[desc_method, desc_input_image],
                        outputs=[prompt, style_selections], show_progress=True, queue=True)
-
         def trigger_imagepaint(img):
-            from PIL import Image
-            import numpy as np
-            # Convert the numpy array to a PIL Image
-            pil_image = Image.fromarray(img)
-            # Save the PIL Image as a PNG file
-            pil_image.save("rastered_output.png")
-            # You can also return the modified_img if needed for further processing
-            return img
-        # Attach the click event to the button
-        imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
-        def trigger_imagepaint1(img):
-            from PIL import Image
-            import numpy as np
-            # Convert the numpy array to a PIL Image
-            pil_image = Image.fromarray(img)
-            # Save the PIL Image as a PNG file
-            pil_image.save("rastered_output.png")
-            # You can also return the modified_img if needed for further processing
-            return "rastered_output.png"
-        imgp_btn1.click(trigger_imagepaint1, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
+
+
+    
 
 
 
