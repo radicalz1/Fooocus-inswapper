@@ -135,9 +135,9 @@ with shared.gradio_root:
                                 return gr.update(value='')                            
                             return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                         history_link = gr.HTML()
-                        shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                         seed_random = gr.Checkbox(label='Random Seed', value=True)
                         image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                        shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                         def random_checked(r):
                             return gr.update(visible=not r)
                         def refresh_seed(r, seed_string):
@@ -158,9 +158,9 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=17):
                     with gr.Row():
-                        prompt = gr.Textbox(show_label=True, label='Positive Prompt', placeholder="Type prompt here or paste parameters.", elem_id='positive_prompt',
+                        prompt = gr.Textbox(show_label=Fa;se, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt',
                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
-                        negative_prompt = gr.Textbox(label='Negative Prompt', show_label=True, placeholder="Type prompt here. Describing what you do not want to see.",
+                        negative_prompt = gr.Textbox(label='Negative Prompt', show_label=False, placeholder="Type NEGATIVE prompt here. Describing what you do not want to see.",
                                          lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
                                          value=modules.config.default_prompt_negative)
                         default_prompt = modules.config.default_prompt
@@ -186,34 +186,34 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
-            with gr.Row():
-                # List of files in the folder
-                files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
-                # Create a button for each file
-                buttons = []
-                for file in files:
-                    file_name = file[:-4]  # Remove the .txt extension
-                    buttons.append(gr.Button(file_name))
-                # Create a refresh button
-                refresh_button = gr.Button("Refresh")
-                # Define the callback function for each button
-                def callback(file_name):
-                    prompt.update(f"__{file_name}__")
-                # Define the callback function for the refresh button
-                def refresh():
-                    global files
-                    files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
-                    buttons = []
-                    for file in files:
-                        file_name = file[:-4]  # Remove the .txt extension
-                        buttons.append(gr.Button(file_name))
-                    for i, button in enumerate(buttons):
-                        button.click(callback, inputs=[button], outputs=[prompt])
-                # Add the buttons to the interface
-                for i, button in enumerate(buttons):
-                    button.click(callback, inputs=[button], outputs=[prompt])
-                # Add the refresh button to the interface
-                refresh_button.click(refresh)
+            # with gr.Row():
+            #     # List of files in the folder
+            #     files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
+            #     # Create a button for each file
+            #     buttons = []
+            #     for file in files:
+            #         file_name = file[:-4]  # Remove the .txt extension
+            #         buttons.append(gr.Button(file_name))
+            #     # Create a refresh button
+            #     refresh_button = gr.Button("Refresh")
+            #     # Define the callback function for each button
+            #     def callback(file_name):
+            #         prompt.update(f"__{file_name}__")
+            #     # Define the callback function for the refresh button
+            #     def refresh():
+            #         global files
+            #         files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
+            #         buttons = []
+            #         for file in files:
+            #             file_name = file[:-4]  # Remove the .txt extension
+            #             buttons.append(gr.Button(file_name))
+            #         for i, button in enumerate(buttons):
+            #             button.click(callback, inputs=[button], outputs=[prompt])
+            #     # Add the buttons to the interface
+            #     for i, button in enumerate(buttons):
+            #         button.click(callback, inputs=[button], outputs=[prompt])
+            #     # Add the refresh button to the interface
+            #     refresh_button.click(refresh)
 
             with gr.Row():
                 # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
