@@ -196,7 +196,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=8, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=4, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
