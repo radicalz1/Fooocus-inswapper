@@ -206,8 +206,7 @@ with shared.gradio_root:
                                 ip_ad_cols = []
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
-                                        # ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        ip_image = gr.Image(label='Image', type='numpy', show_label=False, height=300)
+                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                         ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
