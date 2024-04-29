@@ -112,11 +112,6 @@ with shared.gradio_root:
                             with gr.Row():
                                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                                         elem_classes=['main_view'])
-                                with gr.Column(visible=False) as imagepaint_panel:
-                                    imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
-                                    gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
-                                    imgp_btn = gr.Button(value='Raster to Inpaint')
-
                                 progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
                                                           height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
                             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
@@ -124,6 +119,10 @@ with shared.gradio_root:
                             gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                                  elem_id='final_gallery')
+                            with gr.Column(visible=False) as imagepaint_panel:
+                                imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
+                                gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
+                                imgp_btn = gr.Button(value='Raster to Inpaint')
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
                                    elem_classes='aspect_ratios', scale=3, visible=False)
