@@ -136,6 +136,8 @@ with shared.gradio_root:
                             return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                         history_link = gr.HTML()
                         shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+                        seed_random = gr.Checkbox(label='Random Seed', value=True)
+
 
 
             with gr.Row():
@@ -174,24 +176,22 @@ with shared.gradio_root:
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                with gr.Column():
-                    seed_random = gr.Checkbox(label='Random Seed', value=True)
-                    image_seed = gr.Slider(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                    def random_checked(r):
-                        return gr.update(visible=not r)
-                    def refresh_seed(r, seed_string):
-                        if r:
-                            return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                        else:
-                            try:
-                                seed_value = int(seed_string)
-                                if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
-                                    return seed_value
-                            except ValueError:
-                                pass
-                            return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                    seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
-                                       queue=False, show_progress=False)
+                image_seed = gr.Slider(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                def random_checked(r):
+                    return gr.update(visible=not r)
+                def refresh_seed(r, seed_string):
+                    if r:
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                    else:
+                        try:
+                            seed_value = int(seed_string)
+                            if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
+                                return seed_value
+                        except ValueError:
+                            pass
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
+                                   queue=False, show_progress=False)
 
 
 # Image Pompt's Row
