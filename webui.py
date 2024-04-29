@@ -108,7 +108,7 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=75):
                     with gr.Row():
-                        with gr.Column(scale=9):
+                        with gr.Column(scale=11):
                             with gr.Row():
                                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                                         elem_classes=['main_view'])
@@ -172,25 +172,24 @@ with shared.gradio_root:
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                seed_random = gr.Checkbox(label='Random', value=True)
-                image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                def random_checked(r):
-                    return gr.update(visible=not r)
-
-                def refresh_seed(r, seed_string):
-                    if r:
-                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                    else:
-                        try:
-                            seed_value = int(seed_string)
-                            if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
-                                return seed_value
-                        except ValueError:
-                            pass
-                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-
-                seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
-                                   queue=False, show_progress=False)
+                with gr.Column():
+                    seed_random = gr.Checkbox(label='Random Seed', value=True)
+                    image_seed = gr.Textbox(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                    def random_checked(r):
+                        return gr.update(visible=not r)
+                    def refresh_seed(r, seed_string):
+                        if r:
+                            return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                        else:
+                            try:
+                                seed_value = int(seed_string)
+                                if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
+                                    return seed_value
+                            except ValueError:
+                                pass
+                            return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                    seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
+                                       queue=False, show_progress=False)
 
 
 # Image Pompt's Row
@@ -207,7 +206,8 @@ with shared.gradio_root:
                                 ip_ad_cols = []
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
-                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                        # ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                        ip_image = gr.Image(label='Image', type='numpy', show_label=False, height=300)
                                         ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
