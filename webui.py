@@ -117,6 +117,7 @@ with shared.gradio_root:
                                                 elem_classes=['main_view'])
                         progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
                                                   height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
+                        aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                     progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
                                             elem_id='progress-bar', elem_classes='progress-bar')
                     gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
@@ -168,7 +169,7 @@ with shared.gradio_root:
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
             with gr.Row():
-                aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
+                # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
@@ -195,7 +196,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=2, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=4, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -250,14 +251,12 @@ with shared.gradio_root:
                         with gr.Tabs():
                             with gr.TabItem(label='Upscale or Variation') as uov_tab:
                                 with gr.Row():
-                                    # with gr.Row(visible=True) as mixinguov_panel:
-                                    #     mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
-                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=False)
+                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
                                     uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
-                                    def ip_checked(r):
-                                        return gr.update(visible=not r)
-                                    image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
-                                                       queue=False, show_progress=False)
+                                    # def ip_checked(r):
+                                    #     return gr.update(visible=not r)
+                                    # image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
+                                    #                    queue=False, show_progress=False)
 
                                 with gr.Column():
                                         uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
@@ -266,14 +265,12 @@ with shared.gradio_root:
                             with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                                 with gr.Column():
                                     with gr.Row():
-                                        # with gr.Row(visible=True) as mixing_panel:
-                                        #     mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
-                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=False)
+                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                         def ip_checked(r):
                                             return gr.update(visible=not r)
-                                        image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
+                                        image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint, mixing_image_prompt_and_vary_upscale],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
