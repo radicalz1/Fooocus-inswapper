@@ -881,7 +881,7 @@ with shared.gradio_root:
             pil_image.save("rastered_output.png")
             # You can also return the modified_img if needed for further processing
             return "rastered_output.png"
-        imgp1_btn.click(trigger_imagepaint1, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
+        imgp_btn1.click(trigger_imagepaint1, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
 
 
 
