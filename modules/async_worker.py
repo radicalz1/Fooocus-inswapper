@@ -217,7 +217,7 @@ def worker():
         inswapper_source_image_indicies = args.pop()
         inswapper_target_image_indicies = args.pop()
 
-        print(f"Inswapper: {'ENABLED' if inswapper_enabled and inswapper_source_image is not None else 'DISABLED'}")
+        print(f"Inswapper: {'ENABLED' if inswapper_enabled and inswapper_source_image.any() else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
         photomaker_images = args.pop()
@@ -899,7 +899,7 @@ def worker():
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
-                if inswapper_enabled and inswapper_source_image is not None:
+                if inswapper_enabled and inswapper_source_image.any():
                     imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
 
                 img_paths = []
