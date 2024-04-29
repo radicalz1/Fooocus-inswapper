@@ -343,8 +343,8 @@ with shared.gradio_root:
             #                             outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
-            photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
-                                        outputs=photopea_panel, queue=False, show_progress=False)
+            # photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
+            #                             outputs=photopea_panel, queue=False, show_progress=False)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
                                         outputs=input_image_panel, queue=False, show_progress=False)
             ip_advanced.change(lambda: None, queue=False, show_progress=False)
