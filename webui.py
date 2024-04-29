@@ -135,8 +135,8 @@ with shared.gradio_root:
                                 return gr.update(value='')                            
                             return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                         history_link = gr.HTML()
-                        seed_random = gr.Checkbox(label='Random Seed', value=True)
-                        image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                        seed_random = gr.Checkbox(label='Random Seed', value=True, container=False)
+                        image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False, container=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
                         shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                         def random_checked(r):
                             return gr.update(visible=not r)
