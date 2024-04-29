@@ -209,7 +209,9 @@ with shared.gradio_root:
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
                                         ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        ip_images.append(ip_image)
+                                        ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                        ip_images.append(ip_image, ip_image1, ip_image2)
                                         ip_ctrls.append(ip_image)
                                         with gr.Column(visible=True) as ad_col:
                                             with gr.Row():
@@ -247,7 +249,7 @@ with shared.gradio_root:
                 #         html_block = gr.HTML("""
                 #         <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
                 #         """, visible=True)
-                with gr.Column(scale=8, min_width=0, visible=False) as input_image_panel:
+                with gr.Column(scale=10, min_width=0, visible=False) as input_image_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
@@ -285,7 +287,7 @@ with shared.gradio_root:
                                             imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='imgp_canvas')
                                             gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
                                             imgp_btn = gr.Button(value='Raster to Inpaint')
-                                            imgp_btn2 = gr.Button(label='Raster Below')
+                                            imgp_btn2 = gr.Button(value='Raster Below')
                                             imgpo = grh.Image(label='Output', type='numpy', elem_id='imgp_canvas', visible=False)
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
