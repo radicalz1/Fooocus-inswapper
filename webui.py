@@ -276,7 +276,7 @@ with shared.gradio_root:
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
-                                        # with gr.Row():
+                                        with gr.Row():
                                         #     with gr.Column(visible=False) as imagepaint_panel:
                                         #         imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
                                         #         gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
