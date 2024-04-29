@@ -352,8 +352,8 @@ with shared.gradio_root:
             current_tab = gr.Textbox(value='uov', visible=False)
             uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            inswapper_tab.select(lambda: 'inswapper', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # inswapper_tab.select(lambda: 'inswapper', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
 
         with gr.Column(scale=1, visible=modules.config.default_advanced_checkbox) as advanced_column:
             with gr.Tab(label='Setting'):
@@ -457,9 +457,9 @@ with shared.gradio_root:
     
                         metadata_input_image.upload(trigger_metadata_preview, inputs=metadata_input_image,
                                                     outputs=metadata_json, queue=False, show_progress=True)
-            desc_tab.select(lambda: 'desc', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            photomaker_tab.select(lambda: 'photomaker', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            instantid_tab.select(lambda: 'instantid', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # desc_tab.select(lambda: 'desc', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # photomaker_tab.select(lambda: 'photomaker', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # instantid_tab.select(lambda: 'instantid', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
 
             
             
