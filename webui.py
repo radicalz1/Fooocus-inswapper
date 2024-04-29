@@ -311,7 +311,7 @@ with shared.gradio_root:
                                 with gr.Row():
                                     inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1057c4f3-5dcb-4cd2-8c37-a30d3a893897/width=450/p_world_001.jpeg")
+                                inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
 
 
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
