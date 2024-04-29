@@ -155,7 +155,6 @@ with shared.gradio_root:
                                            queue=False, show_progress=False)
 
 
-
             with gr.Row():
                 with gr.Column(scale=17):
                     with gr.Row():
@@ -186,6 +185,35 @@ with shared.gradio_root:
                         return currentTask
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
+
+            with gr.Row():
+                # List of files in the folder
+                files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
+                # Create a button for each file
+                buttons = []
+                for file in files:
+                    file_name = file[:-4]  # Remove the .txt extension
+                    buttons.append(gr.Button(file_name))
+                # Create a refresh button
+                refresh_button = gr.Button("Refresh")
+                # Define the callback function for each button
+                def callback(file_name):
+                    text_box.update(f"__{file_name}__")
+                # Define the callback function for the refresh button
+                def refresh():
+                    nonlocal files
+                    files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
+                    buttons = []
+                    for file in files:
+                        file_name = file[:-4]  # Remove the .txt extension
+                        buttons.append(gr.Button(file_name))
+                    for i, button in enumerate(buttons):
+                        button.click(callback, inputs=[button], outputs=[text_box])
+                # Add the buttons to the interface
+                for i, button in enumerate(buttons):
+                    button.click(callback, inputs=[button], outputs=[prompt])
+                # Add the refresh button to the interface
+                refresh_button.click(refresh)
 
             with gr.Row():
                 # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
