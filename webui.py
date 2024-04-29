@@ -273,7 +273,7 @@ with shared.gradio_root:
                                     with gr.Column():
                                         with gr.Row():
                                             with gr.Column(visible=False) as imagepaint_panel:
-                                                imgp = grh.ImagePaint(label='Drag any image here', type='numpy')
+                                                imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", interactive=True)
                                                 gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
                                                 imgp_btn = gr.Button(value='Raster to Inpaint')
                                                 # imgp_output = gr.Image(label='Rastered Output')
