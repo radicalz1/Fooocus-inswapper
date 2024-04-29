@@ -256,7 +256,7 @@ with shared.gradio_root:
                 #         html_block = gr.HTML("""
                 #         <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
                 #         """, visible=True)
-                with gr.Column(scale=10, min_width=0, visible=False) as input_image_panel:
+                with gr.Column(scale=11, min_width=0, visible=False) as input_image_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
