@@ -253,6 +253,13 @@ with shared.gradio_root:
                             with gr.Row():
                                 mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
                                 uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                with gr.Column():
+                                    overwrite_vary_strength = gr.Slider(label='"Vary" Denoising Strength',
+                                                                        minimum=-1, maximum=1.0, step=0.001, value=-1,
+                                                                        info='Auto = -1')
+                                    overwrite_upscale_strength = gr.Slider(label='"Upscale" Denoising Strength',
+                                                                           minimum=-1, maximum=1.0, step=0.001, value=-1,
+                                                                           info='Auto = -1')
                                 def ip_checked(r):
                                     return gr.update(visible=r)
                                 image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
@@ -591,12 +598,12 @@ with shared.gradio_root:
                                                      minimum=-1, maximum=2048, step=1, value=-1,
                                                      info='Set as -1 to disable. For developer debugging. '
                                                           'Results will be worse for non-standard numbers that SDXL is not trained on.')
-                        overwrite_vary_strength = gr.Slider(label='Forced Overwrite of Denoising Strength of "Vary"',
-                                                            minimum=-1, maximum=1.0, step=0.001, value=-1,
-                                                            info='Set as negative number to disable. For developer debugging.')
-                        overwrite_upscale_strength = gr.Slider(label='Forced Overwrite of Denoising Strength of "Upscale"',
-                                                               minimum=-1, maximum=1.0, step=0.001, value=-1,
-                                                               info='Set as negative number to disable. For developer debugging.')
+                        # overwrite_vary_strength = gr.Slider(label='Forced Overwrite of Denoising Strength of "Vary"',
+                        #                                     minimum=-1, maximum=1.0, step=0.001, value=-1,
+                        #                                     info='Set as negative number to disable. For developer debugging.')
+                        # overwrite_upscale_strength = gr.Slider(label='Forced Overwrite of Denoising Strength of "Upscale"',
+                        #                                        minimum=-1, maximum=1.0, step=0.001, value=-1,
+                        #                                        info='Set as negative number to disable. For developer debugging.')
                         disable_preview = gr.Checkbox(label='Disable Preview', value=False,
                                                       info='Disable preview during generation.')
                         disable_intermediate_results = gr.Checkbox(label='Disable Intermediate Results', 
