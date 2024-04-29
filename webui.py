@@ -168,12 +168,29 @@ with shared.gradio_root:
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
             with gr.Row():
-                aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height', elem_classes='aspect_ratios')
+                aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
                 seed_random = gr.Checkbox(label='Random', value=True)
                 image_seed = gr.Textbox(label='Seed', value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                def random_checked(r):
+                    return gr.update(visible=not r)
+
+                def refresh_seed(r, seed_string):
+                    if r:
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                    else:
+                        try:
+                            seed_value = int(seed_string)
+                            if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
+                                return seed_value
+                        except ValueError:
+                            pass
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+
+                seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
+                                   queue=False, show_progress=False)
 
 
 # Image Pompt's Row
@@ -233,9 +250,15 @@ with shared.gradio_root:
                         with gr.Tabs():
                             with gr.TabItem(label='Upscale or Variation') as uov_tab:
                                 with gr.Row():
-                                    with gr.Row(visible=True) as mixinguov_panel:
-                                            mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
+                                    # with gr.Row(visible=True) as mixinguov_panel:
+                                    #     mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale',value=False)
+                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=False)
                                     uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                    def ip_checked(r):
+                                        return gr.update(visible=not r)
+                                    image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
+                                                       queue=False, show_progress=False)
+
                                 with gr.Column():
                                         uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
                                         gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
@@ -243,10 +266,15 @@ with shared.gradio_root:
                             with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                                 with gr.Column():
                                     with gr.Row():
-                                        with gr.Row(visible=True) as mixing_panel:
-                                            mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
+                                        # with gr.Row(visible=True) as mixing_panel:
+                                        #     mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False)
+                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=False)
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
+                                        def ip_checked(r):
+                                            return gr.update(visible=not r)
+                                        image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
+                                                           queue=False, show_progress=False)
                                     with gr.Column():
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
@@ -256,26 +284,22 @@ with shared.gradio_root:
                                             inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
-                                            inpaint_engine = gr.Dropdown(label='Inpaint Engine',
-                                                                         value=modules.config.default_inpaint_engine_version,
-                                                                         choices=flags.inpaint_engine_versions,
-                                                                         info='Version of Fooocus inpaint model')
+                                            inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
+                                            inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
+                                                                                 minimum=0.0, maximum=1.0, step=0.001, value=0.618,
+                                                                                 info='The area to inpaint. '
+                                                                                      'Value 0 is same as "Only Masked" in A1111. '
+                                                                                      'Value 1 is same as "Whole Image" in A1111. '
+                                                                                      'Only used in inpaint, not used in outpaint. '
+                                                                                      '(Outpaint always use 1.0)')
+                                            inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
+                                                                                minimum=-64, maximum=64, step=1, value=0,
+                                                                                info='Positive value will make white area in the mask larger, '
+                                                                                     'negative value will make white area smaller.'
+                                                                                     '(default is 0, always process before any mask invert)')
+
                                     example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
                                     example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
-                                    with gr.Row():
-                                        inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
-                                        inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
-                                                                             minimum=0.0, maximum=1.0, step=0.001, value=0.618,
-                                                                             info='The area to inpaint. '
-                                                                                  'Value 0 is same as "Only Masked" in A1111. '
-                                                                                  'Value 1 is same as "Whole Image" in A1111. '
-                                                                                  'Only used in inpaint, not used in outpaint. '
-                                                                                  '(Outpaint always use 1.0)')
-                                        inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
-                                                                            minimum=-64, maximum=64, step=1, value=0,
-                                                                            info='Positive value will make white area in the mask larger, '
-                                                                                 'negative value will make white area smaller.'
-                                                                                 '(default is 0, always process before any mask invert)')
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
     
                 with gr.Column(scale=1, min_width=0, visible=True) as inswapper_panel:
@@ -285,7 +309,7 @@ with shared.gradio_root:
                                 with gr.Row():
                                     inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                inswapper_source_image = grh.Image(label='Source Face Image', source='upload', type='numpy')
+                                inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/1057c4f3-5dcb-4cd2-8c37-a30d3a893897/width=450/p_world_001.jpeg")
 
 
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
@@ -341,23 +365,6 @@ with shared.gradio_root:
                                             value=modules.config.default_output_format)
 
 
-                def random_checked(r):
-                    return gr.update(visible=not r)
-
-                def refresh_seed(r, seed_string):
-                    if r:
-                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                    else:
-                        try:
-                            seed_value = int(seed_string)
-                            if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
-                                return seed_value
-                        except ValueError:
-                            pass
-                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-
-                seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
-                                   queue=False, show_progress=False)
                 with gr.Tab(label='FreeU'):
                     freeu_enabled = gr.Checkbox(label='Enabled', value=False)
                     freeu_b1 = gr.Slider(label='B1', minimum=0, maximum=2, step=0.01, value=1.01)
@@ -633,6 +640,11 @@ with shared.gradio_root:
 
                     with gr.Tab(label='Inpaint'):
                         debugging_inpaint_preprocessor = gr.Checkbox(label='Debug Inpaint Preprocessing', value=False)
+                        inpaint_engine = gr.Dropdown(label='Inpaint Engine',
+                             value=modules.config.default_inpaint_engine_version,
+                             choices=flags.inpaint_engine_versions,
+                             info='Version of Fooocus inpaint model')
+
                         # inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
                         # inpaint_engine = gr.Dropdown(label='Inpaint Engine',
                         #                              value=modules.config.default_inpaint_engine_version,
