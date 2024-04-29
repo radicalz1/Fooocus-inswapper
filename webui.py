@@ -201,7 +201,7 @@ with shared.gradio_root:
                     text_box.update(f"__{file_name}__")
                 # Define the callback function for the refresh button
                 def refresh():
-                    nonlocal files
+                    global files
                     files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
                     buttons = []
                     for file in files:
