@@ -290,7 +290,10 @@ with shared.gradio_root:
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
 
                             with gr.TabItem(label='Painting'):
-                                trypaint=gr.Paint()
+                                with gr.Row():
+                                    with gr.Column():
+                                        imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
+                                        imgp_btn = gr.Button(value='Raster')
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
@@ -856,6 +859,19 @@ with shared.gradio_root:
 
         desc_btn.click(trigger_describe, inputs=[desc_method, desc_input_image],
                        outputs=[prompt, style_selections], show_progress=True, queue=True)
+
+        def trigger_imagepaint(img):
+            from PIL import Image
+            import numpy as np
+            # Convert the numpy array to a PIL Image
+            pil_image = Image.fromarray(modified_img)
+            # Save the PIL Image as a PNG file
+            pil_image.save("rastered_output.png")
+            # You can also return the modified_img if needed for further processing
+            return modified_img
+        # Attach the click event to the button
+        imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[imgp], show_progress=True, queue=True)
+
 
 
 def dump_default_english_config():
