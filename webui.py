@@ -281,27 +281,20 @@ with shared.gradio_root:
                                         inpaint_input_image = gr.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
+                                            inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
                                             outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
                                             inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
                                         with gr.Row():
-                                            inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                             inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
                                             inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
-                                                                                 minimum=0.0, maximum=1.0, step=0.001, value=0.618,
-                                                                                 info='The area to inpaint. '
-                                                                                      'Value 0 is same as "Only Masked" in A1111. '
-                                                                                      'Value 1 is same as "Whole Image" in A1111. '
-                                                                                      'Only used in inpaint, not used in outpaint. '
-                                                                                      '(Outpaint always use 1.0)')
+                                                                                 minimum=0.0, maximum=1.0, step=0.001, value=0.618)
                                             inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
-                                                                                minimum=-64, maximum=64, step=1, value=0,
-                                                                                info='Positive value will make white area in the mask larger, '
-                                                                                     'negative value will make white area smaller.'
-                                                                                     '(default is 0, always process before any mask invert)')
+                                                                                minimum=-64, maximum=64, step=1, value=0)
 
                                     example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
                                     example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
+                                gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                 gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
     
                 with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
