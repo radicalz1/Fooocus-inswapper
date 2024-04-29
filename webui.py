@@ -126,11 +126,12 @@ with shared.gradio_root:
                                                  elem_id='final_gallery')
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
-                                   elem_classes='aspect_ratios', scale=3)
+                                   elem_classes='aspect_ratios', scale=3, visible=False)
                     with gr.Row():
                         image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                         input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
                         inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                        aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
                         photopea_checkbox = gr.Checkbox(label='Photopea', value=False, container=False)
                         advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
                         def update_history_link():
@@ -333,6 +334,9 @@ with shared.gradio_root:
             #     input_image_panel.visible = selected_data.selected
             # input_image_checkbox.select(handle_input_image_checkbox)
 
+            aspectr_checkbox.change(lambda x: gr.update(visible=x), inputs=aspectr_checkbox,
+                                        outputs=aspect_ratios_selection, queue=False, show_progress=False)
+                        
             imagepaint_checkbox.change(lambda x: gr.update(visible=x), inputs=imagepaint_checkbox,
                                         outputs=imagepaint_panel, queue=False, show_progress=False)
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
