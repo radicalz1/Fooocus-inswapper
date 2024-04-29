@@ -105,15 +105,10 @@ with shared.gradio_root:
     currentTask = gr.State(worker.AsyncTask(args=[]))
     with gr.Column():
         with gr.Column(scale=2):
-            # with gr.Row():
-                # progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
-                #                             elem_classes=['main_view'])
-                # progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
-                #                               height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
             with gr.Row():
                 with gr.Column(scale=75):
                     with gr.Row():
-                        with gr.Column(scale=8):
+                        with gr.Column(scale=9):
                             with gr.Row():
                                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                                         elem_classes=['main_view'])
@@ -200,7 +195,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=4, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=5, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -249,7 +244,7 @@ with shared.gradio_root:
                 with gr.Column(scale=8, min_width=0, visible=True):
                     with gr.Column(visible=False) as photopea_panel:
                         html_block = gr.HTML("""
-                        <iframe src="https://www.photopea.com" height="768" width="1280" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
+                        <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
                         """, visible=True)
                     with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
                         with gr.Tabs():
@@ -261,7 +256,6 @@ with shared.gradio_root:
                                         return gr.update(visible=r)
                                     image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
                                                        queue=False, show_progress=False)
-
                                 with gr.Column():
                                         uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
                                         gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
@@ -278,7 +272,7 @@ with shared.gradio_root:
                                                            queue=False, show_progress=False)
                                     with gr.Column():
                                         # inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas', interactive=True)
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
