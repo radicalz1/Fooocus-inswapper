@@ -119,10 +119,6 @@ with shared.gradio_root:
                             gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                                  elem_id='final_gallery')
-                            with gr.Column(visible=False) as imagepaint_panel:
-                                imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
-                                gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
-                                imgp_btn = gr.Button(value='Raster to Inpaint')
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
                                    elem_classes='aspect_ratios', scale=3, visible=False)
@@ -130,7 +126,7 @@ with shared.gradio_root:
                         image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                         input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
                         inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
-                        imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
+                        # imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
                         aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
                         # photopea_checkbox = gr.Checkbox(label='Photopea', value=False, container=False)
                         advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
@@ -200,7 +196,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=5, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Column(scale=8, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -246,60 +242,61 @@ with shared.gradio_root:
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
     
-                with gr.Column(scale=8, min_width=0, visible=True):
-                    with gr.Column(visible=False) as photopea_panel:
-                        html_block = gr.HTML("""
-                        <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
-                        """, visible=True)
-                    with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
-                        with gr.Tabs():
-                            with gr.TabItem(label='Upscale or Variation') as uov_tab:
+                # with gr.Column(scale=8, min_width=0, visible=True):
+                #     with gr.Column(visible=False) as photopea_panel:
+                #         html_block = gr.HTML("""
+                #         <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
+                #         """, visible=True)
+                with gr.Column(scale=8, min_width=0, visible=False) as input_image_panel:
+                    with gr.Tabs():
+                        with gr.TabItem(label='Upscale or Variation') as uov_tab:
+                            with gr.Row():
+                                mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
+                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                def ip_checked(r):
+                                    return gr.update(visible=r)
+                                image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
+                                                   queue=False, show_progress=False)
+                            with gr.Column():
+                                    uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                                    gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
+
+                        with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
+                            with gr.Column():
                                 with gr.Row():
-                                    mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
-                                    uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                    mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
+                                    imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
+                                    inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
+                                    invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                     def ip_checked(r):
                                         return gr.update(visible=r)
-                                    image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
+                                    image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                        queue=False, show_progress=False)
                                 with gr.Column():
-                                        uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
-                                        gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
-    
-                            with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
-                                with gr.Column():
                                     with gr.Row():
-                                        mixing_image_prompt_and_inpaint = gr.Checkbox(label='Mixing Image Prompt and Inpaint', value=False, visible=True)
-                                        inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
-                                        invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
-                                        def ip_checked(r):
-                                            return gr.update(visible=r)
-                                        image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
-                                                           queue=False, show_progress=False)
-                                    with gr.Column():
-                                        with gr.Row():
-                                        #     with gr.Column(visible=False) as imagepaint_panel:
-                                        #         imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
-                                        #         gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
-                                        #         imgp_btn = gr.Button(value='Raster to Inpaint')
-                                                # imgp_output = gr.Image(label='Rastered Output')
-                                            inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                            inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
-                                        with gr.Row():
-                                            inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
-                                            inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
-                                            outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
-                                            inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
-                                        with gr.Row():
-                                            inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
-                                            inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
-                                                                                 minimum=0.0, maximum=1.0, step=0.001, value=0.618)
-                                            inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
-                                                                                minimum=-64, maximum=64, step=1, value=0)
+                                        with gr.Column(visible=False) as imagepaint_panel:
+                                            imgp = grh.Image(label='Drag any image here', type='numpy', source="upload", tool="color-sketch", elem_id='inpaint_canvas')
+                                            gr.HTML('Modify Content - Uncheck disable initial latent - Fill Prompt - Denoise 0.8-0.9')
+                                            imgp_btn = gr.Button(value='Raster to Inpaint')
+                                            # imgp_output = gr.Image(label='Rastered Output')
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                                    with gr.Row():
+                                        inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
+                                        inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
+                                        outpaint_selections = gr.CheckboxGroup(choices=['Left', 'Right', 'Top', 'Bottom'], value=[], label='Outpaint Direction')
+                                        inpaint_strength = gr.Slider(label='Inpaint Denoising Strength', minimum=0.0, maximum=1.0, step=0.001, value=1.0, info='(Outpaint always use 1.0)')
+                                    with gr.Row():
+                                        inpaint_disable_initial_latent = gr.Checkbox(label='Disable initial latent in inpaint', value=False)
+                                        inpaint_respective_field = gr.Slider(label='Inpaint Respective Field',
+                                                                             minimum=0.0, maximum=1.0, step=0.001, value=0.618)
+                                        inpaint_erode_or_dilate = gr.Slider(label='Mask Erode or Dilate',
+                                                                            minimum=-64, maximum=64, step=1, value=0)
 
-                                    example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
-                                    example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
-                                gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
-                                gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
+                                example_inpaint_prompts = gr.Dataset(samples=modules.config.example_inpaint_prompts, label='Additional Prompt Quick List', components=[inpaint_additional_prompt], visible=False)
+                                example_inpaint_prompts.click(lambda x: x[0], inputs=example_inpaint_prompts, outputs=inpaint_additional_prompt, show_progress=False, queue=False)
+                            gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
+                            gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
 
 
     
