@@ -176,7 +176,7 @@ with shared.gradio_root:
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                image_seed = gr.Slider(label='Seed', show_label=False, value=0, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
                 def random_checked(r):
                     return gr.update(visible=not r)
                 def refresh_seed(r, seed_string):
@@ -274,7 +274,7 @@ with shared.gradio_root:
                                 image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
                                                    queue=False, show_progress=False)
                             with gr.Column():
-                                    uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                                    uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy', elem_id="uv_canvas")
                                     generate_button_uv = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
