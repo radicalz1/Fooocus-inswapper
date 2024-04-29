@@ -346,7 +346,7 @@ with shared.gradio_root:
             # input_image_checkbox.select(handle_input_image_checkbox)
 
             imagepaint_checkbox.change(lambda x: gr.update(visible=x), inputs=imagepaint_checkbox,
-                                        outputs=imagepaimt_panel, queue=False, show_progress=False)
+                                        outputs=imagepaint_panel, queue=False, show_progress=False)
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
                                         outputs=image_prompt_panel, queue=False, show_progress=False)
             # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
