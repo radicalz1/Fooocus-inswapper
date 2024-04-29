@@ -279,24 +279,6 @@ with shared.gradio_root:
                                                 # imgp_output = gr.Image(label='Rastered Output')
                                             inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                             inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
-                                                def trigger_imagepaint(img):
-                                                    from PIL import Image
-                                                    import numpy as np
-                                                    import datetime 
-                                                    # Convert the numpy array to a PIL Image
-                                                    pil_image = Image.fromarray(img)
-                                                    # Get the current date and time (down to the second)
-                                                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-                                                    # Define the output file path & file name
-                                                    output_folder = "/content/Fooocus-inswapper/output_ImagePaint"
-                                                    os.makedirs(output_folder, exist_ok=True)
-                                                    output_path = os.path.join(output_folder, f"{timestamp}.png")
-                                                    # Save the PIL Image as a PNG file
-                                                    pil_image.save(output_path)
-                                                    # You can also return the modified_img if needed for further processing
-                                                    return img
-                                                # Attach the click event to the button
-                                                imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
@@ -883,6 +865,24 @@ with shared.gradio_root:
         desc_btn.click(trigger_describe, inputs=[desc_method, desc_input_image],
                        outputs=[prompt, style_selections], show_progress=True, queue=True)
 
+        def trigger_imagepaint(img):
+            from PIL import Image
+            import numpy as np
+            import datetime 
+            # Convert the numpy array to a PIL Image
+            pil_image = Image.fromarray(img)
+            # Get the current date and time (down to the second)
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            # Define the output file path & file name
+            output_folder = "/content/Fooocus-inswapper/output_ImagePaint"
+            os.makedirs(output_folder, exist_ok=True)
+            output_path = os.path.join(output_folder, f"{timestamp}.png")
+            # Save the PIL Image as a PNG file
+            pil_image.save(output_path)
+            # You can also return the modified_img if needed for further processing
+            return img
+        # Attach the click event to the button
+        imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
 
     
 
