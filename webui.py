@@ -271,7 +271,7 @@ with shared.gradio_root:
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
-                                        with.gr.Row():
+                                        with gr.Row():
                                             with gr.Column() as imagepaint_panel:
                                                 imgp = gr.ImagePaint(label='Drag any image here', type='numpy')
                                                 imgp_btn = gr.Button(value='Raster')
