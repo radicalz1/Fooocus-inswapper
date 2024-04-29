@@ -641,6 +641,7 @@ onUiLoaded(async() => {
         gradioApp().addEventListener("mousemove", handleMoveByKey);
     }
 
+    applyZoomAndPan("#uv_canvas");
     applyZoomAndPan("#imgp_canvas");
     applyZoomAndPan("#inpaint_canvas");
     applyZoomAndPan("#instantid_inpaint_canvas")
