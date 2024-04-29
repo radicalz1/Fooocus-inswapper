@@ -126,7 +126,7 @@ with shared.gradio_root:
                                                  elem_id='final_gallery')
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
-                                   elem_classes='aspect_ratios', scale=2)
+                                   elem_classes='aspect_ratios', scale=3)
                     with gr.Row():
                         image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                         input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
@@ -249,7 +249,7 @@ with shared.gradio_root:
                 with gr.Column(scale=8, min_width=0, visible=True):
                     with gr.Column(visible=False) as photopea_panel:
                         html_block = gr.HTML("""
-                        <iframe src="https://www.photopea.com" height="768" width=100% title="Photopea"></iframe>
+                        <iframe src="https://www.photopea.com" height="768" width="1280" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
                         """, visible=True)
                     with gr.Column(scale=3, min_width=0, visible=False) as input_image_panel:
                         with gr.Tabs():
@@ -278,7 +278,7 @@ with shared.gradio_root:
                                                            queue=False, show_progress=False)
                                     with gr.Column():
                                         # inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_input_image = gr.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
