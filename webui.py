@@ -279,6 +279,7 @@ with shared.gradio_root:
                                                 def trigger_imagepaint(img):
                                                     from PIL import Image
                                                     import numpy as np
+                                                    import datetime 
                                                     # Convert the numpy array to a PIL Image
                                                     pil_image = Image.fromarray(img)
                                                     # Get the current date and time (down to the second)
