@@ -113,7 +113,7 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=75):
                     with gr.Row():
-                        with gr.Column():
+                        with gr.Column(scale=8):
                             with gr.Row():
                                 progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
                                                         elem_classes=['main_view'])
@@ -126,7 +126,7 @@ with shared.gradio_root:
                                                  elem_id='final_gallery')
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
-                                   elem_classes='aspect_ratios')
+                                   elem_classes='aspect_ratios', scale=2)
                     with gr.Row():
                         image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                         input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
@@ -258,7 +258,7 @@ with shared.gradio_root:
                                     mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
                                     uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
                                     def ip_checked(r):
-                                        return gr.update(visible=not r)
+                                        return gr.update(visible=r)
                                     image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_vary_upscale],
                                                        queue=False, show_progress=False)
 
@@ -273,12 +273,12 @@ with shared.gradio_root:
                                         inpaint_mask_upload_checkbox = gr.Checkbox(label='Enable Mask Upload', value=False)
                                         invert_mask_checkbox = gr.Checkbox(label='Invert Mask', value=False)
                                         def ip_checked(r):
-                                            return gr.update(visible=not r)
+                                            return gr.update(visible=r)
                                         image_prompt_enabled.change(ip_checked, inputs=[image_prompt_enabled], outputs=[mixing_image_prompt_and_inpaint],
                                                            queue=False, show_progress=False)
                                     with gr.Column():
                                         # inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_input_image = gr.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='editor', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_input_image = gr.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                         with gr.Row():
                                             inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
