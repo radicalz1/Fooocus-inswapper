@@ -217,7 +217,7 @@ def worker():
         inswapper_source_image_indicies = args.pop()
         inswapper_target_image_indicies = args.pop()
 
-        print(f"Inswapper: {'ENABLED' if inswapper_enabled else 'DISABLED'}")
+        print(f"Inswapper: {'ENABLED' if inswapper_enabled and inswapper_source_image is not None else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
         photomaker_images = args.pop()
