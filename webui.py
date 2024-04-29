@@ -268,6 +268,7 @@ with shared.gradio_root:
                                                    queue=False, show_progress=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy')
+                                    generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
@@ -291,6 +292,7 @@ with shared.gradio_root:
                                             imgpo = grh.Image(label='Output', type='numpy', elem_id='imgp_canvas', visible=False)
                                         inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
+                                        generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     with gr.Row():
                                         inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
                                         inpaint_additional_prompt = gr.Textbox(placeholder="Describe what you want to inpaint.", elem_id='inpaint_additional_prompt', label='Inpaint Additional Prompt', visible=False)
