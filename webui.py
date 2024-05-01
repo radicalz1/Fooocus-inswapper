@@ -125,10 +125,20 @@ with shared.gradio_root:
                                     for filename in os.listdir(folder_path):
                                         if filename.endswith(".jpg") or filename.endswith(".png"):
                                             img = Image.open(os.path.join(folder_path, filename))
-                                            images.append(img)
+                                            thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
+                                            images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
                                     return images
+                                    # for filename in os.listdir(folder_path):
+                                    #     if filename.endswith(".jpg") or filename.endswith(".png"):
+                                    #         img = Image.open(os.path.join(folder_path, filename))
+                                    #         images.append(img)
+                                    # return images
                                 glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                                  elem_classes=['resizable_area', 'main_view', 'image_gallery'])
+                                    def show_original(img):
+                                        return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
+                                
+                                    gallery.select(show_original, "image")
                             
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
