@@ -128,8 +128,7 @@ with shared.gradio_root:
                                             images.append(img)
                                     return images
                                 glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                                 elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                                 elem_id='final_gallery')
+                                                 elem_classes=['resizable_area', 'main_view', 'image_gallery'])
                             
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
