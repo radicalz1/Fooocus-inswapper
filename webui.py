@@ -236,11 +236,31 @@ with shared.gradio_root:
                                 ip_weights = []
                                 ip_ctrls = []
                                 ip_ad_cols = []
+                                with gr.Column():
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                    with gr.Column(visible=True) as ad_col:
+                                        with gr.Row():
+                                            default_end, default_weight = flags.default_parameters[flags.cn_ip_face]
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                            ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.cn_ip_face, container=False)
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                    with gr.Column(visible=True) as ad_col:
+                                        with gr.Row():
+                                            default_end, default_weight = flags.default_parameters[flags.cn_ip_face]
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                            # ip_stops.append(ip_stop)
+                                            # ip_ctrls.append(ip_stop)
+                                            ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                            # ip_weights.append(ip_weight)
+                                            # ip_ctrls.append(ip_weight)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.cn_ip_face, container=False)
+                                        # ip_types.append(ip_type)
+                                        # ip_ctrls.append(ip_type)
+    
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
                                         ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                        # ip_image1 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                        # ip_image2 = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
                                         # mip_images = ip_images0.append(ip_image)
                                         # mip_images = ip_images1.append(ip_image1)
                                         # mip_images = ip_images2.append(ip_image2)
@@ -278,9 +298,6 @@ with shared.gradio_root:
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
                             
-                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                     elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                     elem_id='final_gallery')
                     def load_images(folder_path):
                         images = []
                         for filename in os.listdir(folder_path):
@@ -291,7 +308,7 @@ with shared.gradio_root:
                                 images.append(img)
                         return images
                     glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                     elem_classes=['resizable_area', 'main_view', 'image_gallery'])
+                                     elem_classes=['resizable_area', 'main_view', 'image_gallery'], allow_preview=True, preview=True)
                     # def show_original(img):
                     #     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
                 
@@ -1030,4 +1047,3 @@ shared.gradio_root.launch(
     blocked_paths=[constants.AUTH_FILENAME]
 )
 # === END ===
-
