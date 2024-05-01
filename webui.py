@@ -138,7 +138,7 @@ with shared.gradio_root:
                                 def show_original(img):
                                     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
                             
-                                gallery.select(show_original, "image")
+                                glry.select(show_original, "image")
                             
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
