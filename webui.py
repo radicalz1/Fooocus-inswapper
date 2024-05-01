@@ -116,29 +116,6 @@ with shared.gradio_root:
                                                           height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
                             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
                                                     elem_id='progress-bar', elem_classes='progress-bar')
-                            with gr.Row():
-                                gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                                 elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                                 elem_id='final_gallery')
-                                def load_images(folder_path):
-                                    images = []
-                                    for filename in os.listdir(folder_path):
-                                        if filename.endswith(".jpg") or filename.endswith(".png"):
-                                            img = Image.open(os.path.join(folder_path, filename))
-                                            thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
-                                            images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
-                                    return images
-                                    # for filename in os.listdir(folder_path):
-                                    #     if filename.endswith(".jpg") or filename.endswith(".png"):
-                                    #         img = Image.open(os.path.join(folder_path, filename))
-                                    #         images.append(img)
-                                    # return images
-                                glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                                 elem_classes=['resizable_area', 'main_view', 'image_gallery'])
-                                # def show_original(img):
-                                #     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
-                            
-                                # glry.click(show_original, "image")
                             
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
@@ -246,7 +223,7 @@ with shared.gradio_root:
 
 # Image Pompt's Row
             with gr.Row():
-                with gr.Column(scale=4, min_width=0, visible=True) as image_prompt_panel:
+                with gr.Row(scale=4, min_width=0, visible=True) as image_prompt_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
@@ -300,7 +277,26 @@ with shared.gradio_root:
                             ip_advanced.change(ip_advance_checked, inputs=ip_advanced,
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
-    
+                            
+                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                                     elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
+                                     elem_id='final_gallery')
+                    def load_images(folder_path):
+                        images = []
+                        for filename in os.listdir(folder_path):
+                            if filename.endswith(".jpg") or filename.endswith(".png"):
+                                img = Image.open(os.path.join(folder_path, filename))
+                        #         thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
+                        #         images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
+                                images.append(img)
+                        # return images
+                    glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                                     elem_classes=['resizable_area', 'main_view', 'image_gallery'])
+                    # def show_original(img):
+                    #     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
+                
+                    # glry.click(show_original, "image")
+
                 # with gr.Column(scale=8, min_width=0, visible=True):
                 #     with gr.Column(visible=False) as photopea_panel:
                 #         html_block = gr.HTML("""
