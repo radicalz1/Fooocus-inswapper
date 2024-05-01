@@ -289,7 +289,7 @@ with shared.gradio_root:
                         #         thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
                         #         images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
                                 images.append(img)
-                        # return images
+                        return images
                     glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                      elem_classes=['resizable_area', 'main_view', 'image_gallery'])
                     # def show_original(img):
