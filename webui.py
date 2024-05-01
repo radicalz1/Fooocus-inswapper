@@ -120,7 +120,14 @@ with shared.gradio_root:
                                 gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                                  elem_id='final_gallery')
-                                glry = gr.Gallery(value='/content/Fooocus-inswapper/imgs', label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                                def load_images(folder_path):
+                                    images = []
+                                    for filename in os.listdir(folder_path):
+                                        if filename.endswith(".jpg") or filename.endswith(".png"):
+                                            img = Image.open(os.path.join(folder_path, filename))
+                                            images.append(img)
+                                    return images
+                                glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
                                                  elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
                                                  elem_id='final_gallery')
                             
