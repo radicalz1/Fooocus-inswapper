@@ -116,7 +116,7 @@ with shared.gradio_root:
                                                           height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
                             progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
                                                     elem_id='progress-bar', elem_classes='progress-bar')
-                            
+                            gr.FileExplorer()
                         aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
                                    value=modules.config.default_aspect_ratio, info='width × height',
                                    elem_classes='aspect_ratios', scale=3, visible=False)
