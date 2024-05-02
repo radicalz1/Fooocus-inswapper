@@ -241,26 +241,37 @@ with shared.gradio_root:
                                 ip_ad_cols = []
                                 with gr.Column():
                                     ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-#                      inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                    ip_images.append(ip_image)
+                                    ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
+                                            ip_stops.append(ip_stop)
+                                            ip_ctrls.append(ip_stop)
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                            ip_weights.append(ip_weight)
+                                            ip_ctrls.append(ip_weight)
+
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
+
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                    ip_images.append(ip_image)
+                                    ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                            # ip_stops.append(ip_stop)
-                                            # ip_ctrls.append(ip_stop)
+                                            ip_stops.append(ip_stop)
+                                            ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                            # ip_weights.append(ip_weight)
-                                            # ip_ctrls.append(ip_weight)
+                                            ip_weights.append(ip_weight)
+                                            ip_ctrls.append(ip_weight)
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                        # ip_types.append(ip_type)
-                                        # ip_ctrls.append(ip_type)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
     
                                 for _ in range(flags.controlnet_image_count):
                                     with gr.Column():
