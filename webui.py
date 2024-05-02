@@ -244,21 +244,21 @@ with shared.gradio_root:
 #                      inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
-                                            default_end, default_weight = flags.default_parameters[flags.cn_ip_face]
+                                            default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.cn_ip_face, container=False)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
-                                            default_end, default_weight = flags.default_parameters[flags.cn_ip_face]
+                                            default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
                                             # ip_stops.append(ip_stop)
                                             # ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
                                             # ip_weights.append(ip_weight)
                                             # ip_ctrls.append(ip_weight)
-                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.cn_ip_face, container=False)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
                                         # ip_types.append(ip_type)
                                         # ip_ctrls.append(ip_type)
     
@@ -302,17 +302,17 @@ with shared.gradio_root:
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
                             
-                    def load_images(folder_path):
-                        images = []
-                        for filename in os.listdir(folder_path):
-                            if filename.endswith(".jpg") or filename.endswith(".png"):
-                                img = Image.open(os.path.join(folder_path, filename))
-                        #         thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
-                        #         images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
-                                images.append(img)
-                        return images
-                    glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                     elem_classes=['resizable_area', 'main_view', 'image_gallery'], allow_preview=True, preview=True)
+                    # def load_images(folder_path):
+                    #     images = []
+                    #     for filename in os.listdir(folder_path):
+                    #         if filename.endswith(".jpg") or filename.endswith(".png"):
+                    #             img = Image.open(os.path.join(folder_path, filename))
+                    #     #         thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
+                    #     #         images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
+                    #             images.append(img)
+                    #     return images
+                    # glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                    #                  elem_classes=['resizable_area', 'main_view', 'image_gallery'], allow_preview=True, preview=True)
                     # def show_original(img):
                     #     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
                 
