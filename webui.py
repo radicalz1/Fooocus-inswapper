@@ -240,7 +240,8 @@ with shared.gradio_root:
                                 ip_ctrls = []
                                 ip_ad_cols = []
                                 with gr.Column():
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                    ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+#                      inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.cn_ip_face]
