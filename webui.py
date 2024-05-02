@@ -246,9 +246,9 @@ with shared.gradio_root:
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
                                             ip_stops.append(ip_stop)
                                             ip_ctrls.append(ip_stop)
-                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
                                             ip_weights.append(ip_weight)
                                             ip_ctrls.append(ip_weight)
