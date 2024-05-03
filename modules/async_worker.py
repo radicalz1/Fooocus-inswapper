@@ -154,6 +154,7 @@ def worker():
         refiner_model_name = args.pop()
         refiner_switch = args.pop()
         loras = get_enabled_loras([[bool(args.pop()), str(args.pop()), float(args.pop())] for _ in range(modules.config.default_max_lora_number)])
+        image_prompt_enabled = args.pop()
         input_image_checkbox = args.pop()
         current_tab = args.pop()
         uov_method = args.pop()
@@ -335,6 +336,21 @@ def worker():
 
         goals = []
         tasks = []        
+
+        
+        if image_prompt_enabled and cn_tasks:
+            goals.append('cn')
+            progressbar(async_task, 1, 'Downloading control models ...')
+            if len(cn_tasks[flags.cn_canny]) > 0:
+                controlnet_canny_path = modules.config.downloading_controlnet_canny()
+            if len(cn_tasks[flags.cn_cpds]) > 0:
+                controlnet_cpds_path = modules.config.downloading_controlnet_cpds()
+            if len(cn_tasks[flags.cn_ip]) > 0:
+                clip_vision_path, ip_negative_path, ip_adapter_path = modules.config.downloading_ip_adapters('ip')
+            if len(cn_tasks[flags.cn_ip_face]) > 0:
+                clip_vision_path, ip_negative_path, ip_adapter_face_path = modules.config.downloading_ip_adapters(
+                    'face')
+            progressbar(async_task, 1, 'Loading control models ...')
 
         if input_image_checkbox:
             if (current_tab == 'uov' or (
