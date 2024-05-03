@@ -1015,46 +1015,46 @@ def dump_default_english_config():
 # dump_default_english_config()
 
 # ===ADDED CLOUDFLARED===
-import subprocess
-import threading
-import time
-import socket
+# import subprocess
+# import threading
+# import time
+# import socket
 
-def iframe_thread(port):
-    while True:
-        time.sleep(0.5)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex(('127.0.0.1', port))
-        if result == 0:
-            break
-        sock.close()
-    print("\nFooocus finished loading, trying to launch cloudflared (if it gets stuck here cloudflared is having issues)\n")
-    p = subprocess.Popen(["cloudflared", "tunnel", "--url", "http://127.0.0.1:{}".format(port)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    for line in p.stderr:
-        l = line.decode()
-        if "trycloudflare.com" in l:
-            print("This is the URL to access Fooocus:", l[l.find("https"):], end='')
+# def iframe_thread(port):
+#     while True:
+#         time.sleep(0.5)
+#         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#         result = sock.connect_ex(('127.0.0.1', port))
+#         if result == 0:
+#             break
+#         sock.close()
+#     print("\nFooocus finished loading, trying to launch cloudflared (if it gets stuck here cloudflared is having issues)\n")
+#     p = subprocess.Popen(["cloudflared", "tunnel", "--url", "http://127.0.0.1:{}".format(port)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#     for line in p.stderr:
+#         l = line.decode()
+#         if "trycloudflare.com" in l:
+#             print("This is the URL to access Fooocus:", l[l.find("https"):], end='')
 
-port = 7865 # Replace with the port number used by Fooocus
-threading.Thread(target=iframe_thread, daemon=True, args=(port,)).start()
+# port = 7865 # Replace with the port number used by Fooocus
+# threading.Thread(target=iframe_thread, daemon=True, args=(port,)).start()
 
-shared.gradio_root.launch(
-    inbrowser=args_manager.args.in_browser,
-    server_name=args_manager.args.listen,
-    server_port=args_manager.args.port,
-    allowed_paths=[modules.config.path_outputs],
-    blocked_paths=[constants.AUTH_FILENAME]
-)
-# === END ===
-
-# ===Normal Gradio===
 # shared.gradio_root.launch(
 #     inbrowser=args_manager.args.in_browser,
 #     server_name=args_manager.args.listen,
 #     server_port=args_manager.args.port,
-#     share=args_manager.args.share,
-#     auth=check_auth if (args_manager.args.share or args_manager.args.listen) and auth_enabled else None,
 #     allowed_paths=[modules.config.path_outputs],
 #     blocked_paths=[constants.AUTH_FILENAME]
 # )
+# === END ===
+
+# ===Normal Gradio & NGROK===
+shared.gradio_root.launch(
+    inbrowser=args_manager.args.in_browser,
+    server_name=args_manager.args.listen,
+    server_port=args_manager.args.port,
+    share=args_manager.args.share,
+    auth=check_auth if (args_manager.args.share or args_manager.args.listen) and auth_enabled else None,
+    allowed_paths=[modules.config.path_outputs],
+    blocked_paths=[constants.AUTH_FILENAME]
+)
 # === END ===
