@@ -131,8 +131,8 @@ with shared.gradio_root:
                         return gr.update(value='')                            
                     return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
                 history_link = gr.HTML()
-                seed_random = gr.Checkbox(label='Random Seed', value=True, container=False)
-                image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False, container=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                seed_random = gr.Checkbox(label='Random Seed', value=False, container=False)
+                image_seed = gr.Slider(label='Seed', show_label=False, value=6093714271568943000, maximum=9999999999999999999, max_lines=1, visible=False, container=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
                 shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
                 def random_checked(r):
                     return gr.update(visible=not r)
@@ -313,8 +313,7 @@ with shared.gradio_root:
                                             imgp_btn = gr.Button(value='Raster to Inpaint')
                                             imgp_btn2 = gr.Button(value='Raster Below')
                                             imgpo = grh.Image(label='Output', type='numpy', elem_id='imgp_canvas', visible=False)
-                                        # inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
-                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='color-sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
+                                        inpaint_input_image = grh.Image(label='Drag inpaint or outpaint image to here', source='upload', type='numpy', tool='sketch', height=500, brush_color="#FFFFFF", elem_id='inpaint_canvas')
                                         inpaint_mask_image = grh.Image(label='Mask Upload', source='upload', type='numpy', height=500, visible=False)
                                     with gr.Row():
                                         inpaint_mode = gr.Dropdown(choices=modules.flags.inpaint_options, value=modules.flags.inpaint_option_default, label='Method')
@@ -808,7 +807,7 @@ with shared.gradio_root:
         ]
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
-        ctrls += [input_image_checkbox, current_tab]
+        ctrls += [image_prompt_enabled, input_image_checkbox, current_tab]
         ctrls += [uov_method, uov_input_image]
         ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += [disable_preview, disable_intermediate_results, disable_seed_increment]
