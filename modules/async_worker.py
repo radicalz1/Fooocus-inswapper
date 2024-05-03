@@ -205,7 +205,7 @@ def worker():
 
         cn_tasks = {x: [] for x in flags.ip_list}
         # for _ in range(flags.controlnet_image_count):
-        for _ in 6:
+        for _ in range(6):
             cn_img = args.pop()
             cn_stop = args.pop()
             cn_weight = args.pop()
