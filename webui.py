@@ -106,54 +106,49 @@ with shared.gradio_root:
     with gr.Column():
         with gr.Column(scale=2):
             with gr.Row():
-                with gr.Column(scale=75):
+                with gr.Column(scale=11):
                     with gr.Row():
-                        with gr.Column(scale=11):
-                            with gr.Row():
-                                progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
-                                                        elem_classes=['main_view'])
-                                progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
-                                                          height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
-                            progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
-                                                    elem_id='progress-bar', elem_classes='progress-bar')
-                            gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                                 elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
-                                 elem_id='final_gallery')
-                            # gr.FileExplorer()
-                        aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
-                                   value=modules.config.default_aspect_ratio, info='width × height',
-                                   elem_classes='aspect_ratios', scale=3, visible=False)
-                    with gr.Row():
-                        image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
-                        input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                        inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
-                        # imagepaint_checkbox = gr.Checkbox(label='Paint to inpaint', value=False)
-                        aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
-                        # photopea_checkbox = gr.Checkbox(label='Photopea', value=False, container=False)
-                        advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
-                        def update_history_link():
-                            if args_manager.args.disable_image_log:
-                                return gr.update(value='')                            
-                            return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
-                        history_link = gr.HTML()
-                        seed_random = gr.Checkbox(label='Random Seed', value=True, container=False)
-                        image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False, container=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
-                        shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
-                        def random_checked(r):
-                            return gr.update(visible=not r)
-                        def refresh_seed(r, seed_string):
-                            if r:
-                                return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                            else:
-                                try:
-                                    seed_value = int(seed_string)
-                                    if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
-                                        return seed_value
-                                except ValueError:
-                                    pass
-                                return random.randint(constants.MIN_SEED, constants.MAX_SEED)
-                        seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
-                                           queue=False, show_progress=False)
+                        progress_window = grh.Image(label='Preview', show_label=True, visible=False, height=768,
+                                                elem_classes=['main_view'])
+                        progress_gallery = gr.Gallery(label='Finished Images', show_label=True, object_fit='contain',
+                                                  height=768, visible=False, elem_classes=['main_view', 'image_gallery'])
+                    progress_html = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=False,
+                                            elem_id='progress-bar', elem_classes='progress-bar')
+                    gallery = gr.Gallery(label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
+                         elem_classes=['resizable_area', 'main_view', 'final_gallery', 'image_gallery'],
+                         elem_id='final_gallery')
+                aspect_ratios_selection = gr.Radio(label='Aspect Ratios', choices=modules.config.available_aspect_ratios,
+                           value=modules.config.default_aspect_ratio, info='width × height',
+                           elem_classes='aspect_ratios', scale=3, visible=False)
+            with gr.Row():
+                image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
+                input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
+                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
+                advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
+                def update_history_link():
+                    if args_manager.args.disable_image_log:
+                        return gr.update(value='')                            
+                    return gr.update(value=f'<a href="file={get_current_html_path(output_format)}" target="_blank">\U0001F4DA History Log</a>')
+                history_link = gr.HTML()
+                seed_random = gr.Checkbox(label='Random Seed', value=True, container=False)
+                image_seed = gr.Slider(label='Seed', show_label=False, value=0, maximum=9999999999999999999, max_lines=1, visible=False, container=False) # workaround for https://github.com/gradio-app/gradio/issues/5354
+                shared.gradio_root.load(update_history_link, outputs=history_link, queue=False, show_progress=False)
+                def random_checked(r):
+                    return gr.update(visible=not r)
+                def refresh_seed(r, seed_string):
+                    if r:
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                    else:
+                        try:
+                            seed_value = int(seed_string)
+                            if constants.MIN_SEED <= seed_value <= constants.MAX_SEED:
+                                return seed_value
+                        except ValueError:
+                            pass
+                        return random.randint(constants.MIN_SEED, constants.MAX_SEED)
+                seed_random.change(random_checked, inputs=[seed_random], outputs=[image_seed],
+                                   queue=False, show_progress=False)
 
 
             with gr.Row():
@@ -187,35 +182,6 @@ with shared.gradio_root:
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
 
-            # with gr.Row():
-            #     # List of files in the folder
-            #     files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
-            #     # Create a button for each file
-            #     buttons = []
-            #     for file in files:
-            #         file_name = file[:-4]  # Remove the .txt extension
-            #         buttons.append(gr.Button(file_name))
-            #     # Create a refresh button
-            #     refresh_button = gr.Button("Refresh")
-            #     # Define the callback function for each button
-            #     def callback(file_name):
-            #         prompt.update(f"__{file_name}__")
-            #     # Define the callback function for the refresh button
-            #     def refresh():
-            #         global files
-            #         files = [f for f in os.listdir('/content/Fooocus-inswapper/wildcards') if f.endswith('.txt')]
-            #         buttons = []
-            #         for file in files:
-            #             file_name = file[:-4]  # Remove the .txt extension
-            #             buttons.append(gr.Button(file_name))
-            #         for i, button in enumerate(buttons):
-            #             button.click(callback, inputs=[button], outputs=[prompt])
-            #     # Add the buttons to the interface
-            #     for i, button in enumerate(buttons):
-            #         button.click(callback, inputs=[button], outputs=[prompt])
-            #     # Add the refresh button to the interface
-            #     refresh_button.click(refresh)
-
             with gr.Row():
                 # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
@@ -231,9 +197,6 @@ with shared.gradio_root:
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
                                 ip_images = []
-                                # ip_images0 = []
-                                # ip_images1 = []
-                                # ip_images2 = []
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
@@ -309,27 +272,6 @@ with shared.gradio_root:
                                                outputs=ip_ad_cols + ip_types + ip_stops + ip_weights,
                                                queue=False, show_progress=False)
                             
-                    # def load_images(folder_path):
-                    #     images = []
-                    #     for filename in os.listdir(folder_path):
-                    #         if filename.endswith(".jpg") or filename.endswith(".png"):
-                    #             img = Image.open(os.path.join(folder_path, filename))
-                    #     #         thumbnail = img.resize((100, 100), Image.ANTIALIAS)  # Resize the image to a thumbnail size
-                    #     #         images.append((thumbnail, img))  # Store the thumbnail and original image in a tuple
-                    #             images.append(img)
-                    #     return images
-                    # glry = gr.Gallery(value=load_images('/content/Fooocus-inswapper/imgs'), label='Gallery', show_label=False, object_fit='contain', visible=True, height=768,
-                    #                  elem_classes=['resizable_area', 'main_view', 'image_gallery'], allow_preview=True, preview=True)
-                    # def show_original(img):
-                    #     return gr.Image(value=img[1])  # Load the original image when the user clicks on a thumbnail
-                
-                    # glry.click(show_original, "image")
-
-                # with gr.Column(scale=8, min_width=0, visible=True):
-                #     with gr.Column(visible=False) as photopea_panel:
-                #         html_block = gr.HTML("""
-                #         <iframe src="https://www.photopea.com" height="768" width="768" style="overflow-y:hidden; overflow-x:scroll;"></iframe>
-                #         """, visible=True)
                 with gr.Column(scale=11, min_width=0, visible=False) as input_image_panel:
                     with gr.Tabs():
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
@@ -409,22 +351,6 @@ with shared.gradio_root:
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
             down_js = "() => {viewer_to_bottom();}"
 
-            
-            # def handle_photopea_checkbox(selected_data: gr.SelectData):
-            #     mid_panel.visible = selected_data.selected
-            #     photopea_panel.visible = selected_data.selected
-            # photopea_checkbox.select(handle_photopea_checkbox)
-
-            # def handle_image_prompt_enabled(selected_data: gr.SelectData):
-            #     mixinguov_panel.visible = selected_data.selected
-            #     mixing_panel.visible = selected_data.selected
-            #     image_prompt_panel.visible = selected_data.selected
-            # image_prompt_enabled.select(handle_image_prompt_enabled)
-
-            # def handle_input_image_checkbox(selected_data: gr.SelectData):
-            #     mid_panel.visible = selected_data.selected
-            #     input_image_panel.visible = selected_data.selected
-            # input_image_checkbox.select(handle_input_image_checkbox)
 
             aspectr_checkbox.change(lambda x: gr.update(visible=x), inputs=aspectr_checkbox,
                                         outputs=aspect_ratios_selection, queue=False, show_progress=False)
@@ -433,14 +359,8 @@ with shared.gradio_root:
                                         outputs=imagepaint_panel, queue=False, show_progress=False)
             image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
                                         outputs=image_prompt_panel, queue=False, show_progress=False)
-            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-            #                             outputs=mixing_panel, queue=False, show_progress=False)
-            # image_prompt_enabled.change(lambda x: gr.update(visible=x), inputs=image_prompt_enabled,
-            #                             outputs=mixinguov_panel, queue=False, show_progress=False)
             inswapper_enabled.change(lambda x: gr.update(visible=x), inputs=inswapper_enabled,
                                         outputs=inswapper_panel, queue=False, show_progress=False)
-            # photopea_checkbox.change(lambda x: gr.update(visible=x), inputs=photopea_checkbox,
-            #                             outputs=photopea_panel, queue=False, show_progress=False)
             input_image_checkbox.change(lambda x: gr.update(visible=x), inputs=input_image_checkbox,
                                         outputs=input_image_panel, queue=False, show_progress=False)
             ip_advanced.change(lambda: None, queue=False, show_progress=False)
@@ -448,7 +368,7 @@ with shared.gradio_root:
             current_tab = gr.Textbox(value='uov', visible=False)
             uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            # ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             # inswapper_tab.select(lambda: 'inswapper', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
 
         with gr.Column(scale=1, visible=modules.config.default_advanced_checkbox) as advanced_column:
