@@ -90,7 +90,7 @@ metadata_scheme = [
     (f'{MetadataScheme.A1111.value} (plain text)', MetadataScheme.A1111.value),
 ]
 
-controlnet_image_count = 4
+controlnet_image_count = 6
 
 
 class OutputFormat(Enum):
