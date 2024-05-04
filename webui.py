@@ -14,8 +14,8 @@ import modules.flags as flags
 import modules.gradio_hijack as grh
 import modules.style_sorter as style_sorter
 import modules.meta_parser
-import modules.pm as pm
-import modules.instantid as instantid
+# import modules.pm as pm
+# import modules.instantid as instantid
 import args_manager
 import copy
 import launch
@@ -154,7 +154,9 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=17):
                     with gr.Row():
-                        prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt',
+#                         prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt',
+#                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
+                        prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt', value="Redhead",
                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
                         negative_prompt = gr.Textbox(label='Negative Prompt', show_label=False, placeholder="Type NEGATIVE prompt here. Describing what you do not want to see.",
                                          lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
@@ -185,8 +187,10 @@ with shared.gradio_root:
             with gr.Row():
                 # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
-                overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
-                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+#                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
+                overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=15, info='Auto = -1')
+#                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
+                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=1)
 
 
 
@@ -196,69 +200,96 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
+                                girl1_enabled = gr.Checkbox(label="Girl1", value=True, container=False)
+                                ip_profile = 1
+                                image_prompt_add = 2 * ip_profile
+                            with gr.Row():
                                 ip_images = []
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
                                 ip_ctrls = []
                                 ip_ad_cols = []
-                                # with gr.Column():
-                                #     ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                #     ip_images.append(ip_image)
-                                #     ip_ctrls.append(ip_image)
-                                #     with gr.Column(visible=True) as ad_col:
-                                #         with gr.Row():
-                                #             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
-                                #             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                #             ip_stops.append(ip_stop)
-                                #             ip_ctrls.append(ip_stop)
-                                #             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                #             ip_weights.append(ip_weight)
-                                #             ip_ctrls.append(ip_weight)
-
-                                #         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                #         ip_types.append(ip_type)
-                                #         ip_ctrls.append(ip_type)
-
-                                #     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                #     ip_images.append(ip_image)
-                                #     ip_ctrls.append(ip_image)
-                                #     with gr.Column(visible=True) as ad_col:
-                                #         with gr.Row():
-                                #             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
-                                #             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                #             ip_stops.append(ip_stop)
-                                #             ip_ctrls.append(ip_stop)
-                                #             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                #             ip_weights.append(ip_weight)
-                                #             ip_ctrls.append(ip_weight)
-                                #         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                #         ip_types.append(ip_type)
-                                #         ip_ctrls.append(ip_type)
-    
-                                for _ in range(flags.controlnet_image_count):
-                                    with gr.Column():
-                                        ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                with gr.Column(visible=True) as girl1_panel:
+                                    ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                    # ip_images.append(ip_image)
+                                    # ip_ctrls.append(ip_image)
+                                    with gr.Column(visible=True) as ad_col:
+                                        with gr.Row():
+                                            default_end, default_weight = flags.default_parameters[flags.def_ip_face]
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                            # ip_stops.append(ip_stop)
+                                            # ip_ctrls.append(ip_stop)
+                                            ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                            # ip_weights.append(ip_weight)
+                                            # ip_ctrls.append(ip_weight)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
+                                        # ip_types.append(ip_type)
+                                        # ip_ctrls.append(ip_type)
+                                    if girl1_enabled:
                                         ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
-                                        with gr.Column(visible=True) as ad_col:
-                                            with gr.Row():
-                                                default_end, default_weight = flags.default_parameters[flags.default_ip]
-    
-                                                ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                                ip_stops.append(ip_stop)
-                                                ip_ctrls.append(ip_stop)
-    
-                                                ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                                ip_weights.append(ip_weight)
-                                                ip_ctrls.append(ip_weight)
-    
-                                            ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.default_ip, container=False)
-                                            ip_types.append(ip_type)
-                                            ip_ctrls.append(ip_type)
-    
-                                            ip_type.change(lambda x: flags.default_parameters[x], inputs=[ip_type], outputs=[ip_stop, ip_weight], queue=False, show_progress=False)
-                                        ip_ad_cols.append(ad_col)
+                                        ip_weights.append(ip_weight)
+                                        ip_ctrls.append(ip_weight)
+                                        ip_stops.append(ip_stop)
+                                        ip_ctrls.append(ip_stop)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
+
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                    # ip_images.append(ip_image)
+                                    # ip_ctrls.append(ip_image)
+                                    with gr.Column(visible=True) as ad_col:
+                                        with gr.Row():
+                                            default_end, default_weight = flags.default_parameters[flags.def_ip_face]
+                                            ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                            # ip_stops.append(ip_stop)
+                                            # ip_ctrls.append(ip_stop)
+                                            ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                            # ip_weights.append(ip_weight)
+                                            # ip_ctrls.append(ip_weight)
+                                        ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
+                                        # ip_types.append(ip_type)
+                                        # ip_ctrls.append(ip_type)
+                                    if girl1_enabled:
+                                        ip_images.append(ip_image)
+                                        ip_ctrls.append(ip_image)
+                                        ip_weights.append(ip_weight)
+                                        ip_ctrls.append(ip_weight)
+                                        ip_stops.append(ip_stop)
+                                        ip_ctrls.append(ip_stop)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
+
+                                def girl1_pchecked(r):
+                                    return gr.update(visible=r)
+                                girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[girl1_panel], queue=False, show_progress=False)
+                                # girl1_enabled.change(girl1_checked, inputs=[girl1_enabled], outputs=[ip_images[0], ip_images[1]], queue=False, show_progress=False)
+                                
+                                with gr.Column():
+                                    for _ in range(flags.controlnet_image_count):
+                                        with gr.Column():
+                                            ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                            ip_images.append(ip_image)
+                                            ip_ctrls.append(ip_image)
+                                            with gr.Column(visible=True) as ad_col:
+                                                with gr.Row():
+                                                    default_end, default_weight = flags.default_parameters[flags.default_ip]
+
+                                                    ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
+                                                    ip_stops.append(ip_stop)
+                                                    ip_ctrls.append(ip_stop)
+
+                                                    ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
+                                                    ip_weights.append(ip_weight)
+                                                    ip_ctrls.append(ip_weight)
+
+                                                ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.default_ip, container=False)
+                                                ip_types.append(ip_type)
+                                                ip_ctrls.append(ip_type)
+
+                                                ip_type.change(lambda x: flags.default_parameters[x], inputs=[ip_type], outputs=[ip_stop, ip_weight], queue=False, show_progress=False)
+                                            ip_ad_cols.append(ad_col)
                             ip_advanced = gr.Checkbox(label='Advanced', value=True, container=False)
                             gr.HTML('* \"Image Prompt\" is powered by Fooocus Image Mixture Engine (v1.0.1). <a href="https://github.com/lllyasviel/Fooocus/discussions/557" target="_blank">\U0001F4D4 Document</a>')
     
@@ -344,7 +375,10 @@ with shared.gradio_root:
                                 with gr.Row():
                                     inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                if girl1_enabled:
+                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                else:
+                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
 
 
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
@@ -807,7 +841,7 @@ with shared.gradio_root:
         ]
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
-        ctrls += [image_prompt_enabled, input_image_checkbox, current_tab]
+        ctrls += [image_prompt_add, image_prompt_enabled, input_image_checkbox, current_tab]
         ctrls += [uov_method, uov_input_image]
         ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += [disable_preview, disable_intermediate_results, disable_seed_increment]
