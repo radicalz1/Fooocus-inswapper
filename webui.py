@@ -205,6 +205,7 @@ with shared.gradio_root:
                                 def clear():
                                     return None
                                 clear_btn = gr.Button(value="Clear")
+                                girl1_btn = gr.Button(value="Girl1")
 
 #                                 ip_profile = 1
 #                                 image_prompt_add = 2 * ip_profile
@@ -219,12 +220,20 @@ with shared.gradio_root:
 
                                 with gr.Column(visible=True):
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-
+                                    girl1_btn.click(lambda: ip_image.value = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg", inputs=[], outputs=[ip_image.value])
+                                    clear_btn.click(clear, inputs=[], outputs=[ip_image])
 #                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     if not girl1_enabled:
 #                                         ip_image.value = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
 #                                     else:
-                                        ip_image.value = ""
+                                        ip_image.value = None
+                                    def girl1_1(r):
+                                        if r:
+                                            return "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
+                                        else:
+                                            return None
+                                    girl1_enabled.change(girl1_1, inputs=[], outputs=[ip_image])
+
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
@@ -249,7 +258,17 @@ with shared.gradio_root:
                                     if not girl1_enabled:
 #                                         ip_image.value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg"
 #                                     else:
-                                        ip_image.value= ""
+                                        ip_image.value= None
+                                    def girl1_2(r):
+                                        if r:
+                                            return "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg"
+                                        else:
+                                            return None
+                                    girl1_enabled.change(girl1_2, inputs=[], outputs=[ip_image])
+                                    girl1_btn.click(lambda: ip_image.value = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg", inputs=[], outputs=[ip_image.value])
+                                    clear_btn.click(clear, inputs=[], outputs=[ip_image])
+
+                                    
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
@@ -268,11 +287,10 @@ with shared.gradio_root:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
 
-                                def girl1_pchecked(r):
-                                    return gr.update(visible=r)
+#                                 def girl1_pchecked(r):
+#                                     return gr.update(visible=r)
         
-                                girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[none], queue=False, show_progress=False)
-                                clear_btn.click(clear, inputs=[], outputs=[ip_image])
+#                                 girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[none], queue=False, show_progress=False)
 
 #                                 ip_add = len(ip_images) - 1
 #                                 def image_prompt_add():
