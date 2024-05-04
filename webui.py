@@ -205,7 +205,6 @@ with shared.gradio_root:
 #                                 image_prompt_add = 2 * ip_profile
                             with gr.Row():
                                 ip_images = []
-                                image_prompt_add = 2 * ip_profile
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
