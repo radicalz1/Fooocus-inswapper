@@ -154,6 +154,7 @@ def worker():
         refiner_model_name = args.pop()
         refiner_switch = args.pop()
         loras = get_enabled_loras([[bool(args.pop()), str(args.pop()), float(args.pop())] for _ in range(modules.config.default_max_lora_number)])
+        image_prompt_add = args.pop()
         image_prompt_enabled = args.pop()
         input_image_checkbox = args.pop()
         current_tab = args.pop()
@@ -205,7 +206,7 @@ def worker():
         metadata_scheme = MetadataScheme(args.pop()) if not args_manager.args.disable_metadata else MetadataScheme.FOOOCUS
 
         cn_tasks = {x: [] for x in flags.ip_list}
-        for _ in range(flags.controlnet_image_count):
+        for _ in range(flags.controlnet_image_count + image_prompt_add):
             cn_img = args.pop()
             cn_stop = args.pop()
             cn_weight = args.pop()
