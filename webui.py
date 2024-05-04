@@ -201,10 +201,11 @@ with shared.gradio_root:
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
                                 girl1_enabled = gr.Checkbox(label="Girl1", value=True, container=False)
-                                ip_profile = 1
-                                image_prompt_add = 2 * ip_profile
+#                                 ip_profile = 1
+#                                 image_prompt_add = 2 * ip_profile
                             with gr.Row():
                                 ip_images = []
+                                image_prompt_add = 2 * ip_profile
                                 ip_types = []
                                 ip_stops = []
                                 ip_weights = []
@@ -212,60 +213,53 @@ with shared.gradio_root:
                                 ip_ad_cols = []
                                 with gr.Column(visible=True) as girl1_panel:
                                     ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                    # ip_images.append(ip_image)
-                                    # ip_ctrls.append(ip_image)
+                                    if girl1_enabled:
+                                        ip_images.append(ip_image)
+                                        ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                            # ip_stops.append(ip_stop)
-                                            # ip_ctrls.append(ip_stop)
+                                            if girl1_enabled:
+                                                ip_stops.append(ip_stop)
+                                                ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                            # ip_weights.append(ip_weight)
-                                            # ip_ctrls.append(ip_weight)
+                                            if girl1_enabled:
+                                                ip_weights.append(ip_weight)
+                                                ip_ctrls.append(ip_weight)
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                        # ip_types.append(ip_type)
-                                        # ip_ctrls.append(ip_type)
-                                    if girl1_enabled:
-                                        ip_images.append(ip_image)
-                                        ip_ctrls.append(ip_image)
-                                        ip_weights.append(ip_weight)
-                                        ip_ctrls.append(ip_weight)
-                                        ip_stops.append(ip_stop)
-                                        ip_ctrls.append(ip_stop)
-                                        ip_types.append(ip_type)
-                                        ip_ctrls.append(ip_type)
+                                        if girl1_enabled:
+                                            ip_types.append(ip_type)
+                                            ip_ctrls.append(ip_type)
 
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                    # ip_images.append(ip_image)
-                                    # ip_ctrls.append(ip_image)
+                                    if girl1_enabled:
+                                        ip_images.append(ip_image)
+                                        ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                            # ip_stops.append(ip_stop)
-                                            # ip_ctrls.append(ip_stop)
+                                            if girl1_enabled:
+                                                ip_stops.append(ip_stop)
+                                                ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                            # ip_weights.append(ip_weight)
-                                            # ip_ctrls.append(ip_weight)
+                                            if girl1_enabled:
+                                                ip_weights.append(ip_weight)
+                                                ip_ctrls.append(ip_weight)
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                        # ip_types.append(ip_type)
-                                        # ip_ctrls.append(ip_type)
-                                    if girl1_enabled:
-                                        ip_images.append(ip_image)
-                                        ip_ctrls.append(ip_image)
-                                        ip_weights.append(ip_weight)
-                                        ip_ctrls.append(ip_weight)
-                                        ip_stops.append(ip_stop)
-                                        ip_ctrls.append(ip_stop)
-                                        ip_types.append(ip_type)
-                                        ip_ctrls.append(ip_type)
-
+                                        if girl1_enabled:
+                                            ip_types.append(ip_type)
+                                            ip_ctrls.append(ip_type)
+                                            
                                 def girl1_pchecked(r):
                                     return gr.update(visible=r)
                                 girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[girl1_panel], queue=False, show_progress=False)
                                 # girl1_enabled.change(girl1_checked, inputs=[girl1_enabled], outputs=[ip_images[0], ip_images[1]], queue=False, show_progress=False)
                                 
+                                
+                                image_prompt_add = len(ip_images) - 1
+
                                 with gr.Column():
                                     for _ in range(flags.controlnet_image_count):
                                         with gr.Column():
