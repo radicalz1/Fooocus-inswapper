@@ -211,7 +211,7 @@ with shared.gradio_root:
                                 ip_ctrls = []
                                 ip_ad_cols = []
                                 with gr.Column(visible=True) as girl1_panel:
-                                    ip_image = grh.Image(label='Image', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
                                     if girl1_enabled:
                                         ip_images.append(ip_image)
                                         ip_ctrls.append(ip_image)
@@ -250,17 +250,28 @@ with shared.gradio_root:
                                         if girl1_enabled:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
-                                            
+
                                 def girl1_pchecked(r):
                                     return gr.update(visible=r)
                                 girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[girl1_panel], queue=False, show_progress=False)
-                                # girl1_enabled.change(girl1_checked, inputs=[girl1_enabled], outputs=[ip_images[0], ip_images[1]], queue=False, show_progress=False)
-                                
-                                
-                                image_prompt_add = len(ip_images) - 1
+
+#                                 ip_add = len(ip_images) - 1
+#                                 def image_prompt_add():
+#                                     if ip_add>0:
+#                                         return ip_add
+#                                     else:
+#                                         return 0
 
                                 with gr.Column():
-                                    for _ in range(flags.controlnet_image_count):
+                                    if girl1_enabled:
+                                        cn_image_count = flags.controlnet_image_count - 2
+                                    else:
+                                        cn_image_count = flags.controlnet_image_count
+                                    def webui_cn_image_count():
+                                        return cn_image_count
+                                    
+#                                     for _ in range(flags.controlnet_image_count):
+                                    for _ in range(webui_cn_image_count()):
                                         with gr.Column():
                                             ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                             ip_images.append(ip_image)
@@ -834,7 +845,7 @@ with shared.gradio_root:
         ]
 
         ctrls += [base_model, refiner_model, refiner_switch] + lora_ctrls
-        ctrls += [image_prompt_add, image_prompt_enabled, input_image_checkbox, current_tab]
+        ctrls += [image_prompt_enabled, input_image_checkbox, current_tab]
         ctrls += [uov_method, uov_input_image]
         ctrls += [outpaint_selections, inpaint_input_image, inpaint_additional_prompt, inpaint_mask_image]
         ctrls += [disable_preview, disable_intermediate_results, disable_seed_increment]
@@ -886,16 +897,14 @@ with shared.gradio_root:
         metadata_import_button.click(trigger_metadata_import, inputs=[metadata_input_image, state_is_generating], outputs=load_data_outputs, queue=False, show_progress=True) \
             .then(style_sorter.sort_styles, inputs=style_selections, outputs=style_selections, queue=False, show_progress=False)
 
-        generate_button.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
-                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
+        generate_button.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True), outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
-                  outputs=[generate_button, generate_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False), outputs=[generate_button, generate_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
-        generate_button_uv.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
-                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
+
+        generate_button_uv.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True), outputs=[stop_button, skip_button, generate_button, generate_button_uv, generate_button_io, gallery, state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
