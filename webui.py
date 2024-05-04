@@ -123,7 +123,7 @@ with shared.gradio_root:
             with gr.Row():
                 image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                 input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
+                inswapper_enabled = gr.Checkbox(label="Inswapper", value=False, container=False)
                 aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
                 advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
                 def update_history_link():
@@ -201,6 +201,11 @@ with shared.gradio_root:
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
                                 girl1_enabled = gr.Checkbox(label="Girl1", value=True, container=False)
+                                none=gr.Checkbox(visible=True)
+                                def clear():
+                                    return None
+                                clear_btn = gr.Button(value="Clear")
+
 #                                 ip_profile = 1
 #                                 image_prompt_add = 2 * ip_profile
                             with gr.Row():
@@ -210,11 +215,18 @@ with shared.gradio_root:
                                 ip_weights = []
                                 ip_ctrls = []
                                 ip_ad_cols = []
-                                with gr.Column(visible=True) as girl1_panel:
+#                                 with gr.Column(visible=True) as girl1_panel:
+
+                                with gr.Column(visible=True):
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                    if girl1_enabled:
-                                        ip_images.append(ip_image)
-                                        ip_ctrls.append(ip_image)
+
+#                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                    if not girl1_enabled:
+#                                         ip_image.value = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
+#                                     else:
+                                        ip_image.value = ""
+                                    ip_images.append(ip_image)
+                                    ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
@@ -230,11 +242,16 @@ with shared.gradio_root:
                                         if girl1_enabled:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
-
+                                        
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                    if girl1_enabled:
-                                        ip_images.append(ip_image)
-                                        ip_ctrls.append(ip_image)
+                                    
+#                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                    if not girl1_enabled:
+#                                         ip_image.value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg"
+#                                     else:
+                                        ip_image.value= ""
+                                    ip_images.append(ip_image)
+                                    ip_ctrls.append(ip_image)
                                     with gr.Column(visible=True) as ad_col:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
@@ -253,7 +270,9 @@ with shared.gradio_root:
 
                                 def girl1_pchecked(r):
                                     return gr.update(visible=r)
-                                girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[girl1_panel], queue=False, show_progress=False)
+        
+                                girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[none], queue=False, show_progress=False)
+                                clear_btn.click(clear, inputs=[], outputs=[ip_image])
 
 #                                 ip_add = len(ip_images) - 1
 #                                 def image_prompt_add():
@@ -372,7 +391,7 @@ with shared.gradio_root:
 
 
     
-                with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
+                with gr.Column(scale=2, min_width=0, visible=False) as inswapper_panel:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
