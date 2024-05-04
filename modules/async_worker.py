@@ -44,6 +44,7 @@ def worker():
     import args_manager
     import PIL.Image as Image
 
+#     from webui import webui_cn_image_count
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion, apply_arrays
     from modules.private_logger import log
     from extras.expansion import safe_str
@@ -154,7 +155,6 @@ def worker():
         refiner_model_name = args.pop()
         refiner_switch = args.pop()
         loras = get_enabled_loras([[bool(args.pop()), str(args.pop()), float(args.pop())] for _ in range(modules.config.default_max_lora_number)])
-        image_prompt_add = args.pop()
         image_prompt_enabled = args.pop()
         input_image_checkbox = args.pop()
         current_tab = args.pop()
@@ -206,7 +206,8 @@ def worker():
         metadata_scheme = MetadataScheme(args.pop()) if not args_manager.args.disable_metadata else MetadataScheme.FOOOCUS
 
         cn_tasks = {x: [] for x in flags.ip_list}
-        for _ in range(flags.controlnet_image_count + image_prompt_add):
+        for _ in range(flags.controlnet_image_count):
+#         for _ in range(webui_cn_image_count):
             cn_img = args.pop()
             cn_stop = args.pop()
             cn_weight = args.pop()
