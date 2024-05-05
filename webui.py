@@ -203,7 +203,8 @@ with shared.gradio_root:
                                 girl1_enabled = gr.Checkbox(label="Girl1", value=True, container=False)
                                 none=gr.Checkbox(visible=True)
                                 def clear():
-                                    return None
+                                    # return None
+                                    return ""
                                 clear_btn = gr.Button(value="Clear")
                                 girl1_btn = gr.Button(value="Girl1")
 
@@ -220,7 +221,10 @@ with shared.gradio_root:
 
                                 with gr.Column(visible=True):
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                    girl1_btn.click(lambda: ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"), inputs=[], outputs=[ip_image])
+#                                     girl1_btn.click(lambda: ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"), inputs=[], outputs=[ip_image])
+                                    def set_image():
+                                        return ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
+                                    girl1_btn.click(set_image, inputs=[], outputs=[ip_image])
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image])
 #                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     if not girl1_enabled:
@@ -265,7 +269,10 @@ with shared.gradio_root:
                                         else:
                                             return None
                                     girl1_enabled.change(girl1_2, inputs=[], outputs=[ip_image])
-                                    girl1_btn.click(lambda: ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"), inputs=[], outputs=[ip_image])
+#                                     girl1_btn.click(lambda: ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"), inputs=[], outputs=[ip_image])
+                                    def set_image1():
+                                        return ip_image.value("https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
+                                    girl1_btn.click(set_image1, inputs=[], outputs=[ip_image])
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image])
 
                                     
