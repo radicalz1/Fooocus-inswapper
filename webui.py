@@ -329,7 +329,8 @@ with shared.gradio_root:
                                                    queue=False, show_progress=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy', elem_id="uv_canvas")
-                                    generate_button_uv = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                    top_js = "() => {viewer_to_top();}"
+                                    generate_button_uv = gr.Button(_js=top_js, scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
@@ -371,7 +372,6 @@ with shared.gradio_root:
                                 with gr.Column():
                                     gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                     gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
-                                top_js = "() => {viewer_to_top();}"
                                 generate_button_io = gr.Button(_js=top_js, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
 
                                 def trigger_imagepaint(img):
