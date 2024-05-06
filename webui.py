@@ -1002,8 +1002,8 @@ def dump_default_english_config():
 # === END ===
 
 # ===Normal Gradio & NGROK===
-from google.colab import public_url
-print(f" * ngrok tunnel: {public_url}")
+# from google.colab import public_url
+# print(f" * ngrok tunnel: {public_url}")
 shared.gradio_root.launch(
     inbrowser=args_manager.args.in_browser,
     server_name=args_manager.args.listen,
