@@ -162,7 +162,7 @@ with shared.gradio_root:
                         default_prompt = modules.config.default_prompt
                         if isinstance(default_prompt, str) and default_prompt != '':
                             shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
-                with gr.Column(scale=3):
+                with gr.Column(scale=2):
                     generate_button = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
@@ -181,7 +181,7 @@ with shared.gradio_root:
                         return currentTask
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
-                with gr.Column():
+                with gr.Column(scale=1):
                     image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
             with gr.Row():
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
