@@ -399,7 +399,31 @@ with shared.gradio_root:
                                 with gr.Column():
                                     gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                     gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
-                                generate_button_io = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                top_js = "() => {viewer_to_top();}"
+                                generate_button_io = gr.Button(_js=top_js, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+
+        def trigger_imagepaint(img):
+            from PIL import Image
+            import numpy as np
+            import datetime 
+            # Convert the numpy array to a PIL Image
+            pil_image = Image.fromarray(img)
+            # Get the current date and time (down to the second)
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            # Define the output file path & file name
+            output_folder = "/content/Fooocus-inswapper/output_ImagePaint"
+            os.makedirs(output_folder, exist_ok=True)
+            output_path = os.path.join(output_folder, f"{timestamp}.png")
+            # Save the PIL Image as a PNG file
+            pil_image.save(output_path)
+            # You can also return the modified_img if needed for further processing
+            return img
+        # Attach the click event to the button
+        imgp_btn.click(lambda: [modules.flags.inpaint_option_modify, 0.8, False], outpus=[inpaint_mode, inpaint_strength, inpaint_disable_initial_latent])
+
+        imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
+        imgp_btn2.click(lambda: gr.update(visible=True), outputs=[imgpo])
+        imgp_btn2.click(trigger_imagepaint, inputs=[imgp], outputs=[imgpo], show_progress=True, queue=True)
 
 
     
@@ -436,7 +460,7 @@ with shared.gradio_root:
             current_tab = gr.Textbox(value='uov', visible=False)
             uov_tab.select(lambda: 'uov', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             inpaint_tab.select(lambda: 'inpaint', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
-            ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
+            # ip_tab.select(lambda: 'ip', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
             # inswapper_tab.select(lambda: 'inswapper', outputs=current_tab, queue=False, _js=down_js, show_progress=False)
 
         with gr.Column(scale=1, visible=modules.config.default_advanced_checkbox) as advanced_column:
@@ -967,27 +991,6 @@ with shared.gradio_root:
 
         desc_btn.click(trigger_describe, inputs=[desc_method, desc_input_image],
                        outputs=[prompt, style_selections], show_progress=True, queue=True)
-
-        def trigger_imagepaint(img):
-            from PIL import Image
-            import numpy as np
-            import datetime 
-            # Convert the numpy array to a PIL Image
-            pil_image = Image.fromarray(img)
-            # Get the current date and time (down to the second)
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            # Define the output file path & file name
-            output_folder = "/content/Fooocus-inswapper/output_ImagePaint"
-            os.makedirs(output_folder, exist_ok=True)
-            output_path = os.path.join(output_folder, f"{timestamp}.png")
-            # Save the PIL Image as a PNG file
-            pil_image.save(output_path)
-            # You can also return the modified_img if needed for further processing
-            return img
-        # Attach the click event to the button
-        imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
-        imgp_btn2.click(lambda: gr.update(visible=True), outputs=[imgpo])
-        imgp_btn2.click(trigger_imagepaint, inputs=[imgp], outputs=[imgpo], show_progress=True, queue=True)
 
     
 
