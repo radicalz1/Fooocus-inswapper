@@ -3,6 +3,7 @@ from PIL import Image
 import numpy as np
 sys.path.append('../inswapper')
 
+from modules.async_worker import goals, uov_method
 from inswapper.swapper import process
 
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
@@ -13,8 +14,10 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
       print(f"Inswapper: Source indicies: {inswapper_source_image_indicies}")
       print(f"Inswapper: Target indicies: {inswapper_target_image_indicies}")      
       result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
-      # Add the original image to the list
-      swapped_images.append(item)
+
+      if ('vary' in goals and 'inswap' in uov_method) or 'inpaint' in goals:
+        # Add the original image to the list
+        swapped_images.append(item)
   if True:
       from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
       
