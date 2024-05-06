@@ -253,14 +253,14 @@ with shared.gradio_root:
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
                                         ip_types.append(ip_type)
                                         ip_ctrls.append(ip_type)
-
-                            def character_enabled_fn(value):
-                                if value:
-                                    return [gr.update(visible=True), [], []]
-                                else:
-                                    return [gr.update(visible=False), None, None]
-                            character_enabled.select(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
-                            # character_enabled.change(gr.update(visible=False), outputs=character_panel, queue=False, show_progress=False)
+                                        
+                                def character_enabled_fn(value):
+                                    if value:
+                                        return [gr.update(visible=True), [], []]
+                                    else:
+                                        return [gr.update(visible=False), None, None]
+                                character_enabled.select(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
+                                # character_enabled.change(gr.update(visible=False), outputs=character_panel, queue=False, show_progress=False)
 
 
                                 with gr.Column():
