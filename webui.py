@@ -1002,6 +1002,7 @@ def dump_default_english_config():
 # === END ===
 
 # ===Normal Gradio & NGROK===
+print(f" * ngrok tunnel: {public_url}")
 shared.gradio_root.launch(
     inbrowser=args_manager.args.in_browser,
     server_name=args_manager.args.listen,
@@ -1012,5 +1013,4 @@ shared.gradio_root.launch(
     blocked_paths=[constants.AUTH_FILENAME]
 )
 # === END ===
-print(f" * ngrok tunnel: {public_url}")
 
