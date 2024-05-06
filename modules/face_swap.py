@@ -3,7 +3,10 @@ from PIL import Image
 import numpy as np
 sys.path.append('../inswapper')
 
-from modules.async_worker import goals, uov_method
+from modules.async_worker import async_worker
+goals = async_worker.goals
+uov_method = async_worker.uov_method
+
 from inswapper.swapper import process
 
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
