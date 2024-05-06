@@ -165,7 +165,7 @@ with shared.gradio_root:
                         if isinstance(default_prompt, str) and default_prompt != '':
                             shared.gradio_root.load(lambda: default_prompt, outputs=prompt)
                 with gr.Column(scale=3):
-                    generate_button = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                    generate_button = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                     load_parameter_button = gr.Button(label="Load Parameters", value="Load Parameters", elem_classes='type_row', elem_id='load_parameter_button', visible=False)
                     skip_button = gr.Button(label="Skip", value="Skip", elem_classes='type_row_half', visible=False)
                     stop_button = gr.Button(label="Stop", value="Stop", elem_classes='type_row_half', elem_id='stop_button', visible=False)
@@ -343,7 +343,7 @@ with shared.gradio_root:
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
                                 mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
-                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
+                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.inswap)
                                 with gr.Column():
                                     overwrite_vary_strength = gr.Slider(label='"Vary" Denoising Strength',
                                                                         minimum=-1, maximum=1.0, step=0.001, value=-1,
@@ -357,7 +357,7 @@ with shared.gradio_root:
                                                    queue=False, show_progress=False)
                             with gr.Column():
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy', elem_id="uv_canvas")
-                                    generate_button_uv = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                    generate_button_uv = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
@@ -399,7 +399,7 @@ with shared.gradio_root:
                                 with gr.Column():
                                     gr.HTML('Respective Field : 0 = Only Masked, 1 = Whole Image --- Erode/Dilate : + = larger, - = smaller')
                                     gr.HTML('* Powered by Fooocus Inpaint Engine <a href="https://github.com/lllyasviel/Fooocus/discussions/414" target="_blank">\U0001F4D4 Document</a>')
-                                generate_button_io = gr.Button(label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                generate_button_io = gr.Button(scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
 
 
     
