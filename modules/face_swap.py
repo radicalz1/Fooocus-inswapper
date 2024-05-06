@@ -16,8 +16,9 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
       result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
 
       if ('vary' in goals and 'inswap' in uov_method) or 'inpaint' in goals:
-        # Add the original image to the list
+        # Add the original & before restore image to the list
         swapped_images.append(item)
+        swapped_images.append(result_image)
   if True:
       from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
       
