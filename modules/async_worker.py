@@ -547,7 +547,7 @@ def worker():
             progressbar(async_task, 13, 'Image processing ...')
 
             
-        if 'vary' or 'inswap' in goals:
+        if 'vary' in goals:
             if 'inswap' in uov_method:
                 denoising_strength =0.001
             if 'subtle' in uov_method:
