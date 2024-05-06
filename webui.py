@@ -215,7 +215,7 @@ with shared.gradio_root:
                                 ip_ad_cols = []
 
                                 with gr.Column(visible=True):
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="")
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
                                     def aerith1():
                                         return "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2021/08/final-fantasy-vii-remake-aerith-2433995.jpg"
@@ -239,7 +239,7 @@ with shared.gradio_root:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
                                         
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="")
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
                                     def aerith2():
                                         return "https://www.siliconera.com/wp-content/uploads/2020/04/final-fantasy-7-remake-aerith-final-fantasy-vii-remake-aerith.jpg"
