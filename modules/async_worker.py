@@ -359,7 +359,7 @@ def worker():
                     current_tab == 'ip' and mixing_image_prompt_and_vary_upscale)) \
                     and uov_method != flags.disabled and uov_input_image is not None:
                 uov_input_image = HWC3(uov_input_image)
-                if 'vary' in uov_method:
+                if 'vary' or 'inswap' in uov_method:
                     goals.append('vary')
                 elif 'upscale' in uov_method:
                     goals.append('upscale')
@@ -546,7 +546,10 @@ def worker():
         if len(goals) > 0:
             progressbar(async_task, 13, 'Image processing ...')
 
-        if 'vary' in goals:
+            
+        if 'vary' or 'inswap' in goals:
+            if 'inswap' in uov_method:
+                denoising_strength =0.001
             if 'subtle' in uov_method:
                 denoising_strength = 0.5
             if 'strong' in uov_method:
