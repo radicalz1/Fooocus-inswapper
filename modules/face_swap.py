@@ -4,8 +4,11 @@ import numpy as np
 sys.path.append('../inswapper')
 
 from modules.async_worker import worker
-# awgoals = goals
-# awuov = uov_method
+# Call the worker function
+worker()
+# Access the goals variable
+goals = worker().goals
+uov_method = worker().uov_method
 
 from inswapper.swapper import process
 
