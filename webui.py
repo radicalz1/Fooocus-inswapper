@@ -259,7 +259,8 @@ with shared.gradio_root:
                                         return [gr.update(visible=True), [], []]
                                     else:
                                         return [gr.update(visible=False), None, None]
-                                character_enabled.select(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
+                                # character_enabled.select(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
+                                character_enabled.change(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
                                 # character_enabled.change(gr.update(visible=False), outputs=character_panel, queue=False, show_progress=False)
 
 
