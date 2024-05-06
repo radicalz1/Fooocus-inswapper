@@ -419,7 +419,7 @@ with shared.gradio_root:
                                     # You can also return the modified_img if needed for further processing
                                     return img
                                 # Attach the click event to the button
-                                imgp_btn.click(lambda: [modules.flags.inpaint_option_modify, 0.8, False], outpus=[inpaint_mode, inpaint_strength, inpaint_disable_initial_latent])
+                                imgp_btn.click(lambda: [modules.flags.inpaint_option_modify, 0.8, False], outputs=[inpaint_mode, inpaint_strength, inpaint_disable_initial_latent])
                         
                                 imgp_btn.click(trigger_imagepaint, inputs=[imgp], outputs=[inpaint_input_image], show_progress=True, queue=True)
                                 imgp_btn2.click(lambda: gr.update(visible=True), outputs=[imgpo])
