@@ -254,7 +254,9 @@ with shared.gradio_root:
                                         ip_types.append(ip_type)
                                         ip_ctrls.append(ip_type)
                                         
-                                character_enabled.change(lambda [x: gr.update(visible=x), None, None], inputs=character_enabled, outputs=[character_panel, ip_image, ip_image], queue=False, show_progress=False)
+                                def character_checked(r):
+                                    return [gr.update(visible=r), None, None]
+                                character_enabled.change(character_checked, inputs=[character_enabled], outputs=[character_panel, ip_image, ip_image], queue=False, show_progress=False)
 
 
                                 with gr.Column():
