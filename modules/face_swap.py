@@ -3,8 +3,9 @@ from PIL import Image
 import numpy as np
 sys.path.append('../inswapper')
 
-from modules.async_worker import goals
-from modules.async_worker import uov_method
+from modules.async_worker import worker
+# awgoals = goals
+# awuov = uov_method
 
 from inswapper.swapper import process
 
