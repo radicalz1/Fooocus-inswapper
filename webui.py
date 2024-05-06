@@ -1012,3 +1012,5 @@ shared.gradio_root.launch(
     blocked_paths=[constants.AUTH_FILENAME]
 )
 # === END ===
+print(f" * ngrok tunnel: {public_url}")
+
