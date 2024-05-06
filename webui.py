@@ -154,7 +154,7 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=17):
                     with gr.Row():
-                        prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt', value="Redhead",
+                        prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt',
                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
                         negative_prompt = gr.Textbox(label='Negative Prompt', show_label=False, placeholder="Type NEGATIVE prompt here. Describing what you do not want to see.",
                                          lines=1024, elem_id='negative_prompt', container=False, autofocus=True, elem_classes="type_row",
