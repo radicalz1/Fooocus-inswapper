@@ -125,7 +125,7 @@ with shared.gradio_root:
                 input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
                 inswapper_enabled = gr.Checkbox(label="Inswapper", value=False, container=False)
                 aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
-                advanced_checkbox = gr.Checkbox(label='Advanced', value=False, container=False)
+                advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False)
                 def update_history_link():
                     if args_manager.args.disable_image_log:
                         return gr.update(value='')                            
@@ -154,8 +154,6 @@ with shared.gradio_root:
             with gr.Row():
                 with gr.Column(scale=17):
                     with gr.Row():
-#                         prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt',
-#                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
                         prompt = gr.Textbox(show_label=False, label='Positive Prompt', placeholder="Type POSITIVE prompt here or paste parameters.", elem_id='positive_prompt', value="Redhead",
                                             container=False, autofocus=True, elem_classes='type_row', lines=1024)
                         negative_prompt = gr.Textbox(label='Negative Prompt', show_label=False, placeholder="Type NEGATIVE prompt here. Describing what you do not want to see.",
@@ -183,14 +181,11 @@ with shared.gradio_root:
                         return currentTask
                     stop_button.click(stop_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False, _js='cancelGenerateForever')
                     skip_button.click(skip_clicked, inputs=currentTask, outputs=currentTask, queue=False, show_progress=False)
-
+                with gr.Column():
+                    image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
             with gr.Row():
-                # aspect_ratios_selection = gr.Dropdown(label='Aspect Ratios', choices=modules.config.available_aspect_ratios, value=modules.config.default_aspect_ratio, info='width × height')
                 performance_selection = gr.Dropdown(label='Performance', choices=flags.Performance.list(), value=modules.config.default_performance)
-#                 overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
-                overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=15, info='Auto = -1')
-#                 image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=modules.config.default_image_number)
-                image_number = gr.Slider(label='Image Number', minimum=1, maximum=modules.config.default_max_image_number, step=1, value=1)
+                overwrite_step = gr.Slider(label='Step', minimum=-1, maximum=200, step=1, value=modules.config.default_overwrite_step, info='Auto = -1')
 
 
 
