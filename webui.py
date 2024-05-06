@@ -200,16 +200,12 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
-                                girl1_enabled = gr.Checkbox(label="Girl1", value=True, container=False)
-                                none=gr.Checkbox(visible=True)
                                 def clear():
-                                    # return None
-                                    return 
+                                    return None
+                                    # return 
                                 clear_btn = gr.Button(value="Clear")
-                                girl1_btn = gr.Button(value="Girl1")
+                                aerith_btn = gr.Button(value="Aerith")
 
-#                                 ip_profile = 1
-#                                 image_prompt_add = 2 * ip_profile
                             with gr.Row():
                                 ip_images = []
                                 ip_types = []
@@ -217,25 +213,13 @@ with shared.gradio_root:
                                 ip_weights = []
                                 ip_ctrls = []
                                 ip_ad_cols = []
-#                                 with gr.Column(visible=True) as girl1_panel:
 
                                 with gr.Column(visible=True):
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg")
-                                    def girl11():
-                                        return "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
-                                    girl1_btn.click(girl11, inputs=[], outputs=[ip_image])
-                                    clear_btn.click(clear, inputs=[], outputs=[ip_image])
-#                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                    if not girl1_enabled:
-#                                         ip_image.value = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
-#                                     else:
-                                        ip_image.value = None
-                                    def girl1_1(r):
-                                        if r:
-                                            return "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a75bc34c-d954-46d2-b9d0-cd7faf3c1c35/original=true/ComfyUI_00002_.jpeg"
-                                        else:
-                                            return None
-                                    girl1_enabled.change(girl1_1, inputs=[], outputs=[ip_image])
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="")
+                                    clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
+                                    def aerith1():
+                                        return "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2021/08/final-fantasy-vii-remake-aerith-2433995.jpg"
+                                    aerith_btn.click(aerith1, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
 
                                     ip_images.append(ip_image)
                                     ip_ctrls.append(ip_image)
@@ -255,12 +239,11 @@ with shared.gradio_root:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
                                         
-                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                    
-                                    def girl12():
-                                        return "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg"
-                                    girl1_btn.click(girl12, inputs=[], outputs=[ip_image])
-                                    clear_btn.click(clear, inputs=[], outputs=[ip_image])
+                                    ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300, value="")
+                                    clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
+                                    def aerith2():
+                                        return "https://www.siliconera.com/wp-content/uploads/2020/04/final-fantasy-7-remake-aerith-final-fantasy-vii-remake-aerith.jpg"
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
 
                                     
                                     ip_images.append(ip_image)
@@ -281,17 +264,6 @@ with shared.gradio_root:
                                             ip_types.append(ip_type)
                                             ip_ctrls.append(ip_type)
 
-#                                 def girl1_pchecked(r):
-#                                     return gr.update(visible=r)
-        
-#                                 girl1_enabled.change(girl1_pchecked, inputs=[girl1_enabled], outputs=[none], queue=False, show_progress=False)
-
-#                                 ip_add = len(ip_images) - 1
-#                                 def image_prompt_add():
-#                                     if ip_add>0:
-#                                         return ip_add
-#                                     else:
-#                                         return 0
 
                                 with gr.Column():
                                     if girl1_enabled:
@@ -433,10 +405,9 @@ with shared.gradio_root:
                                 with gr.Row():
                                     inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                if girl1_enabled:
-                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/a1534d08-fd57-44d2-b96d-704ca0dd7b0e/original=true/00121-2609342272.jpeg")
-                                else:
-                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
+                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy', value="")
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
 
 
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
