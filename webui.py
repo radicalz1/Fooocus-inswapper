@@ -200,6 +200,7 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label='Image Prompt') as ip_tab:
                             with gr.Row():
+                                character_enabled = gr.Checkbox(label='Character', value=True, container=False)
                                 def clear():
                                     return None
                                     # return 
@@ -227,17 +228,14 @@ with shared.gradio_root:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                            if girl1_enabled:
-                                                ip_stops.append(ip_stop)
-                                                ip_ctrls.append(ip_stop)
+                                            ip_stops.append(ip_stop)
+                                            ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                            if girl1_enabled:
-                                                ip_weights.append(ip_weight)
-                                                ip_ctrls.append(ip_weight)
+                                            ip_weights.append(ip_weight)
+                                            ip_ctrls.append(ip_weight)
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                        if girl1_enabled:
-                                            ip_types.append(ip_type)
-                                            ip_ctrls.append(ip_type)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
                                         
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
@@ -252,21 +250,18 @@ with shared.gradio_root:
                                         with gr.Row():
                                             default_end, default_weight = flags.default_parameters[flags.def_ip_face]
                                             ip_stop = gr.Slider(label='Stop At', minimum=0.0, maximum=1.0, step=0.001, value=default_end)
-                                            if girl1_enabled:
-                                                ip_stops.append(ip_stop)
-                                                ip_ctrls.append(ip_stop)
+                                            ip_stops.append(ip_stop)
+                                            ip_ctrls.append(ip_stop)
                                             ip_weight = gr.Slider(label='Weight', minimum=0.0, maximum=2.0, step=0.001, value=default_weight)
-                                            if girl1_enabled:
-                                                ip_weights.append(ip_weight)
-                                                ip_ctrls.append(ip_weight)
+                                            ip_weights.append(ip_weight)
+                                            ip_ctrls.append(ip_weight)
                                         ip_type = gr.Radio(label='Type', choices=flags.ip_list, value=flags.def_ip_face, container=False)
-                                        if girl1_enabled:
-                                            ip_types.append(ip_type)
-                                            ip_ctrls.append(ip_type)
+                                        ip_types.append(ip_type)
+                                        ip_ctrls.append(ip_type)
 
 
                                 with gr.Column():
-                                    if girl1_enabled:
+                                    if character_enabled:
                                         cn_image_count = flags.controlnet_image_count - 2
                                     else:
                                         cn_image_count = flags.controlnet_image_count
