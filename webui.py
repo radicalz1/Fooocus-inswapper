@@ -310,7 +310,7 @@ with shared.gradio_root:
                         with gr.TabItem(label='Upscale or Variation') as uov_tab:
                             with gr.Row():
                                 mixing_image_prompt_and_vary_upscale = gr.Checkbox(label='Mixing Image Prompt and Vary/Upscale', value=False, visible=True)
-                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.inswap)
+                                uov_method = gr.Radio(label='Upscale or Variation:', choices=flags.uov_list, value=flags.disabled)
                                 with gr.Column():
                                     overwrite_vary_strength = gr.Slider(label='"Vary" Denoising Strength',
                                                                         minimum=-1, maximum=1.0, step=0.001, value=-1,
