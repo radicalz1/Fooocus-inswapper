@@ -256,7 +256,7 @@ with shared.gradio_root:
 
                             def character_enabled_fn(value):
                                 if value:
-                                    return [gr.update(visible=True), pass, pass]
+                                    return [gr.update(visible=True), [], []]
                                 else:
                                     return [gr.update(visible=False), None, None]
                             character_enabled.select(character_enabled_fn, outputs=[character_panel, ip_image[0], ip_image[1]], queue=False, show_progress=False)
