@@ -212,6 +212,7 @@ with shared.gradio_root:
 
                                 with gr.Column(visible=True) as character_panel:
                                     ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                    character_enabled.change(None, inputs=[character_enabled], outputs=[ip_image], queue=False, show_progress=False)
                                     clear_btn.click(clear, inputs=[], outputs=[ip_image], show_progress=True, queue=False)
                                     def aerith1():
                                         return "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2021/08/final-fantasy-vii-remake-aerith-2433995.jpg"
@@ -255,8 +256,8 @@ with shared.gradio_root:
                                         ip_ctrls.append(ip_type)
                                         
                                 def character_checked(r):
-                                    return [gr.update(visible=r), None, None]
-                                character_enabled.change(character_checked, inputs=[character_enabled], outputs=[character_panel, ip_image, ip_image], queue=False, show_progress=False)
+                                    return [gr.update(visible=r), None]
+                                character_enabled.change(character_checked, inputs=[character_enabled], outputs=[character_panel, ip_image], queue=False, show_progress=False)
 
 
                                 with gr.Column():
