@@ -2,14 +2,15 @@ from enum import IntEnum, Enum
 
 disabled = 'Disabled'
 enabled = 'Enabled'
-subtle_variation = 'Vary (Subtle)'
-strong_variation = 'Vary (Strong)'
+inswap = "Inswap (0.001)"
+subtle_variation = 'Vary (Subtle 0.5)'
+strong_variation = 'Vary (Strong 0.85)'
 upscale_15 = 'Upscale (1.5x)'
 upscale_2 = 'Upscale (2x)'
 upscale_fast = 'Upscale (Fast 2x)'
 
 uov_list = [
-    disabled, subtle_variation, strong_variation, upscale_15, upscale_2, upscale_fast
+    disabled, inswap, subtle_variation, strong_variation, upscale_15, upscale_2, upscale_fast
 ]
 
 CIVITAI_NO_KARRAS = ["euler", "euler_ancestral", "heun", "dpm_fast", "dpm_adaptive", "ddim", "uni_pc"]
