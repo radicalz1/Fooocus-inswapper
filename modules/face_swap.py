@@ -3,21 +3,36 @@ from PIL import Image
 import numpy as np
 sys.path.append('../inswapper')
 
+# def handler(async_task):
+#     uov_method = args.pop()
+#     uov_method = uov_method.lower()
+
+
+#         if input_image_checkbox:
+#             if (current_tab == 'uov' or (
+#                     current_tab == 'ip' and mixing_image_prompt_and_vary_upscale)) \
+#                     and uov_method != flags.disabled and uov_input_image is not None:
+#                 uov_input_image = HWC3(uov_input_image)
+#                 if 'vary' or 'inswap' in uov_method:
+#                   # Access the goals variable
+# goals = worker().goals
+# uov_method = worker().uov_method
+
 from inswapper.swapper import process
 
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
   swapped_images = []
 
   for item in images:
-    for image in ins_s_images:
-        source_image = Image.fromarray(ins_s_images)
-        print(f"Inswapper: Source indicies: {inswapper_source_image_indicies}")
-        print(f"Inswapper: Target indicies: {inswapper_target_image_indicies}")      
-        result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
-  
+      source_image = Image.fromarray(inswapper_source_image)
+      print(f"Inswapper: Source indicies: {inswapper_source_image_indicies}")
+      print(f"Inswapper: Target indicies: {inswapper_target_image_indicies}")      
+      result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
+
+      # if 'inswap' in uov_method) or 'inpaint' in goals:
         # Add the original & before restore image to the list
-        swapped_images.append(item)
-        swapped_images.append(result_image)
+      swapped_images.append(item)
+      swapped_images.append(result_image)
   if True:
       from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
       
@@ -53,4 +68,3 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
       swapped_images.append(result_image)
   
   return swapped_images
-
