@@ -12,6 +12,10 @@ class AsyncTask:
         self.last_stop = False
         self.processing = False
 
+from webui import ins_s_ins
+from webui import ins_t_ins
+from webui import ins_s_ims
+
 
 async_tasks = []
 
@@ -44,7 +48,6 @@ def worker():
     import args_manager
     import PIL.Image as Image
 
-#     from webui import webui_cn_image_count
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion, apply_arrays
     from modules.private_logger import log
     from extras.expansion import safe_str
@@ -920,9 +923,13 @@ def worker():
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
-                if inswapper_enabled:
-                    if inswapper_source_image is not None:
-                        imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
+                if inswapper_enabled and ins_s_ims is not None:
+                    for item in ins_s_ims:
+                        ins_s_in = ins_s_ins[item]
+                        ins_t_in = ins_t_ins[item]
+                        ins_s_im = item
+                        imgs = perform_face_swap(imgs, ins_s_im, ins_s_in, ins_t_in)
+                        # imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
 
                 img_paths = []
                 for x in imgs:
