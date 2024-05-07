@@ -400,8 +400,8 @@ with shared.gradio_root:
                                 ins_s_ins = []
                                 ins_t_ins = []
                                 ins_s_ims = []
-                                ins_s_n = gr.Number(label='How many source image?', value=2)
-                                for _ in range(ins_s_n.value):
+                                # ins_s_n = gr.Number(label='How many source image?', value=2)
+                                for _ in range(2):
                                     with gr.Row():
                                         inswapper_source_image_indicies = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                         inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
