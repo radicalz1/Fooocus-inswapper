@@ -45,8 +45,6 @@ def worker():
     import args_manager
     import PIL.Image as Image
 
-    from webui import ins_s_ins, ins_t_ins, ins_s_ims
-
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion, apply_arrays
     from modules.private_logger import log
     from extras.expansion import safe_str
@@ -844,6 +842,9 @@ def worker():
                 int(15.0 + 85.0 * float(done_steps) / float(all_steps)),
                 f'Step {step}/{total_steps} in the {current_task_id + 1}{ordinal_suffix(current_task_id + 1)} Sampling', y)])
 
+        # ins_s_ins = args.pop()
+        # ins_t_ins = args.pop()
+        # ins_s_ims = args.pop()
         for current_task_id, task in enumerate(tasks):
             execution_start_time = time.perf_counter()
 
