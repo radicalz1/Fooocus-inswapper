@@ -12,9 +12,6 @@ class AsyncTask:
         self.last_stop = False
         self.processing = False
 
-from webui import ins_s_ins
-from webui import ins_t_ins
-from webui import ins_s_ims
 
 
 async_tasks = []
@@ -47,6 +44,8 @@ def worker():
     import fooocus_version
     import args_manager
     import PIL.Image as Image
+
+    from webui import ins_s_ins, ins_t_ins, ins_s_ims
 
     from modules.sdxl_styles import apply_style, apply_wildcards, fooocus_expansion, apply_arrays
     from modules.private_logger import log
