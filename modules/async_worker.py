@@ -943,17 +943,17 @@ def worker():
                     if inswapper_source_image is not None:
                         imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
                     if inswapper_source_image1 is not None:
-                        imgs = perform_face_swap(imgs[1], inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1)
                     if inswapper_source_image2 is not None:
-                        imgs = perform_face_swap(imgs[2], inswapper_source_image2, inswapper_source_image_indicies2, inswapper_target_image_indicies2)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image2, inswapper_source_image_indicies2, inswapper_target_image_indicies2)
                     if inswapper_source_image3 is not None:
-                        imgs = perform_face_swap(imgs[3], inswapper_source_image3, inswapper_source_image_indicies3, inswapper_target_image_indicies3)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image3, inswapper_source_image_indicies3, inswapper_target_image_indicies3)
                     if inswapper_source_image4 is not None:
-                        imgs = perform_face_swap(imgs[4], inswapper_source_image4, inswapper_source_image_indicies4, inswapper_target_image_indicies4)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image4, inswapper_source_image_indicies4, inswapper_target_image_indicies4)
                     if inswapper_source_image5 is not None:
-                        imgs = perform_face_swap(imgs[5], inswapper_source_image5, inswapper_source_image_indicies5, inswapper_target_image_indicies5)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image5, inswapper_source_image_indicies5, inswapper_target_image_indicies5)
                     if inswapper_source_image6 is not None:
-                        imgs = perform_face_swap(imgs[6], inswapper_source_image6, inswapper_source_image_indicies6, inswapper_target_image_indicies6)
+                        imgs = perform_face_swap(imgs[0], inswapper_source_image6, inswapper_source_image_indicies6, inswapper_target_image_indicies6)
 
 
                 
