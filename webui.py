@@ -123,7 +123,7 @@ with shared.gradio_root:
             with gr.Row():
                 image_prompt_enabled = gr.Checkbox(label="Image Prompt", value=True, container=False)
                 input_image_checkbox = gr.Checkbox(label='Input Image', value=False, container=False)
-                inswapper_enabled = gr.Checkbox(label="Inswapper", value=False, container=False)
+                inswapper_enabled = gr.Checkbox(label="Inswapper", value=True, container=False)
                 aspectr_checkbox = gr.Checkbox(label="Aspect Ratios", value=False, container=False)
                 advanced_checkbox = gr.Checkbox(label='Advanced', value=modules.config.default_advanced_checkbox, container=False)
                 def update_history_link():
