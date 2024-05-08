@@ -216,11 +216,10 @@ def worker():
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
         inswapper_enabled = args.pop()
-        ins_n = args.pop()
         ins_sins = []
         ins_tins = []
         ins_sims = []
-        for _ in range(ins_n):
+        for _ in range(flags.inswapper_image_count):
             ins_sin = args.pop()
             ins_tin = args.pop()
             ins_sim = args.pop()
