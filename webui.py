@@ -889,6 +889,7 @@ with shared.gradio_root:
 
         ctrls += ip_ctrls
         ctrls += [inswapper_enabled, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies]
+        ctrls += [inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1]
         ctrls += [photomaker_enabled, photomaker_images]
         ctrls += [instantid_enabled, instantid_source_image_path, instantid_pose_image_path, instantid_identitynet_strength_ratio, instantid_adapter_strength_ratio]
 
