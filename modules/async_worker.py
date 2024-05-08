@@ -133,6 +133,9 @@ def worker():
 
     @torch.no_grad()
     @torch.inference_mode()
+    ins_sins = []
+    ins_tins = []
+    ins_sims = []
     def handler(async_task):
         execution_start_time = time.perf_counter()
         async_task.processing = True
@@ -216,9 +219,6 @@ def worker():
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
         inswapper_enabled = args.pop()
-        ins_sins = []
-        ins_tins = []
-        ins_sims = []
         for _ in range(flags.inswapper_image_count):
             ins_sin = args.pop()
             ins_tin = args.pop()
