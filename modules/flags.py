@@ -92,6 +92,7 @@ metadata_scheme = [
 ]
 
 controlnet_image_count = 6
+inswapper_image_count = 12
 
 
 class OutputFormat(Enum):
