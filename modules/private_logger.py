@@ -31,7 +31,12 @@ def log(image, metadata, metadata_parser: MetadataParser | None = None, output_f
     print(f"image type: {type(image)}")
 
     if not isinstance(image, Image.Image):
-        image = Image.fromarray(image)
+        if isinstance(image, list):
+            for item in image:
+                # Convert item to a NumPy array (assuming it's image data)
+                image = np.asarray(item)
+        else:
+            image = Image.fromarray(image)
 
     parsed_parameters = metadata_parser.parse_string(metadata.copy()) if metadata_parser is not None else ''
 
