@@ -15,9 +15,6 @@ class AsyncTask:
 
 
 async_tasks = []
-ins_sins = []
-ins_tins = []
-ins_sims = []
 
 
 def worker():
@@ -223,6 +220,9 @@ def worker():
             ins_sin = args.pop()
             ins_tin = args.pop()
             ins_sim = args.pop()
+            ins_sins = []
+            ins_tins = []
+            ins_sims = []
             if ins_sim is not None:
                 ins_sins.append(ins_sin)
                 ins_tins.append(ins_tin)
