@@ -224,9 +224,9 @@ def worker():
             ins_tin = args.pop()
             ins_sim = args.pop()
             if ins_sim is not None:
-                ins_sins.append = [ins_sin]
-                ins_tins.append = [ins_tin]
-                ins_sims.append = [ins_sim]
+                ins_sins.append(ins_sin)
+                ins_tins.append(ins_tin)
+                ins_sims.append(ins_sim)
             
         # def get_active_ins(ins: list) -> list:
         #   return [[input[0],input[1],input[2] for input in ins if input[2] is not None]
