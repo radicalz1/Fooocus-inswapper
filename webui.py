@@ -418,7 +418,7 @@ with shared.gradio_root:
                                 # def ():
                                 #     return ""
                                 with gr.Column():
-                                    for _ in range(ins_n()):
+                                    for _ in range(ins_n):
                                         with gr.Row():
                                             inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
                                             with gr.Column():
