@@ -207,7 +207,6 @@ def worker():
 
         cn_tasks = {x: [] for x in flags.ip_list}
         for _ in range(flags.controlnet_image_count):
-#         for _ in range(webui_cn_image_count):
             cn_img = args.pop()
             cn_stop = args.pop()
             cn_weight = args.pop()
@@ -216,13 +215,13 @@ def worker():
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
         inswapper_enabled = args.pop()
+        ins_sins = []
+        ins_tins = []
+        ins_sims = []
         for _ in range(flags.inswapper_image_count):
             ins_sin = args.pop()
             ins_tin = args.pop()
             ins_sim = args.pop()
-            ins_sins = []
-            ins_tins = []
-            ins_sims = []
             if ins_sim is not None:
                 ins_sins.append(ins_sin)
                 ins_tins.append(ins_tin)
