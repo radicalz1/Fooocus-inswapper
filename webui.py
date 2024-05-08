@@ -393,7 +393,7 @@ with shared.gradio_root:
 
 
     
-                with gr.Column(scale=2, min_width=0, visible=False) as inswapper_panel:
+                with gr.Column(scale=2, min_width=0, visible=True) as inswapper_panel:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
