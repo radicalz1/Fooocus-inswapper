@@ -397,6 +397,7 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
+                                ins_n = 10
                                 ins_ctrls = []
                                 def aerith3():
                                     return "https://cdn.vox-cdn.com/thumbor/cczSiJV366oYBvJylL-BEUDgI50=/0x0:3840x2048/1200x675/filters:focal(1455x631:2069x1245)/cdn.vox-cdn.com/uploads/chorus_image/image/73229269/IMG_9322.0.jpeg"
@@ -416,84 +417,85 @@ with shared.gradio_root:
                                 #     return ""
                                 # def ():
                                 #     return ""
-                                with gr.Row():
-                                    with gr.Column():
-                                        inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
-                                        inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                        inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
-                                        ins_ctrls.append(inswapper_source_image_indicies)
-                                        ins_ctrls.append(inswapper_target_image_indicies)
-                                        ins_ctrls.append(inswapper_source_image)
+                                with gr.Column():
+                                    for _ in range(ins_n()):
                                         with gr.Row():
-                                            clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_aerith2 = gr.Button(value="Aerith2")
-                                            ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_aerith3 = gr.Button(value="Aerith3")
-                                            ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa1 = gr.Button(value="Tifa1")
-                                            ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa2 = gr.Button(value="Tifa2")
-                                            ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa3 = gr.Button(value="Tifa3")
-                                            ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_rinoa1 = gr.Button(value="Rinoa1")
-                                            ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_rinoa2 = gr.Button(value="Rinoa2")
-                                            ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_lightning1 = gr.Button(value="Lightning1")
-                                            ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                with gr.Row():
-                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
-                                    with gr.Column():
-                                        inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
-                                        inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                        ins_ctrls.append(inswapper_source_image_indicies)
-                                        ins_ctrls.append(inswapper_target_image_indicies)
-                                        ins_ctrls.append(inswapper_source_image)
-                                        with gr.Row():
-                                            clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_aerith2 = gr.Button(value="Aerith2")
-                                            ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_aerith3 = gr.Button(value="Aerith3")
-                                            ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa1 = gr.Button(value="Tifa1")
-                                            ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa2 = gr.Button(value="Tifa2")
-                                            ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_tifa3 = gr.Button(value="Tifa3")
-                                            ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_rinoa1 = gr.Button(value="Rinoa1")
-                                            ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_rinoa2 = gr.Button(value="Rinoa2")
-                                            ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                            ins_btn_lightning1 = gr.Button(value="Lightning1")
-                                            ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                with gr.Row():
-                                    with gr.Column():
-                                        inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
-                                        inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
-                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
-                                        ins_ctrls.append(inswapper_source_image_indicies)
-                                        ins_ctrls.append(inswapper_target_image_indicies)
-                                        ins_ctrls.append(inswapper_source_image)
-                                    with gr.Column():
-                                        clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_aerith2 = gr.Button(value="Aerith2")
-                                        ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_aerith3 = gr.Button(value="Aerith3")
-                                        ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_tifa1 = gr.Button(value="Tifa1")
-                                        ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_tifa2 = gr.Button(value="Tifa2")
-                                        ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_tifa3 = gr.Button(value="Tifa3")
-                                        ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_rinoa1 = gr.Button(value="Rinoa1")
-                                        ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_rinoa2 = gr.Button(value="Rinoa2")
-                                        ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                        ins_btn_lightning1 = gr.Button(value="Lightning1")
-                                        ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                            inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
+                                            with gr.Column():
+                                                inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                                inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                                ins_ctrls.append(inswapper_source_image_indicies)
+                                                ins_ctrls.append(inswapper_target_image_indicies)
+                                                ins_ctrls.append(inswapper_source_image)
+                                                with gr.Row():
+                                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_aerith2 = gr.Button(value="Aerith2")
+                                                    ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_aerith3 = gr.Button(value="Aerith3")
+                                                    ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_tifa1 = gr.Button(value="Tifa1")
+                                                    ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_tifa2 = gr.Button(value="Tifa2")
+                                                    ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_tifa3 = gr.Button(value="Tifa3")
+                                                    ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_rinoa1 = gr.Button(value="Rinoa1")
+                                                    ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_rinoa2 = gr.Button(value="Rinoa2")
+                                                    ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_btn_lightning1 = gr.Button(value="Lightning1")
+                                                    ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    # with gr.Column():
+                                    #     inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    #     inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    #     inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
+                                    #     ins_ctrls.append(inswapper_source_image_indicies)
+                                    #     ins_ctrls.append(inswapper_target_image_indicies)
+                                    #     ins_ctrls.append(inswapper_source_image)
+                                    #     with gr.Row():
+                                    #         clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_aerith2 = gr.Button(value="Aerith2")
+                                    #         ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_aerith3 = gr.Button(value="Aerith3")
+                                    #         ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_tifa1 = gr.Button(value="Tifa1")
+                                    #         ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_tifa2 = gr.Button(value="Tifa2")
+                                    #         ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_tifa3 = gr.Button(value="Tifa3")
+                                    #         ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_rinoa1 = gr.Button(value="Rinoa1")
+                                    #         ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_rinoa2 = gr.Button(value="Rinoa2")
+                                    #         ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    #         ins_btn_lightning1 = gr.Button(value="Lightning1")
+                                    #         ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                # with gr.Row():
+                                #     with gr.Column():
+                                #         inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                #         inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                #     inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
+                                #         ins_ctrls.append(inswapper_source_image_indicies)
+                                #         ins_ctrls.append(inswapper_target_image_indicies)
+                                #         ins_ctrls.append(inswapper_source_image)
+                                #     with gr.Column():
+                                #         clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_aerith2 = gr.Button(value="Aerith2")
+                                #         ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_aerith3 = gr.Button(value="Aerith3")
+                                #         ins_btn_aerith3.click(aerith3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_tifa1 = gr.Button(value="Tifa1")
+                                #         ins_btn_tifa1.click(tifa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_tifa2 = gr.Button(value="Tifa2")
+                                #         ins_btn_tifa2.click(tifa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_tifa3 = gr.Button(value="Tifa3")
+                                #         ins_btn_tifa3.click(tifa3, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_rinoa1 = gr.Button(value="Rinoa1")
+                                #         ins_btn_rinoa1.click(rinoa1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_rinoa2 = gr.Button(value="Rinoa2")
+                                #         ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                #         ins_btn_lightning1 = gr.Button(value="Lightning1")
+                                #         ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
                                 # with gr.Row():
                                 #     inswapper_source_image_indicies1 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                 #     inswapper_target_image_indicies1 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
@@ -1009,7 +1011,7 @@ with shared.gradio_root:
             ctrls += [save_metadata_to_images, metadata_scheme]
 
         ctrls += ip_ctrls
-        ctrls += [inswapper_enabled]
+        ctrls += [inswapper_enabled, ins_n]
         ctrls += ins_ctrls
         # ctrls += [inswapper_enabled, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies]
         # ctrls += [inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1]
