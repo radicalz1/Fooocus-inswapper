@@ -407,8 +407,38 @@ with shared.gradio_root:
                                     inswapper_source_image_indicies1 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                     inswapper_target_image_indicies1 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
                                     inswapper_source_image1 = grh.Image(label='Source Face Image', type='numpy')
-                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image1], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image1], show_progress=True, queue=False)
+                                with gr.Row():
+                                    inswapper_source_image_indicies2 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    inswapper_target_image_indicies2 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    inswapper_source_image2 = grh.Image(label='Source Face Image', type='numpy')
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image2], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image2], show_progress=True, queue=False)
+                                with gr.Row():
+                                    inswapper_source_image_indicies3 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    inswapper_target_image_indicies3 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    inswapper_source_image3 = grh.Image(label='Source Face Image', type='numpy')
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image3], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image3], show_progress=True, queue=False)
+                                with gr.Row():
+                                    inswapper_source_image_indicies4 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    inswapper_target_image_indicies4 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    inswapper_source_image4 = grh.Image(label='Source Face Image', type='numpy')
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image4], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image4], show_progress=True, queue=False)
+                                with gr.Row():
+                                    inswapper_source_image_indicies5 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    inswapper_target_image_indicies5 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    inswapper_source_image5 = grh.Image(label='Source Face Image', type='numpy')
+                                    clear_btn.click(clear, 5inputs=[], outputs=[inswapper_source_image5], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image5], show_progress=True, queue=False)
+                                with gr.Row():
+                                    inswapper_source_image_indicies6 = gr.Text(label="Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
+                                    inswapper_target_image_indicies6 = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                    inswapper_source_image6 = grh.Image(label='Source Face Image', type='numpy')
+                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image6], show_progress=True, queue=False)
+                                    aerith_btn.click(aerith2, inputs=[], outputs=[inswapper_source_image6], show_progress=True, queue=False)
 
 
             switch_js = "(x) => {if(x){viewer_to_bottom(100);viewer_to_bottom(500);}else{viewer_to_top();} return x;}"
@@ -890,8 +920,13 @@ with shared.gradio_root:
         ctrls += ip_ctrls
         ctrls += [inswapper_enabled, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies]
         ctrls += [inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1]
-        ctrls += [photomaker_enabled, photomaker_images]
-        ctrls += [instantid_enabled, instantid_source_image_path, instantid_pose_image_path, instantid_identitynet_strength_ratio, instantid_adapter_strength_ratio]
+        ctrls += [inswapper_source_image2, inswapper_source_image_indicies2, inswapper_target_image_indicies2]
+        ctrls += [inswapper_source_image3, inswapper_source_image_indicies3, inswapper_target_image_indicies3]
+        ctrls += [inswapper_source_image4, inswapper_source_image_indicies4, inswapper_target_image_indicies4]
+        ctrls += [inswapper_source_image5, inswapper_source_image_indicies5, inswapper_target_image_indicies5]
+        ctrls += [inswapper_source_image6, inswapper_source_image_indicies6, inswapper_target_image_indicies6]
+        # ctrls += [photomaker_enabled, photomaker_images]
+        # ctrls += [instantid_enabled, instantid_source_image_path, instantid_pose_image_path, instantid_identitynet_strength_ratio, instantid_adapter_strength_ratio]
 
         def parse_meta(raw_prompt_txt, is_generating):
             loaded_json = None
