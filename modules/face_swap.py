@@ -24,8 +24,9 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
   swapped_images = []
 
   for item in images:
-    for item in inswapper_source_image:
-        source_image = Image.fromarray(inswapper_source_image)
+    for image in inswapper_source_image:
+        # source_image = Image.fromarray(inswapper_source_image)
+        source_image = image
         print(f"Inswapper: Source indicies: {inswapper_source_image_indicies}")
         print(f"Inswapper: Target indicies: {inswapper_target_image_indicies}")      
         result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
