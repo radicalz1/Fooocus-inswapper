@@ -34,8 +34,8 @@
     "default_sampler": "dpmpp_2m_sde_gpu",
     "default_scheduler": "karras",
     "default_performance": "Speed",
-    "default_prompt": "Redhead",
-    "default_prompt_negative": "unrealistic, saturated, high contrast, big nose, painting, drawing, sketch, cartoon, anime, manga, render, CG, 3d, watermark, signature, label",
+    "default_prompt": "A woman with (straight long red hair:1.5), a gentle smile on her lips and her (green eyes:1.5) radiating warmth, cradles a newborn baby in her arms.",
+    "default_prompt_negative": "unrealistic, saturated, (high contrast:1.5), big nose, painting, drawing, sketch, cartoon, anime, manga, render, CG, 3d, watermark, signature, label",
     "default_styles": [
         "Fooocus V2",
         "Fooocus Enhance",
