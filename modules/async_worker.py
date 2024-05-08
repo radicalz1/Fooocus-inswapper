@@ -222,7 +222,23 @@ def worker():
         inswapper_source_image1 = args.pop()  
         inswapper_source_image_indicies1 = args.pop()
         inswapper_target_image_indicies1 = args.pop()
+        inswapper_source_image2 = args.pop()  
+        inswapper_source_image_indicies2 = args.pop()
+        inswapper_target_image_indicies2 = args.pop()
+        inswapper_source_image3 = args.pop()  
+        inswapper_source_image_indicies3 = args.pop()
+        inswapper_target_image_indicies3 = args.pop()
+        inswapper_source_image4 = args.pop()  
+        inswapper_source_image_indicies4 = args.pop()
+        inswapper_target_image_indicies4 = args.pop()
+        inswapper_source_image5 = args.pop()  
+        inswapper_source_image_indicies5 = args.pop()
+        inswapper_target_image_indicies5 = args.pop()
+        inswapper_source_image6 = args.pop()  
+        inswapper_source_image_indicies6 = args.pop()
+        inswapper_target_image_indicies6 = args.pop()
 
+        
         print(f"Inswapper: {'ENABLED' if inswapper_enabled else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
@@ -928,6 +944,19 @@ def worker():
                         imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
                     if inswapper_source_image1 is not None:
                         imgs = perform_face_swap(imgs, inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1)
+                    if inswapper_source_image2 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image2, inswapper_source_image_indicies2, inswapper_target_image_indicies2)
+                    if inswapper_source_image3 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image3, inswapper_source_image_indicies3, inswapper_target_image_indicies3)
+                    if inswapper_source_image4 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image4, inswapper_source_image_indicies4, inswapper_target_image_indicies4)
+                    if inswapper_source_image5 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image5, inswapper_source_image_indicies5, inswapper_target_image_indicies5)
+                    if inswapper_source_image6 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image6, inswapper_source_image_indicies6, inswapper_target_image_indicies6)
+
+
+                
 
                 img_paths = []
                 for x in imgs:
