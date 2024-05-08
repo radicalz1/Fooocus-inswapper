@@ -219,6 +219,9 @@ def worker():
         inswapper_source_image = args.pop()  
         inswapper_source_image_indicies = args.pop()
         inswapper_target_image_indicies = args.pop()
+        inswapper_source_image1 = args.pop()  
+        inswapper_source_image_indicies1 = args.pop()
+        inswapper_target_image_indicies1 = args.pop()
 
         print(f"Inswapper: {'ENABLED' if inswapper_enabled else 'DISABLED'}")
 
@@ -842,9 +845,6 @@ def worker():
                 int(15.0 + 85.0 * float(done_steps) / float(all_steps)),
                 f'Step {step}/{total_steps} in the {current_task_id + 1}{ordinal_suffix(current_task_id + 1)} Sampling', y)])
 
-        # ins_s_ins = args.pop()
-        # ins_t_ins = args.pop()
-        # ins_s_ims = args.pop()
         for current_task_id, task in enumerate(tasks):
             execution_start_time = time.perf_counter()
 
@@ -923,13 +923,11 @@ def worker():
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
-                if inswapper_enabled and ins_s_ims is not None:
-                    for item in ins_s_ims:
-                        ins_s_in = ins_s_ins[item]
-                        ins_t_in = ins_t_ins[item]
-                        ins_s_im = item
-                        imgs = perform_face_swap(imgs, ins_s_im, ins_s_in, ins_t_in)
-                        # imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
+                if inswapper_enabled:
+                    if inswapper_source_image is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
+                    if inswapper_source_image1 is not None:
+                        imgs = perform_face_swap(imgs, inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1)
 
                 img_paths = []
                 for x in imgs:
