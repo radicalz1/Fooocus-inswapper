@@ -955,9 +955,10 @@ def worker():
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
                 if inswapper_enabled and ins_sims is not None:
-                    img = imgs.copy()
-                    for idx, item in enumerate(ins_sims):
-                        imgs = perform_face_swap(img, item, ins_sins[idx], ins_tins[idx])
+                    imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
+                    # img = imgs.copy()
+                    # for idx, item in enumerate(ins_sims):
+                    #     imgs = perform_face_swap(img, item, ins_sins[idx], ins_tins[idx])
 
                 # if inswapper_enabled and ins_sims is not None:
                 #     for item in ins_sims:
