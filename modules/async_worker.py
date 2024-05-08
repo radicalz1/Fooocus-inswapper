@@ -939,8 +939,8 @@ def worker():
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
+                img = imgs
                 if inswapper_enabled:
-                    img = imgs
                     if inswapper_source_image is not None:
                         imgs = perform_face_swap(img, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
                     if inswapper_source_image1 is not None:
