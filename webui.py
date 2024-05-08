@@ -397,25 +397,24 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
-                                    def aerith3():
-                                        return "https://cdn.vox-cdn.com/thumbor/cczSiJV366oYBvJylL-BEUDgI50=/0x0:3840x2048/1200x675/filters:focal(1455x631:2069x1245)/cdn.vox-cdn.com/uploads/chorus_image/image/73229269/IMG_9322.0.jpeg"
-                                    def tifa1():
-                                        return "https://oyster.ignimgs.com/mediawiki/apis.ign.com/final-fantasy-7-rebirth/a/a8/Tifa_Lockhart_Final_Fantasy_VII_Rebirth.png"
-                                    def tifa2():
-                                        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNkIqXPYktTO1aupqh-UZ6EJ88HfcberPccA&usqp=CAU"
-                                    def tifa3():
-                                        return "https://hypeabis.id/assets/content/202210121502_crop.jpg"
-                                    def rinoa1():
-                                        return "https://scontent.fsub21-1.fna.fbcdn.net/v/t39.30808-6/302728128_477318131068197_9075365086051644825_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=9eFWu2LClK0Q7kNvgF15QRf&_nc_ht=scontent.fsub21-1.fna&oh=00_AfDfha3Ys2wOOJkr6Y5rj_9sNVFTLK5Y0hNg4OSyERt1kA&oe=66414F58"
-                                    def rinoa2():
-                                        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0rHicxnLLnSEx3ZpbEEXkz_6RgY1dJHQLIQ&usqp=CAU"
-                                    def lightning1():
-                                        return "https://images.pushsquare.com/1009fd46171fc/light-of-our-life.large.jpg"
-                                    # def ():
-                                    #     return ""
-                                    # def ():
-                                    #     return ""
-
+                                def aerith3():
+                                    return "https://cdn.vox-cdn.com/thumbor/cczSiJV366oYBvJylL-BEUDgI50=/0x0:3840x2048/1200x675/filters:focal(1455x631:2069x1245)/cdn.vox-cdn.com/uploads/chorus_image/image/73229269/IMG_9322.0.jpeg"
+                                def tifa1():
+                                    return "https://oyster.ignimgs.com/mediawiki/apis.ign.com/final-fantasy-7-rebirth/a/a8/Tifa_Lockhart_Final_Fantasy_VII_Rebirth.png"
+                                def tifa2():
+                                    return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNkIqXPYktTO1aupqh-UZ6EJ88HfcberPccA&usqp=CAU"
+                                def tifa3():
+                                    return "https://hypeabis.id/assets/content/202210121502_crop.jpg"
+                                def rinoa1():
+                                    return "https://scontent.fsub21-1.fna.fbcdn.net/v/t39.30808-6/302728128_477318131068197_9075365086051644825_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5f2048&_nc_ohc=9eFWu2LClK0Q7kNvgF15QRf&_nc_ht=scontent.fsub21-1.fna&oh=00_AfDfha3Ys2wOOJkr6Y5rj_9sNVFTLK5Y0hNg4OSyERt1kA&oe=66414F58"
+                                def rinoa2():
+                                    return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0rHicxnLLnSEx3ZpbEEXkz_6RgY1dJHQLIQ&usqp=CAU"
+                                def lightning1():
+                                    return "https://images.pushsquare.com/1009fd46171fc/light-of-our-life.large.jpg"
+                                # def ():
+                                #     return ""
+                                # def ():
+                                #     return ""
                                 with gr.Row():
                                     with gr.Column():
                                         inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
