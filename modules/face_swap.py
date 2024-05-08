@@ -36,10 +36,10 @@ for item in images:
       result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
       # result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
       # swapped_images.append(result_image)
-      print(==================)
-      print(Inswapper Finished)
-      print(Start Restoration)
-      print(==================)
+      print("==================")
+      print("Inswapper Finished")
+      print("Start Restoration")
+      print("==================")
 
   # if True:
       
@@ -54,8 +54,8 @@ for item in images:
                                       device)
 
       swapped_images.append(result_image)
-      print(===============)
-      print(Done, appended)
-      print(===============)
+      print("===============")
+      print("Done, appended")
+      print("===============")
   
   return swapped_images
