@@ -216,9 +216,26 @@ def worker():
                 cn_tasks[cn_type].append([cn_img, cn_stop, cn_weight])
 
         inswapper_enabled = args.pop()
-        inswapper_source_image = args.pop()  
-        inswapper_source_image_indicies = args.pop()
-        inswapper_target_image_indicies = args.pop()
+        ins_n = args.pop()
+        ins_sins = []
+        ins_tins = []
+        ins_sims = []
+        for _ in range(ins_n):
+            ins_sin = args.pop()
+            ins_tin = args.pop()
+            ins_sim = args.pop()
+            if ins_sim is not None:
+                ins_sins.append = [ins_sin]
+                ins_tins.append = [ins_tin]
+                ins_sims.append = [ins_sim]
+            
+        # def get_active_ins(ins: list) -> list:
+        #   return [[input[0],input[1],input[2] for input in ins if input[2] is not None]
+        # ins = get_active_ins([[str(args.pop()), str(args.pop()), image(args.pop())] for _ in range(ins_n)])
+
+        # inswapper_source_image = args.pop()  
+        # inswapper_source_image_indicies = args.pop()
+        # inswapper_target_image_indicies = args.pop()
         # inswapper_source_image1 = args.pop()  
         # inswapper_source_image_indicies1 = args.pop()
         # inswapper_target_image_indicies1 = args.pop()
@@ -939,9 +956,11 @@ def worker():
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
                 # if inswapper_enabled and input_image_checkbox and current_tab != 'inpaint':
-                if inswapper_enabled:
-                    if inswapper_source_image is not None:
-                        imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
+                if inswapper_enabled and ins_sims is not None:
+                    for item in ins_sims:
+                        imgs = perform_face_swap(imgs, item, ins_sins[item], ins_tins[item])
+
+                        # imgs = perform_face_swap(imgs, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies)
                     # if inswapper_source_image1 is not None:
                     #     imgs = perform_face_swap(img, inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1)
                     # if inswapper_source_image2 is not None:
