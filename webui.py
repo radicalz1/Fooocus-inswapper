@@ -427,7 +427,8 @@ with shared.gradio_root:
                                                 ins_ctrls.append(inswapper_target_image_indicies)
                                                 ins_ctrls.append(inswapper_source_image)
                                                 with gr.Row():
-                                                    clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
+                                                    ins_clear_btn = gr.Button(value="Clear")
+                                                    ins_clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
                                                     ins_btn_aerith2 = gr.Button(value="Aerith2")
                                                     ins_btn_aerith2.click(aerith2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
                                                     ins_btn_aerith3 = gr.Button(value="Aerith3")
