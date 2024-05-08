@@ -925,8 +925,8 @@ with shared.gradio_root:
         ctrls += [inswapper_source_image4, inswapper_source_image_indicies4, inswapper_target_image_indicies4]
         ctrls += [inswapper_source_image5, inswapper_source_image_indicies5, inswapper_target_image_indicies5]
         ctrls += [inswapper_source_image6, inswapper_source_image_indicies6, inswapper_target_image_indicies6]
-        # ctrls += [photomaker_enabled, photomaker_images]
-        # ctrls += [instantid_enabled, instantid_source_image_path, instantid_pose_image_path, instantid_identitynet_strength_ratio, instantid_adapter_strength_ratio]
+        ctrls += [photomaker_enabled, photomaker_images]
+        ctrls += [instantid_enabled, instantid_source_image_path, instantid_pose_image_path, instantid_identitynet_strength_ratio, instantid_adapter_strength_ratio]
 
         def parse_meta(raw_prompt_txt, is_generating):
             loaded_json = None
