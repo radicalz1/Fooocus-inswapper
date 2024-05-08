@@ -419,6 +419,7 @@ with shared.gradio_root:
                                     with gr.Column():
                                         inswapper_source_image_indicies = gr.Text(label = "Source Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="0")
                                         inswapper_target_image_indicies = gr.Text(label = "Target Image Index", info="-1 will swap all faces, otherwise provide the 0-based index of the face (0, 1, etc)", value="-1")
+                                        inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
                                         with gr.Row():
                                             clear_btn.click(clear, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
                                             ins_btn_aerith2 = gr.Button(value="Aerith2")
@@ -437,7 +438,6 @@ with shared.gradio_root:
                                             ins_btn_rinoa2.click(rinoa2, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
                                             ins_btn_lightning1 = gr.Button(value="Lightning1")
                                             ins_btn_lightning1.click(lightning1, inputs=[], outputs=[inswapper_source_image], show_progress=True, queue=False)
-                                    inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
                                 with gr.Row():
                                     inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
                                     with gr.Column():
