@@ -397,7 +397,6 @@ with shared.gradio_root:
                     with gr.Tabs():
                         with gr.TabItem(label="Inswapper") as inswapper_tab:
                             with gr.Column():
-                                ins_n = 10
                                 ins_ctrls = []
                                 def aerith3():
                                     return "https://cdn.vox-cdn.com/thumbor/cczSiJV366oYBvJylL-BEUDgI50=/0x0:3840x2048/1200x675/filters:focal(1455x631:2069x1245)/cdn.vox-cdn.com/uploads/chorus_image/image/73229269/IMG_9322.0.jpeg"
@@ -418,7 +417,7 @@ with shared.gradio_root:
                                 # def ():
                                 #     return ""
                                 with gr.Column():
-                                    for _ in range(ins_n):
+                                    for _ in range(flags.inswapper_image_count):
                                         with gr.Row():
                                             inswapper_source_image = grh.Image(label='Source Face Image', type='numpy')
                                             with gr.Column():
@@ -1011,7 +1010,7 @@ with shared.gradio_root:
             ctrls += [save_metadata_to_images, metadata_scheme]
 
         ctrls += ip_ctrls
-        ctrls += [inswapper_enabled, ins_n]
+        ctrls += [inswapper_enabled]
         ctrls += ins_ctrls
         # ctrls += [inswapper_enabled, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies]
         # ctrls += [inswapper_source_image1, inswapper_source_image_indicies1, inswapper_target_image_indicies1]
