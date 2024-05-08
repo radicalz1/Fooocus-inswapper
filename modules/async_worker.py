@@ -15,6 +15,9 @@ class AsyncTask:
 
 
 async_tasks = []
+ins_sins = []
+ins_tins = []
+ins_sims = []
 
 
 def worker():
@@ -133,9 +136,6 @@ def worker():
 
     @torch.no_grad()
     @torch.inference_mode()
-    ins_sins = []
-    ins_tins = []
-    ins_sims = []
     def handler(async_task):
         execution_start_time = time.perf_counter()
         async_task.processing = True
