@@ -12,7 +12,7 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
 
   print("==================")
   print(f"Read target image")
-  target_img = cv2.cvtColor(np.array(target_img), cv2.COLOR_RGB2BGR)
+  target_img = cv2.cvtColor(np.array(images), cv2.COLOR_RGB2BGR)
   print("========================================================")
   print(f"detect faces that will be replaced in the target image")
   target_faces = get_many_faces(face_analyser, target_img)
