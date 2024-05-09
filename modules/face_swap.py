@@ -1,25 +1,13 @@
 import sys
 from PIL import Image
 import numpy as np
-import cv2
 sys.path.append('../inswapper')
 
-from inswapper.swapper import process, getFaceAnalyser, get_many_faces
+from inswapper.swapper import process
 
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
   swapped_images = []
   swapped_images.extend(images)
-
-  print("==================")
-  print(f"Read target image")
-  target_img = cv2.cvtColor(np.array(images), cv2.COLOR_RGB2BGR)
-  print("========================================================")
-  print(f"detect faces that will be replaced in the target image")
-  target_faces = get_many_faces(face_analyser, target_img)
-  num_target_faces = len(target_faces)
-  swapped_images.append(target_faces)
-  print("==================")
-  print(f"Appended Target Faces")
 
   from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
   # make sure the ckpts downloaded successfully
@@ -47,8 +35,7 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         print(f"Inswapper: Source indicies: {inswapper_source_image_indicies}")
         print(f"Inswapper: Target indicies: {inswapper_target_image_indicies}")      
 
-        result_image = process(target_faces, num_target_faces, [sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
-        # result_image = process([source_image], item, inswapper_source_image_indicies, inswapper_target_image_indicies, "../inswapper/checkpoints/inswapper_128.onnx")
+        result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
         # swapped_images.append(result_image)
         print("==================")
         print(f"Inswap {idx} Finished")
