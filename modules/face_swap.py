@@ -74,11 +74,21 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
           # Add black padding (assuming black padding)
           padding_top = int(diff_sim_height / 2)
           padding_bottom = diff_sim_height - padding_top
+          # Print image shapes for debugging (optional)
+          print("===========================================")
+          print(f"result_image.shape: {result_image.shape}")
+          print(f"resized_sim.shape: {resized_sim.shape}")
+          print("===========================================")
           resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
         else:  # if portrait image, no need to pad anything
           target_height = rim_height
           target_width = int(target_height * aspect_ratio_sim)
+          # Print image shapes for debugging (optional)
+          print("===========================================")
+          print(f"result_image.shape: {result_image.shape}")
+          print(f"resized_sim.shape: {resized_sim.shape}")
+          print("===========================================")
           resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
         print("=====================================================")
