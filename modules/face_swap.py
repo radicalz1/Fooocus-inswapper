@@ -8,6 +8,7 @@ from inswapper.swapper import process
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
   swapped_images = []
   swapped_images.extend(images)
+  tinsim = len(inswapper_source_image)
 
   from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
   # make sure the ckpts downloaded successfully
@@ -38,8 +39,8 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
         # swapped_images.append(result_image)
         print("==================")
-        print(f"Inswap {idx} Finished")
-        print(f"Start {idx} Restoration")
+        print(f"Inswap {idx} / {tinsim} Finished")
+        print(f"Start {idx} / {tinsim} Restoration")
         print("==================")
         
         result_image = cv2.cvtColor(np.array(result_image), cv2.COLOR_RGB2BGR)
@@ -54,7 +55,7 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
   
         swapped_images.append(result_image)
         print("===============")
-        print(f"Done restore and append {idx}")
+        print(f"Done restore and append {idx} / {tinsim}")
         print("===============")
     
   return swapped_images
