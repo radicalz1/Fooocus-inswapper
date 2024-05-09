@@ -64,7 +64,7 @@ def swap_face(face_swapper,
     return face_swapper.get(temp_frame, target_face, source_face, paste_back=True)
  
     
-def process(source_img: Union[Image.Image, List],
+def process(target_faces, num_target_faces, source_img: Union[Image.Image, List],
             target_img: Image.Image,
             source_indexes: str,
             target_indexes: str,
@@ -80,11 +80,11 @@ def process(source_img: Union[Image.Image, List],
     face_swapper = getFaceSwapModel(model_path)
     
     # read target image
-    target_img = cv2.cvtColor(np.array(target_img), cv2.COLOR_RGB2BGR)
+    # target_img = cv2.cvtColor(np.array(target_img), cv2.COLOR_RGB2BGR)
     
     # detect faces that will be replaced in the target image
-    target_faces = get_many_faces(face_analyser, target_img)
-    num_target_faces = len(target_faces)
+    # target_faces = get_many_faces(face_analyser, target_img)
+    # num_target_faces = len(target_faces)
     num_source_images = len(source_img)
 
     if target_faces is not None:
