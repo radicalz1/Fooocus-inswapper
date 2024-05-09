@@ -64,14 +64,16 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         print("===========================================")
         print(f"Resizing source image {iinsim} / {tinsim}")
         print("===========================================")
-        # Resize sim image proportionately based on its orientation
         original_sim_height, original_sim_width = sim.shape[:2]
-        # Calculate aspect ratio of sim
+        rim_height, rim_width = result_image.shape[:2]
         aspect_ratio_sim = original_sim_width / original_sim_height
-        # Determine target height based on result_image height
-        target_height = result_image.shape[0]
-        # Calculate new width for sim to maintain aspect ratio
-        target_width = int(target_height * aspect_ratio_sim)
+        if aspect_ratio_sim >= 1:
+          target_width = rim_width
+          target_height = int(target_width * aspect_ratio_sim)
+        else:
+          # target_height = result_image.shape[0]
+          target_height = rim_height
+          target_width = int(target_height * aspect_ratio_sim)
         # Resize sim proportionally (consider using cv2.INTER_AREA for upscaling)
         resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
@@ -79,7 +81,7 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         print(f"Combining & appending result & source image {iinsim} / {tinsim}")
         print("=====================================================")
         # Combine result_image and resized_sim horizontally
-        combined_result_image = cv2.hconcat([resized_sim, result_image])
+        combined_result_image = cv2.hconcat([result_image, resized_sim])
         # Append combined_result_image to swapped_images
         swapped_images.append(combined_result_image)
         # swapped_images.append(result_image)
