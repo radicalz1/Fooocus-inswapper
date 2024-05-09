@@ -1,6 +1,7 @@
 import sys
 from PIL import Image
 import numpy as np
+import cv2
 sys.path.append('../inswapper')
 
 from inswapper.swapper import process
@@ -39,10 +40,13 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
 
         result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
         # swapped_images.append(result_image)
-        print("==================")
+        print("=====================================")
         print(f"Inswap {iinsim} / {tinsim} Finished")
-        print(f"Start {insim} / {tinsim} Restoration")
-        print("==================")
+        print("=====================================")
+
+        print("=======================================")
+        print(f"Start {iinsim} / {tinsim} Restoration")
+        print("=======================================")
         
         result_image = cv2.cvtColor(np.array(result_image), cv2.COLOR_RGB2BGR)
         result_image = face_restoration(result_image, 
@@ -53,10 +57,34 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
                                         upsampler,
                                         codeformer_net,
                                         device)
-  
-        swapped_images.append(result_image)
+        print("======================================================")
+        print(f"Done restore {iinsim} / {tinsim}, start combining...")
+        print("======================================================")
+
+        print("===========================================")
+        print(f"Resizing source image {iinsim} / {tinsim}")
+        print("===========================================")
+        # Resize sim image proportionately based on its orientation
+        original_sim_height, original_sim_width = sim.shape[:2]
+        # Calculate aspect ratio of sim
+        aspect_ratio_sim = original_sim_width / original_sim_height
+        # Determine target height based on result_image height
+        target_height = result_image.shape[0]
+        # Calculate new width for sim to maintain aspect ratio
+        target_width = int(target_height * aspect_ratio_sim)
+        # Resize sim proportionally (consider using cv2.INTER_AREA for upscaling)
+        resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
+
+        print("=====================================================")
+        print(f"Combining & appending result & source image {iinsim} / {tinsim}")
+        print("=====================================================")
+        # Combine result_image and resized_sim horizontally
+        combined_result_image = cv2.hconcat([resized_sim, result_image])
+        # Append combined_result_image to swapped_images
+        swapped_images.append(combined_result_image)
+        # swapped_images.append(result_image)
         print("===============")
-        print(f"Done restore and append {iinsim} / {tinsim}")
+        print(f"Done combining and append {iinsim} / {tinsim}")
         print("===============")
     
   return swapped_images
