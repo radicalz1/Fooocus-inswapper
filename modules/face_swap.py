@@ -67,16 +67,16 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         original_sim_height, original_sim_width = sim.shape[:2]
         rim_height, rim_width = result_image.shape[:2]
         aspect_ratio_sim = original_sim_width / original_sim_height
-        if aspect_ratio_sim >= 1:  # if wide image
+        if aspect_ratio_sim > 1:  # if wide image
           target_width = rim_width
-          res_sim_height = int(target_width * aspect_ratio_sim)
+          res_sim_height = int(target_width / aspect_ratio_sim)
           diff_sim_height = max(0, rim_height - res_sim_height)  # Ensure non-negative diff
           # Add black padding (assuming black padding)
           padding_top = int(diff_sim_height / 2)
           padding_bottom = diff_sim_height - padding_top
           resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-        if aspect_ratio_sim <1:  # if portrait image, no need to pad anything
+        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
           target_height = rim_height
           target_width = int(target_height * aspect_ratio_sim)
           resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
