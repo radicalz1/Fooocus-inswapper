@@ -1,17 +1,21 @@
 import sys
 from PIL import Image
 import numpy as np
-import cv2
+import modules.default_pipeline as pipeline
+# import cv2
 sys.path.append('../inswapper')
 
 from inswapper.swapper import process
+from inswapper.restoration import face_restoration, check_ckpts, set_realesrgan, torch, ARCH_REGISTRY, cv2
+from modules.async_worker import positive_cond, negative_cond, steps, switch, width, height, image_seed, callback, final_sampler_name, final_scheduler_name,
+            initial_latent, denoising_strength, tiled, cfg_scale, refiner_swap_method, disable_preview
+
 
 def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
   swapped_images = []
   swapped_images.extend(images)
   tinsim = len(inswapper_source_image)
 
-  from inswapper.restoration import face_restoration,check_ckpts,set_realesrgan,torch,ARCH_REGISTRY,cv2
   # make sure the ckpts downloaded successfully
   check_ckpts()
   # https://huggingface.co/spaces/sczhou/CodeFormer
@@ -61,6 +65,49 @@ def perform_face_swap(images, inswapper_source_image, inswapper_source_image_ind
         print(f"Done restore {iinsim} / {tinsim}, start combining...")
         print("======================================================")
 
+        print("======================================================")
+        print(f"Start improving detail {iinsim} / {tinsim}")
+        print("======================================================")
+
+        rim_inip = core.numpy_to_pytorch(result_image)
+        candidate_vae, _ = pipeline.get_candidate_vae(
+            steps=steps,
+            switch=switch,
+            denoise=denoising_strength,
+            refiner_swap_method=refiner_swap_method
+        )
+        initial_latent = core.encode_vae(
+            vae=candidate_vae,
+            pixels=initial_pixels, tiled=True)
+        B, C, H, W = initial_latent['samples'].shape
+        width = W * 8
+        height = H * 8
+        print(f'Final resolution is {str((height, width))}.')
+        
+        imgs = pipeline.process_diffusion(
+            positive_cond=positive_cond,
+            negative_cond=negative_cond,
+            steps=steps,
+            switch=switch,
+            width=width,
+            height=height,
+            image_seed=task['task_seed'],
+            callback=callback,
+            sampler_name=final_sampler_name,
+            scheduler_name=final_scheduler_name,
+            latent=initial_latent,
+            denoise=denoising_strength,
+            tiled=tiled,
+            cfg_scale=cfg_scale,
+            refiner_swap_method=refiner_swap_method,
+        disable_preview=disable_preview
+        )
+
+        print("======================================================")
+        print(f"Finish improving detail {iinsim} / {tinsim}")
+        print("======================================================")
+
+        
         print("===========================================")
         print(f"Resizing source image {iinsim} / {tinsim}")
         print("===========================================")
