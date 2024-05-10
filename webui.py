@@ -267,11 +267,27 @@ with shared.gradio_root:
                                         cn_image_count = flags.controlnet_image_count
                                     def webui_cn_image_count():
                                         return cn_image_count
+
+# def process_image(filepath):
+#   # Load the image from the selected filepath
+#   if filepath:
+#     try:
+#       with open(filepath, 'rb') as f:
+#         image = gr.Image(value=f.read())
+#       return image
+#     except FileNotFoundError:
+#       # Handle file not found error (optional)
+#       return "Error: File not found."
+#   else:
+#     # Handle no file selected case (optional)
+#     return "No image selected."
                                     
 #                                     for _ in range(flags.controlnet_image_count):
                                     for _ in range(webui_cn_image_count()):
                                         with gr.Column():
                                             ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
+                                            ip_browse = gr.FileExplorer(label='Browse..', file_count='single', root='./content/Fooocus-inswapper/imgs' 
+                                            ip_browse.change(ip_browse.value, inputs=ip_browse, outputs=ip_image)
                                             ip_images.append(ip_image)
                                             ip_ctrls.append(ip_image)
                                             with gr.Column(visible=True) as ad_col:
