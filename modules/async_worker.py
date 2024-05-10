@@ -443,7 +443,10 @@ def worker():
         ip_adapter.load_ip_adapter(clip_vision_path, ip_negative_path, ip_adapter_face_path)
 
         if overwrite_step > 0:
-            steps = overwrite_step
+            if 'inswap' in uov_method:
+                steps = 1
+            else:
+                steps = overwrite_step
 
         switch = int(round(steps * refiner_switch))
 
@@ -557,7 +560,6 @@ def worker():
         if 'vary' in goals:
             if 'inswap' in uov_method:
                 denoising_strength =0.001
-                overwrite_step = 1
             if 'subtle' in uov_method:
                 denoising_strength = 0.5
             if 'strong' in uov_method:
