@@ -1,5 +1,8 @@
 from enum import IntEnum, Enum
 
+controlnet_image_count = 10
+inswapper_image_count = 10
+
 disabled = 'Disabled'
 enabled = 'Enabled'
 inswap = "Inswap (0.001)"
@@ -90,9 +93,6 @@ metadata_scheme = [
     (f'{MetadataScheme.FOOOCUS.value} (json)', MetadataScheme.FOOOCUS.value),
     (f'{MetadataScheme.A1111.value} (plain text)', MetadataScheme.A1111.value),
 ]
-
-controlnet_image_count = 6
-inswapper_image_count = 12
 
 
 class OutputFormat(Enum):
