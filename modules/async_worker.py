@@ -932,7 +932,7 @@ def worker():
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
                     print("=====================================")
-                    print("Inswapper START - face swap py to async"
+                    print("Inswapper START - face swap py to async")
                     print("=====================================")
                     import sys
                     from PIL import Image
