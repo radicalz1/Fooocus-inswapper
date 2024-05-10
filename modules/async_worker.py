@@ -1036,7 +1036,7 @@ def worker():
                         print(f"Resizing source image {iinsim} / {tinsim}")
                         print("===========================================")
                         original_sim_height, original_sim_width = sim.shape[:2]
-                        rim_height, rim_width = result_image.shape[:2]
+                        rim_height, rim_width = rim_r.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         if aspect_ratio_sim > 1:  # if wide image
                           target_width = rim_width
@@ -1056,7 +1056,8 @@ def worker():
                         print("=====================================================")
                         # Print image shapes for debugging (optional)
                         print("===========================================")
-                        print(f"result_image.shape: {result_image.shape}")
+                        print(f"restored_image.shape: {rim_r.shape}")
+                        print(f"enhanced_image.shape: {rim_e.shape}")
                         print(f"resized_sim.shape: {resized_sim.shape}")
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
