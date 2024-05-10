@@ -995,6 +995,22 @@ def worker():
                         print("======================================================")
                         print(f"Start enhance {iinsim} / {tinsim}")
                         print("======================================================")
+                        rip = core.numpy_to_pytorch(rim_r) # initial_pixels
+                        progressbar(async_task, 13, 'VAE encoding ...')
+            
+                        ins_candidate_vae, _ = pipeline.get_candidate_vae(
+                            steps=15,
+                            switch=switch,
+                            denoise=0.275,
+                            refiner_swap_method=refiner_swap_method
+                        )
+            
+                        ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
+                        rB, rC, rH, rW = ril['samples'].shape
+                        rwidth = rW * 8
+                        rheight = rH * 8
+                        print(f'Final resolution is {str((rheight, rwidth))}.')
+                          
                         rim_e = pipeline.process_diffusion(
                             positive_cond=positive_cond,
                             negative_cond=negative_cond,
@@ -1006,7 +1022,7 @@ def worker():
                             callback=callback,
                             sampler_name=final_sampler_name,
                             scheduler_name=final_scheduler_name,
-                            latent=rim_r,
+                            latent=ril,
                             denoise=0.275,
                             tiled=tiled,
                             cfg_scale=cfg_scale,
