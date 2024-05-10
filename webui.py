@@ -286,7 +286,7 @@ with shared.gradio_root:
                                     for _ in range(webui_cn_image_count()):
                                         with gr.Column():
                                             ip_image = grh.Image(label='Image', source='upload', type='numpy', show_label=False, height=300)
-                                            ip_browse = gr.FileExplorer(label='Browse..', file_count='single', root='./content/Fooocus-inswapper/imgs' 
+                                            ip_browse = gr.FileExplorer(label='Browse..', file_count='single', root='./content/Fooocus-inswapper/imgs')
                                             ip_browse.change(ip_browse.value, inputs=ip_browse, outputs=ip_image)
                                             ip_images.append(ip_image)
                                             ip_ctrls.append(ip_image)
