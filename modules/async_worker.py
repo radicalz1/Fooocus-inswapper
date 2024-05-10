@@ -226,35 +226,8 @@ def worker():
                 ins_sins.append(ins_sin)
                 ins_tins.append(ins_tin)
                 ins_sims.append(ins_sim)
-            
-        # def get_active_ins(ins: list) -> list:
-        #   return [[input[0],input[1],input[2] for input in ins if input[2] is not None]
-        # ins = get_active_ins([[str(args.pop()), str(args.pop()), image(args.pop())] for _ in range(ins_n)])
-
-        # inswapper_source_image = args.pop()  
-        # inswapper_source_image_indicies = args.pop()
-        # inswapper_target_image_indicies = args.pop()
-        # inswapper_source_image1 = args.pop()  
-        # inswapper_source_image_indicies1 = args.pop()
-        # inswapper_target_image_indicies1 = args.pop()
-        # inswapper_source_image2 = args.pop()  
-        # inswapper_source_image_indicies2 = args.pop()
-        # inswapper_target_image_indicies2 = args.pop()
-        # inswapper_source_image3 = args.pop()  
-        # inswapper_source_image_indicies3 = args.pop()
-        # inswapper_target_image_indicies3 = args.pop()
-        # inswapper_source_image4 = args.pop()  
-        # inswapper_source_image_indicies4 = args.pop()
-        # inswapper_target_image_indicies4 = args.pop()
-        # inswapper_source_image5 = args.pop()  
-        # inswapper_source_image_indicies5 = args.pop()
-        # inswapper_target_image_indicies5 = args.pop()
-        # inswapper_source_image6 = args.pop()  
-        # inswapper_source_image_indicies6 = args.pop()
-        # inswapper_target_image_indicies6 = args.pop()
-
-        
-        print(f"Inswapper: {'ENABLED' if inswapper_enabled else 'DISABLED'}")
+                    
+        print(f"Inswapper: {'ENABLED' if inswapper_enabled and ins_sims is not None else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
         photomaker_images = args.pop()
@@ -584,6 +557,7 @@ def worker():
         if 'vary' in goals:
             if 'inswap' in uov_method:
                 denoising_strength =0.001
+                overwrite_step = 1
             if 'subtle' in uov_method:
                 denoising_strength = 0.5
             if 'strong' in uov_method:
