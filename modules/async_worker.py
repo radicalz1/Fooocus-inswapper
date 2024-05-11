@@ -1051,7 +1051,7 @@ def worker():
                             sampler_name=final_sampler_name,
                             scheduler_name=final_scheduler_name,
                             latent=ril,
-                            denoise=em+dem,
+                            denoise=en_den,
                             tiled=tiled,
                             cfg_scale=cfg_scale,
                             refiner_swap_method=refiner_swap_method,
