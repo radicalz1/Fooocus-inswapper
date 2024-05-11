@@ -1138,17 +1138,6 @@ def worker():
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
                         def blend_images(bg_image, fg_image, alpha=ins_dn):
-                          """
-                          Blends two images with a darkening effect on the top layer.
-                          Args:
-                              bg_image: PIL Image object representing the background image.
-                              fg_image: PIL Image object representing the foreground image (top layer).
-                              alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
-                          """
-                          # Ensure images have the same size (optional, uncomment if needed)
-                          # if bg_image.size != fg_image.size:
-                          #   bg_image = bg_image.resize(fg_image.size)
-                          # Convert images to RGBA mode (for alpha channel)
                             bg_im = Image.open(bg_image)
                             fg_im = Image.open(fg_image)
                             bg_image = bg_im.convert("RGBA")
