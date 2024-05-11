@@ -941,21 +941,21 @@ def worker():
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
 
-                    print("====================")
-                    print("Positive_Cond START")
-                    print("====================")
-                    print(f"Type of positive_cond: {type(positive_cond)}")
-                    # Check the length of the list (optional)
-                    list_length = len(positive_cond)
-                    # print(f"List length: {list_length}")
-                    # Print each element in the list
-                    for i in range(list_length):
-                      element = positive_cond[i]
-                      print(f"Type Element {i+1}/{list_length}: type({element})")
-                      print(f"Element {i+1}/{list_length}: {element}")
-                    print("====================")
-                    print("Positive_Cond DONE")
-                    print("====================")
+                    # print("====================")
+                    # print("Positive_Cond START")
+                    # print("====================")
+                    # print(f"Type of positive_cond: {type(positive_cond)}")
+                    # # Check the length of the list (optional)
+                    # list_length = len(positive_cond)
+                    # # print(f"List length: {list_length}")
+                    # # Print each element in the list
+                    # for i in range(list_length):
+                    #   element = positive_cond[i]
+                    #   print(f"Type Element {i+1}/{list_length}: type({element})")
+                    #   print(f"Element {i+1}/{list_length}: {element}")
+                    # print("====================")
+                    # print("Positive_Cond DONE")
+                    # print("====================")
 
                     print("===============")
                     print("Inswapper START")
@@ -1149,15 +1149,17 @@ def worker():
                           # if bg_image.size != fg_image.size:
                           #   bg_image = bg_image.resize(fg_image.size)
                           # Convert images to RGBA mode (for alpha channel)
-                          bg_image = bg_image.convert("RGBA")
-                          fg_image = fg_image.convert("RGBA")
-                          # Invert foreground alpha for darkening effect (more alpha = darker)
-                          inverted_alpha = 1.0 - fg_image.split()[-1]
-                          # Blend the images using weighted addition
-                          blended_image = Image.blend(bg_image, fg_image, alpha=alpha)
-                          # Apply the inverted alpha to the top layer
-                          blended_image.putalpha(inverted_alpha)
-                          return blended_image
+                            bg_im = Image.open(bg_image)
+                            fg_im = Image.open(fg_image)
+                            bg_image = bg_im.convert("RGBA")
+                            fg_image = fg_im.convert("RGBA")
+                            # Invert foreground alpha for darkening effect (more alpha = darker)
+                            inverted_alpha = 1.0 - fg_image.split()[-1]
+                            # Blend the images using weighted addition
+                            blended_image = Image.blend(bg_image, fg_image, alpha=alpha)
+                            # Apply the inverted alpha to the top layer
+                            blended_image.putalpha(inverted_alpha)
+                            return blended_image
                         bg = rim_r
                         fg = rim_re
                         rim_red = blend_images(bg, fg)
