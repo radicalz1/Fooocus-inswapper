@@ -1037,6 +1037,42 @@ def worker():
                         print("======================================================")
                         print(f"Finish enhance {iinsim} / {tinsim}")
                         print("======================================================")
+                        print("======================================================")
+                        print(f"Start Darken {iinsim} / {tinsim}")
+                        print("======================================================")
+                        def blend_images(bg_path, fg_path, output_path, alpha=0.7):
+                            """
+                            Blends two images with a darkening effect on the top layer.
+                            Args:
+                            img1_path: Path to the background image.
+                            img2_path: Path to the foreground image (top layer).
+                            output_path: Path to save the blended image.
+                            alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
+                            """
+                            background = Image.open(bg_path)
+                            foreground = Image.open(fg_path)
+                            # Ensure images have the same size
+                            # background = background.resize(foreground.size)
+                            # Convert images to RGBA mode (for alpha channel)
+                            background = background.convert("RGBA")
+                            foreground = foreground.convert("RGBA")
+                            # Invert foreground alpha for darkening effect (more alpha = darker)
+                            inverted_alpha = 1.0 - foreground.split()[-1]
+                            # Blend the images using weighted addition
+                            blended_image = Image.blend(background, foreground, alpha=alpha)
+                            # Apply the inverted alpha to the top layer
+                            blended_image.putalpha(inverted_alpha)
+                            return blended_image
+                            # # Save the blended image
+                            # blended_image.save(output_path)
+                        # Example usage
+                        bg_path = rim_r
+                        fg_path = rim_e
+                        rim_d = blend_images(img1_path, img2_path)
+                        
+                        print("======================================================")
+                        print(f"Finish Darken {iinsim} / {tinsim}")
+                        print("======================================================")
                         print("===========================================")
                         print(f"Resizing source image {iinsim} / {tinsim}")
                         print("===========================================")
@@ -1054,6 +1090,11 @@ def worker():
                           padding_bottom = diff_sim_height - padding_top
                           resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
+                          target_height = rim_height
+                          target_width = int(target_height * aspect_ratio_sim)
+                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                        # RESIZE rim_r -- Not needed
                         # if aspect_ratio_rimr > 1:  # if wide image
                         #   target_width = rim_width
                         #   res_rimr_height = int(target_width / aspect_ratio_rimr)
@@ -1063,10 +1104,6 @@ def worker():
                         #   padding_bottom = diff_rimr_height - padding_top
                         #   resized_rimr = cv2.copyMakeBorder(cv2.resize(rim_r, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
                         #                                    padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-                        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
-                          target_height = rim_height
-                          target_width = int(target_height * aspect_ratio_sim)
-                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         # if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
                         #   target_height = rim_height
                         #   target_width = int(target_height * aspect_ratio_rimr)
@@ -1079,10 +1116,11 @@ def worker():
                         print(f"restored_image.shape: {rim_r.shape}")
                         # print(f"resized_rimr.shape: {resized_rimr.shape}")
                         print(f"enhanced_image.shape: {rim_e.shape}")
+                        print(f"darken_image.shape: {rim_d.shape}")
                         print(f"resized_sim.shape: {resized_sim.shape}")
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
-                        combined_result_image = cv2.hconcat([rim_e, rim_r, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_d, rim_e, rim_r, resized_sim])
                         # Append combined_result_image to swapped_images
                         ins_imgs.append(combined_result_image)
                         print("===============")
@@ -1141,8 +1179,7 @@ def worker():
                             d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
                             d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
                             ins_img_paths.append(log(x, d, metadata_parser, output_format))
-        
-                        ins_yield_result(async_task, ins_img_paths)
+                            ins_yield_result(async_task, ins_img_paths)
                         print("===============")
                         print(f"Finish logging {iinsim} / {tinsim}")
                         print("===============")
