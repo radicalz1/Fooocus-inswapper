@@ -1044,7 +1044,7 @@ def worker():
                         print("======================================")
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r = face_restoration(result_image, True, True, 1, 0.5, upsampler, codeformer_net, device)
+                        rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
                         print("=======================================")
                         print(f"Finish Restoration {iinsim} / {tinsim}")
                         print("=======================================")
@@ -1077,7 +1077,7 @@ def worker():
                             sampler_name=final_sampler_name,
                             scheduler_name=final_scheduler_name,
                             latent=ril,
-                            denoise=0.275,
+                            denoise=0.5,
                             tiled=tiled,
                             cfg_scale=cfg_scale,
                             refiner_swap_method=refiner_swap_method,
