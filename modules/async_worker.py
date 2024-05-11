@@ -1075,9 +1075,8 @@ def worker():
                         print(f"Inswapper: Target indicies: {tin}")      
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
                         print(f"Type of img: {type(rim)}")
-                        rim_im = np.array(rim)  # Convert to NumPy array before returning
-                        print(f"Type of img: {type(rim_im)}")
-                        ins_y(rim_im)
+                        rim_i = np.array(rim)  # Convert to NumPy array before returning
+                        ins_y(rim_i)
                         print("==================================")
                         print(f"Finish Inswap {iinsim} / {tinsim}")
                         print("==================================")
@@ -1085,13 +1084,15 @@ def worker():
                         print(f"Start Enhance Inswap {iinsim} / {tinsim}")
                         print("=========================================")
                         progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
-                        rim_en1 = ins_en(rim_im)
-                        ins_y(rim_en1)
-                        rim_en2 = ins_en(rim_en1)
-                        ins_y(rim_en2)
+                        rim_ie = ins_en(rim_i)
+                        ins_y(rim_ie)
+                        # rim_ie2 = ins_en(rim_ie1)
+                        # ins_y(rim_ie2)
                         print("=========================================")
                         print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
                         print("=========================================")
+                    
+
                         print("======================================")
                         print(f"Start Restoration {iinsim} / {tinsim}")
                         print("======================================")
@@ -1102,52 +1103,51 @@ def worker():
                         print(f"Finish Restoration {iinsim} / {tinsim}")
                         print("=======================================")
                         print("======================================")
-                        print(f"Start Enhancement {iinsim} / {tinsim}")
+                        print(f"Start Restoration Enhancement {iinsim} / {tinsim}")
                         print("======================================")
-                        progressbar(async_task, 13, f'Start Enhancement {iinsim} / {tinsim}')
-                        rim_re1 = ins_en(rim_r)
-                        ins_y(rim_re1)
-                        rim_re2 = ins_en(rim_re1)
-                        ins_y(rim_re2)
+                        progressbar(async_task, 13, f'Start Restoration Enhancement {iinsim} / {tinsim}')
+                        rim_re = ins_en(rim_r)
+                        ins_y(rim_re)
+                        # rim_re2 = ins_en(rim_re1)
+                        # ins_y(rim_re2)
                         print("=======================================")
-                        print(f"Finish Enhancement {iinsim} / {tinsim}")
+                        print(f"Finish Restoration Enhancement {iinsim} / {tinsim}")
                         print("=======================================")
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re])
+                        ins_y(combined_result_image)
                         print("=================================")
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        def blend_images(bg_path, fg_path, alpha=ins_dn):
-                            # """
-                            # Blends two images with a darkening effect on the top layer.
-                            # Args:
-                            # img1_path: Path to the background image.
-                            # img2_path: Path to the foreground image (top layer).
-                            # output_path: Path to save the blended image.
-                            # alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
-                            # """
-                            background = Image.open(bg_path)
-                            foreground = Image.open(fg_path)
-                            # Ensure images have the same size
-                            # background = background.resize(foreground.size)
-                            # Convert images to RGBA mode (for alpha channel)
-                            background = background.convert("RGBA")
-                            foreground = foreground.convert("RGBA")
-                            # Invert foreground alpha for darkening effect (more alpha = darker)
-                            inverted_alpha = 1.0 - foreground.split()[-1]
-                            # Blend the images using weighted addition
-                            blended_image = Image.blend(background, foreground, alpha=alpha)
-                            # Apply the inverted alpha to the top layer
-                            blended_image.putalpha(inverted_alpha)
-                            return blended_image
-                            # # Save the blended image
-                            # blended_image.save(output_path)
-                        # Example usage
-                        bg_path = rim_r
-                        fg_path = rim_re1
-                        rim_red1 = blend_images(bg_path, fg_path)
+                        def blend_images(bg_image, fg_image, alpha=ins_dn):
+                          """
+                          Blends two images with a darkening effect on the top layer.
+                          Args:
+                              bg_image: PIL Image object representing the background image.
+                              fg_image: PIL Image object representing the foreground image (top layer).
+                              alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
+                          """
+                          # Ensure images have the same size (optional, uncomment if needed)
+                          # if bg_image.size != fg_image.size:
+                          #   bg_image = bg_image.resize(fg_image.size)
+                          # Convert images to RGBA mode (for alpha channel)
+                          bg_image = bg_image.convert("RGBA")
+                          fg_image = fg_image.convert("RGBA")
+                          # Invert foreground alpha for darkening effect (more alpha = darker)
+                          inverted_alpha = 1.0 - fg_image.split()[-1]
+                          # Blend the images using weighted addition
+                          blended_image = Image.blend(bg_image, fg_image, alpha=alpha)
+                          # Apply the inverted alpha to the top layer
+                          blended_image.putalpha(inverted_alpha)
+                          return blended_image
+                        bg = rim_r
+                        fg = rim_re1
+                        rim_red1 = blend_images(bg, fg)
                         ins_y(rim_red1)
-                        rim_red2 = blend_images(bg_path, rim_re2)
+                        rim_red2 = blend_images(bg, rim_re2)
                         ins_y(rim_red2)
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red1, rim_red2])
+                        ins_y(combined_result_image)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
                         print("==================================")
@@ -1173,51 +1173,15 @@ def worker():
                           target_height = rim_height
                           target_width = int(target_height * aspect_ratio_sim)
                           resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
-                        # RESIZE rim_r -- Not needed
-                        # if aspect_ratio_rimr > 1:  # if wide image
-                        #   target_width = rim_width
-                        #   res_rimr_height = int(target_width / aspect_ratio_rimr)
-                        #   diff_rimr_height = max(0, rim_height - res_rimr_height)  # Ensure non-negative diff
-                        #   # Add black padding (assuming black padding)
-                        #   padding_top = int(diff_rimr_height / 2)
-                        #   padding_bottom = diff_rimr_height - padding_top
-                        #   resized_rimr = cv2.copyMakeBorder(cv2.resize(rim_r, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
-                        #                                    padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-                        # if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
-                        #   target_height = rim_height
-                        #   target_width = int(target_height * aspect_ratio_rimr)
-                        #   resized_rimr = cv2.resize(rim_r, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
                         print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("=====================================================")
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        # Print image shapes for debugging (optional)
-                        print("===========================================")
-                        print(f"restored_image.shape: {rim_r.shape}")
-                        # print(f"resized_rimr.shape: {resized_rimr.shape}")
-                        print(f"enhanced_image.shape: {rim_e.shape}")
-                        print(f"darken_image.shape: {rim_d.shape}")
-                        print(f"resized_sim.shape: {resized_sim.shape}")
-                        print("===========================================")
-                        # Combine result_image and resized_sim horizontally
-                        combined_result_image = cv2.hconcat([rim_red2, rim_red1, rim_re2, rim_re1, rim_d, rim_e, rim_r, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red1, rim_red2, resized_sim])
                         ins_y(combined_result_image)
-                        # Append combined_result_image to swapped_images
-                        # ins_imgs.append(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
                         print("====================================================")
-                        # print("==================================")
-                        # print(f"Start Logging {iinsim} / {tinsim}")
-                        # print("==================================")
-                        # progressbar(async_task, 13, f'Start Logging {iinsim} / {tinsim}')
-                        # # ins_img_paths = []
-                        # # for x in ins_imgs:
-                        # log(combined_result_image, d, metadata_parser, output_format)
-                        # ins_yield_result(async_task, combined_result_image)
-                        # print("===================================")
-                        # print(f"Finish logging {iinsim} / {tinsim}")
-                        # print("===================================")
 
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
