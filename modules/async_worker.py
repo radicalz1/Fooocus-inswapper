@@ -967,7 +967,6 @@ def worker():
                         sin = ins_sins[idx]
                         tin = ins_tins[idx]
                         iinsim = idx+1
-                        imgs.append(sim)
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
                         result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
@@ -1047,35 +1046,35 @@ def worker():
                           padding_bottom = diff_sim_height - padding_top
                           resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-                        if aspect_ratio_rimr > 1:  # if wide image
-                          target_width = rim_width
-                          res_rimr_height = int(target_width / aspect_ratio_rimr)
-                          diff_rimr_height = max(0, rim_height - res_rimr_height)  # Ensure non-negative diff
-                          # Add black padding (assuming black padding)
-                          padding_top = int(diff_rimr_height / 2)
-                          padding_bottom = diff_rimr_height - padding_top
-                          resized_rimr = cv2.copyMakeBorder(cv2.resize(rim_r, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
-                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                        # if aspect_ratio_rimr > 1:  # if wide image
+                        #   target_width = rim_width
+                        #   res_rimr_height = int(target_width / aspect_ratio_rimr)
+                        #   diff_rimr_height = max(0, rim_height - res_rimr_height)  # Ensure non-negative diff
+                        #   # Add black padding (assuming black padding)
+                        #   padding_top = int(diff_rimr_height / 2)
+                        #   padding_bottom = diff_rimr_height - padding_top
+                        #   resized_rimr = cv2.copyMakeBorder(cv2.resize(rim_r, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
+                        #                                    padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
                           target_height = rim_height
                           target_width = int(target_height * aspect_ratio_sim)
                           resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
-                        if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
-                          target_height = rim_height
-                          target_width = int(target_height * aspect_ratio_rimr)
-                          resized_rimr = cv2.resize(rim_r, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                        # if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
+                        #   target_height = rim_height
+                        #   target_width = int(target_height * aspect_ratio_rimr)
+                        #   resized_rimr = cv2.resize(rim_r, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
                         print(f"Combining & appending result & source image {iinsim} / {tinsim}")
                         print("=====================================================")
                         # Print image shapes for debugging (optional)
                         print("===========================================")
                         print(f"restored_image.shape: {rim_r.shape}")
-                        print(f"resized_rimr.shape: {resized_rimr.shape}")
+                        # print(f"resized_rimr.shape: {resized_rimr.shape}")
                         print(f"enhanced_image.shape: {rim_e.shape}")
                         print(f"resized_sim.shape: {resized_sim.shape}")
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
-                        combined_result_image = cv2.hconcat([rim_e, resized_rimr, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_e, rim_r, resized_sim])
                         # Append combined_result_image to swapped_images
                         imgs.append(combined_result_image)
                         print("===============")
