@@ -938,14 +938,18 @@ def worker():
 
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
-                    ins_imgs=[]
-                    print("=====================================")
-                    print("Inswapper START - face swap py to async")
-                    print("=====================================")
+                    print("===============")
+                    print("Inswapper START")
+                    print("===============")
+                    progressbar(async_task, 13, '=== Start INSWAPPER ===')
                     import sys
                     sys.path.append('../inswapper')
                     from inswapper.swapper import process
                     from inswapper.restoration import face_restoration, check_ckpts, set_realesrgan, torch, ARCH_REGISTRY, cv2
+                    # ==============================
+                    # START RESTORATION REQUIREMENTS
+                    # ==============================
+                    progressbar(async_task, 13, '=== Start INSWAPPER : Restoration Requirements')
                     # make sure the ckpts downloaded successfully
                     check_ckpts()
                     # https://huggingface.co/spaces/sczhou/CodeFormer
@@ -962,54 +966,100 @@ def worker():
                     checkpoint = torch.load(ckpt_path)["params_ema"]
                     codeformer_net.load_state_dict(checkpoint)
                     codeformer_net.eval()
+                    # ============================
+                    # END RESTORATION REQUIREMENTS
+                    # ============================
+                    # ======================
+                    # START LOG REQUIREMENTS
+                    # ======================
+                    progressbar(async_task, 13, '=== Start INSWAPPER : Log Requirements')
+                    d = [('Prompt', 'prompt', task['log_positive_prompt']),
+                         ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
+                         ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
+                         ('Styles', 'styles', str(raw_style_selections)),
+                         ('Performance', 'performance', performance_selection.value)]
+                    if performance_selection.steps() != steps:
+                        d.append(('Steps', 'steps', steps))
+                    d += [('Resolution', 'resolution', str((width, height))),
+                          ('Guidance Scale', 'guidance_scale', guidance_scale),
+                          ('Sharpness', 'sharpness', sharpness),
+                          ('ADM Guidance', 'adm_guidance', str((
+                              modules.patch.patch_settings[pid].positive_adm_scale,
+                              modules.patch.patch_settings[pid].negative_adm_scale,
+                              modules.patch.patch_settings[pid].adm_scaler_end))),
+                          ('Base Model', 'base_model', base_model_name),
+                          ('Refiner Model', 'refiner_model', refiner_model_name),
+                          ('Refiner Switch', 'refiner_switch', refiner_switch)]
+                    if refiner_model_name != 'None':
+                        if overwrite_switch > 0:
+                            d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
+                        if refiner_swap_method != flags.refiner_swap_method:
+                            d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
+                    if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
+                        d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
+                    d.append(('Sampler', 'sampler', sampler_name))
+                    d.append(('Scheduler', 'scheduler', scheduler_name))
+                    d.append(('Seed', 'seed', str(task['task_seed'])))
+                    if freeu_enabled:
+                        d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
+                    for li, (n, w) in enumerate(loras):
+                        if n != 'None':
+                            d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
+                    metadata_parser = None
+                    if save_metadata_to_images:
+                        metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
+                        metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
+                                                 task['log_negative_prompt'], task['negative'],
+                                                 steps, base_model_name, refiner_model_name, loras)
+                    d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
+                    d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
+                    # ====================
+                    # END LOG REQUIREMENTS
+                    # ====================
 
+                    ins_imgs=[]
+                    ins_imgs.extend(imgs)
+                    log(imgs[-1], d, metadata_parser, output_format))
+                    ins_yield_result(async_task, imgs[-1])
                     tinsim = len(ins_sims)
                     
-                    # def perform_face_swap(images, inswapper_source_image, inswapper_source_image_indicies, inswapper_target_image_indicies):
-                    #   swapped_images = []
-                    #   swapped_images.extend(images)
-                    
-                    for item in imgs:
+                    for item in ins_imgs:
                       for idx, image in enumerate(ins_sims):
                         sim = image
                         sin = ins_sins[idx]
                         tin = ins_tins[idx]
                         iinsim = idx+1
+                        print("=================================")
+                        print(f"Start Inswap {iinsim} / {tinsim}")
+                        print("=================================")
+                        progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
-                        result_image = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")
-                        # swapped_images.append(result_image)
-                        print("=====================================")
-                        print(f"Inswap {iinsim} / {tinsim} Finished")
-                        print("=====================================")
+                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
+                        print("==================================")
+                        print(f"Finish Inswap {iinsim} / {tinsim}")
+                        print("==================================")
+                        print("======================================")
+                        print(f"Start Restoration {iinsim} / {tinsim}")
+                        print("======================================")
+                        progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
+                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        rim_r = face_restoration(result_image, True, True, 1, 0.5, upsampler, codeformer_net, device)
                         print("=======================================")
-                        print(f"Start {iinsim} / {tinsim} Restoration")
+                        print(f"Finish Restoration {iinsim} / {tinsim}")
                         print("=======================================")
-                        result_image = cv2.cvtColor(np.array(result_image), cv2.COLOR_RGB2BGR)
-                        rim_r = face_restoration(result_image, 
-                                                        True, 
-                                                        True, 
-                                                        1, 
-                                                        0.5,
-                                                        upsampler,
-                                                        codeformer_net,
-                                                        device)
-                        print("======================================================")
-                        print(f"Done restore {iinsim} / {tinsim}")
-                        print("======================================================")
-                        print("======================================================")
-                        print(f"Start enhance {iinsim} / {tinsim}")
-                        print("======================================================")
+                        print("======================================")
+                        print(f"Start Enhancement {iinsim} / {tinsim}")
+                        print("======================================")
+                        progressbar(async_task, 13, f'Start Enhancement {iinsim} / {tinsim}')
                         rip = core.numpy_to_pytorch(rim_r) # initial_pixels
-                        progressbar(async_task, 13, 'VAE encoding ...')
-            
+                        # progressbar(async_task, 13, 'VAE encoding ...')
                         ins_candidate_vae, _ = pipeline.get_candidate_vae(
-                            steps=15,
+                            steps=steps,
                             switch=switch,
-                            denoise=0.275,
+                            denoise=denoising_strength,
                             refiner_swap_method=refiner_swap_method
                         )
-            
                         ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
                         rB, rC, rH, rW = ril['samples'].shape
                         rwidth = rW * 8
@@ -1034,21 +1084,22 @@ def worker():
                         disable_preview=disable_preview
                         )
                         rim_e = enhance_image[-1]
-                        print("======================================================")
-                        print(f"Finish enhance {iinsim} / {tinsim}")
-                        print("======================================================")
-                        print("======================================================")
+                        print("=======================================")
+                        print(f"Finish Enhancement {iinsim} / {tinsim}")
+                        print("=======================================")
+                        print("=================================")
                         print(f"Start Darken {iinsim} / {tinsim}")
-                        print("======================================================")
+                        print("=================================")
+                        progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
                         def blend_images(bg_path, fg_path, output_path, alpha=0.7):
-                            """
-                            Blends two images with a darkening effect on the top layer.
-                            Args:
-                            img1_path: Path to the background image.
-                            img2_path: Path to the foreground image (top layer).
-                            output_path: Path to save the blended image.
-                            alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
-                            """
+                            # """
+                            # Blends two images with a darkening effect on the top layer.
+                            # Args:
+                            # img1_path: Path to the background image.
+                            # img2_path: Path to the foreground image (top layer).
+                            # output_path: Path to save the blended image.
+                            # alpha: Opacity of the top layer (0.0 - fully transparent, 1.0 - fully opaque).
+                            # """
                             background = Image.open(bg_path)
                             foreground = Image.open(fg_path)
                             # Ensure images have the same size
@@ -1068,14 +1119,14 @@ def worker():
                         # Example usage
                         bg_path = rim_r
                         fg_path = rim_e
-                        rim_d = blend_images(img1_path, img2_path)
-                        
-                        print("======================================================")
+                        rim_d = blend_images(bg_path, fg_path)
+                        print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
-                        print("======================================================")
-                        print("===========================================")
-                        print(f"Resizing source image {iinsim} / {tinsim}")
-                        print("===========================================")
+                        print("==================================")
+                        print("=======================================================")
+                        print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
+                        print("=======================================================")
+                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         original_sim_height, original_sim_width = sim.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         original_rimr_height, original_rimr_width = rim_r.shape[:2]
@@ -1109,8 +1160,9 @@ def worker():
                         #   target_width = int(target_height * aspect_ratio_rimr)
                         #   resized_rimr = cv2.resize(rim_r, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
-                        print(f"Combining & appending result & source image {iinsim} / {tinsim}")
+                        print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("=====================================================")
+                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
                         # Print image shapes for debugging (optional)
                         print("===========================================")
                         print(f"restored_image.shape: {rim_r.shape}")
@@ -1122,67 +1174,21 @@ def worker():
                         # Combine result_image and resized_sim horizontally
                         combined_result_image = cv2.hconcat([rim_d, rim_e, rim_r, resized_sim])
                         # Append combined_result_image to swapped_images
-                        ins_imgs.append(combined_result_image)
-                        print("===============")
-                        print(f"Done combining and append {iinsim} / {tinsim}")
-                        print("===============")
-                        print("===============")
-                        print(f"Start logging {iinsim} / {tinsim}")
-                        print("===============")
-                        ins_img_paths = []
-                        for x in ins_imgs:
-                            d = [('Prompt', 'prompt', task['log_positive_prompt']),
-                                 ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
-                                 ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
-                                 ('Styles', 'styles', str(raw_style_selections)),
-                                 ('Performance', 'performance', performance_selection.value)]
-        
-                            if performance_selection.steps() != steps:
-                                d.append(('Steps', 'steps', steps))
-        
-                            d += [('Resolution', 'resolution', str((width, height))),
-                                  ('Guidance Scale', 'guidance_scale', guidance_scale),
-                                  ('Sharpness', 'sharpness', sharpness),
-                                  ('ADM Guidance', 'adm_guidance', str((
-                                      modules.patch.patch_settings[pid].positive_adm_scale,
-                                      modules.patch.patch_settings[pid].negative_adm_scale,
-                                      modules.patch.patch_settings[pid].adm_scaler_end))),
-                                  ('Base Model', 'base_model', base_model_name),
-                                  ('Refiner Model', 'refiner_model', refiner_model_name),
-                                  ('Refiner Switch', 'refiner_switch', refiner_switch)]
-        
-                            if refiner_model_name != 'None':
-                                if overwrite_switch > 0:
-                                    d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
-                                if refiner_swap_method != flags.refiner_swap_method:
-                                    d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
-                            if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
-                                d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
-        
-                            d.append(('Sampler', 'sampler', sampler_name))
-                            d.append(('Scheduler', 'scheduler', scheduler_name))
-                            d.append(('Seed', 'seed', str(task['task_seed'])))
-        
-                            if freeu_enabled:
-                                d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
-        
-                            for li, (n, w) in enumerate(loras):
-                                if n != 'None':
-                                    d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
-        
-                            metadata_parser = None
-                            if save_metadata_to_images:
-                                metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
-                                metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
-                                                         task['log_negative_prompt'], task['negative'],
-                                                         steps, base_model_name, refiner_model_name, loras)
-                            d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
-                            d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
-                            ins_img_paths.append(log(x, d, metadata_parser, output_format))
-                            ins_yield_result(async_task, ins_img_paths)
-                        print("===============")
+                        # ins_imgs.append(combined_result_image)
+                        print("====================================================")
+                        print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
+                        print("====================================================")
+                        print("==================================")
+                        print(f"Start Logging {iinsim} / {tinsim}")
+                        print("==================================")
+                        progressbar(async_task, 13, f'Start Logging {iinsim} / {tinsim}')
+                        # ins_img_paths = []
+                        # for x in ins_imgs:
+                        log(combined_result_image, d, metadata_parser, output_format))
+                        ins_yield_result(async_task, combined_result_image)
+                        print("===================================")
                         print(f"Finish logging {iinsim} / {tinsim}")
-                        print("===============")
+                        print("===================================")
 
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
