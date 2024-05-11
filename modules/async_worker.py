@@ -1072,7 +1072,9 @@ def worker():
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
-                        ins_y(rim)
+                        print(f"Type of img: {type(rim)}")
+                        rim_im = np.array(rim)  # Convert to NumPy array before returning
+                        ins_y(rim_im)
                         print("==================================")
                         print(f"Finish Inswap {iinsim} / {tinsim}")
                         print("==================================")
@@ -1080,7 +1082,6 @@ def worker():
                         print(f"Start Enhance Inswap {iinsim} / {tinsim}")
                         print("=========================================")
                         progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
-                        print(f"Type of img: {type(rim)}")
                         rim_en1 = ins_en(rim)
                         ins_y(rim_en1)
                         rim_en2 = ins_en(rim_en1)
