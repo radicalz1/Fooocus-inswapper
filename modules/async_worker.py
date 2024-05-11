@@ -940,6 +940,9 @@ def worker():
 
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
+
+                    print(f"Type of positive_cond: {type(positive_cond)}")
+
                     print("===============")
                     print("Inswapper START")
                     print("===============")
