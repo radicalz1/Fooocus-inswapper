@@ -1056,7 +1056,7 @@ def worker():
                           # Add black padding (assuming black padding)
                           padding_top = int(diff_rimr_height / 2)
                           padding_bottom = diff_rimr_height - padding_top
-                          resized_rimr = cv2.copyMakeBorder(cv2.resize(rimr, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
+                          resized_rimr = cv2.copyMakeBorder(cv2.resize(rim_r, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
                                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
                           target_height = rim_height
@@ -1065,7 +1065,7 @@ def worker():
                         if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
                           target_height = rim_height
                           target_width = int(target_height * aspect_ratio_rimr)
-                          resized_rimr = cv2.resize(rimr, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                          resized_rimr = cv2.resize(rim_r, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
                         print(f"Combining & appending result & source image {iinsim} / {tinsim}")
                         print("=====================================================")
