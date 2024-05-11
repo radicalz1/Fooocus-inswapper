@@ -1010,8 +1010,7 @@ def worker():
                         rwidth = rW * 8
                         rheight = rH * 8
                         print(f'Final resolution is {str((rheight, rwidth))}.')
-                          
-                        rim_e = pipeline.process_diffusion(
+                        enhance_image = pipeline.process_diffusion(
                             positive_cond=positive_cond,
                             negative_cond=negative_cond,
                             steps=15,
@@ -1029,6 +1028,7 @@ def worker():
                             refiner_swap_method=refiner_swap_method,
                         disable_preview=disable_preview
                         )
+                        rim_e = enhance_image[-1]
                         print("======================================================")
                         print(f"Finish enhance {iinsim} / {tinsim}")
                         print("======================================================")
@@ -1036,8 +1036,10 @@ def worker():
                         print(f"Resizing source image {iinsim} / {tinsim}")
                         print("===========================================")
                         original_sim_height, original_sim_width = sim.shape[:2]
-                        rim_height, rim_width = rim_r.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
+                        original_rimr_height, original_rimr_width = rim_r.shape[:2]
+                        aspect_ratio_rimr = original_rimr_width / original_rimr_height
+                        rim_height, rim_width = rim_e.shape[:2]
                         if aspect_ratio_sim > 1:  # if wide image
                           target_width = rim_width
                           res_sim_height = int(target_width / aspect_ratio_sim)
@@ -1047,21 +1049,35 @@ def worker():
                           padding_bottom = diff_sim_height - padding_top
                           resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                        if aspect_ratio_rimr > 1:  # if wide image
+                          target_width = rim_width
+                          res_rimr_height = int(target_width / aspect_ratio_rimr)
+                          diff_rimr_height = max(0, rim_height - res_rimr_height)  # Ensure non-negative diff
+                          # Add black padding (assuming black padding)
+                          padding_top = int(diff_rimr_height / 2)
+                          padding_bottom = diff_rimr_height - padding_top
+                          resized_rimr = cv2.copyMakeBorder(cv2.resize(rimr, (target_width, res_rimr_height), interpolation=cv2.INTER_AREA),
+                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
                           target_height = rim_height
                           target_width = int(target_height * aspect_ratio_sim)
                           resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                        if aspect_ratio_rimr <= 1:  # if square / portrait image, no need to pad anything
+                          target_height = rim_height
+                          target_width = int(target_height * aspect_ratio_rimr)
+                          resized_rimr = cv2.resize(rimr, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
                         print(f"Combining & appending result & source image {iinsim} / {tinsim}")
                         print("=====================================================")
                         # Print image shapes for debugging (optional)
                         print("===========================================")
                         print(f"restored_image.shape: {rim_r.shape}")
+                        print(f"resized_rimr.shape: {resized_rimr.shape}")
                         print(f"enhanced_image.shape: {rim_e.shape}")
                         print(f"resized_sim.shape: {resized_sim.shape}")
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
-                        combined_result_image = cv2.hconcat([rim_e, rim_r, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_e, resized_rimr, resized_sim])
                         # Append combined_result_image to swapped_images
                         imgs.append(combined_result_image)
                         print("===============")
