@@ -1080,6 +1080,7 @@ def worker():
                         print(f"Start Enhance Inswap {iinsim} / {tinsim}")
                         print("=========================================")
                         progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
+                        print(f"Type of img: {type(rim)}")
                         rim_en1 = ins_en(rim)
                         ins_y(rim_en1)
                         rim_en2 = ins_en(rim_en1)
