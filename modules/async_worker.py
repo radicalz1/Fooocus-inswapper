@@ -1091,7 +1091,7 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        def blend_images(bg_path, fg_path, output_path, alpha=0.7):
+                        def blend_images(bg_path, fg_path, alpha=0.7):
                             # """
                             # Blends two images with a darkening effect on the top layer.
                             # Args:
