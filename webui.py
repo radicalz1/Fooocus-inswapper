@@ -327,7 +327,13 @@ with shared.gradio_root:
                                     uov_input_image = grh.Image(label='Drag above image to here', source='upload', type='numpy', elem_id="uv_canvas")
                                     top_js = "() => {viewer_to_top();}"
                                     generate_button_uv = gr.Button(_js=top_js, scroll_to_output=True, label="Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
+                                    desgen_button_uv = gr.Button(_js=top_js, scroll_to_output=True, label="Describe & Generate", value="Generate", elem_classes='type_row', elem_id='generate_button', visible=True)
                                     gr.HTML('<a href="https://github.com/lllyasviel/Fooocus/discussions/390" target="_blank">\U0001F4D4 Document</a>')
+                                    def trigger_desgen(img):
+                                        from extras.interrogate import default_interrogator as default_interrogator_photo
+                                        return default_interrogator_photo(img)
+                                    desgen_button_uv.click(trigger_desgen, inputs=[uov_input_image],
+                                                   outputs=[prompt], show_progress=True, queue=True)
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                             with gr.Column():
