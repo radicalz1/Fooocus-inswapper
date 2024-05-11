@@ -1019,7 +1019,7 @@ def worker():
 
                     ins_imgs=[]
                     ins_imgs.extend(imgs)
-                    log(imgs[-1], d, metadata_parser, output_format))
+                    log(imgs[-1], d, metadata_parser, output_format)
                     ins_yield_result(async_task, imgs[-1])
                     tinsim = len(ins_sims)
                     
@@ -1184,7 +1184,7 @@ def worker():
                         progressbar(async_task, 13, f'Start Logging {iinsim} / {tinsim}')
                         # ins_img_paths = []
                         # for x in ins_imgs:
-                        log(combined_result_image, d, metadata_parser, output_format))
+                        log(combined_result_image, d, metadata_parser, output_format)
                         ins_yield_result(async_task, combined_result_image)
                         print("===================================")
                         print(f"Finish logging {iinsim} / {tinsim}")
