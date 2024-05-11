@@ -233,7 +233,9 @@ def worker():
                 ins_sins.append(ins_sin)
                 ins_tins.append(ins_tin)
                 ins_sims.append(ins_sim)
-                    
+        en_den = args.pop()
+        en_steps = args.pop()
+        ins_dn = args.pop()
         print(f"Inswapper: {'ENABLED' if inswapper_enabled and ins_sims is not None else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
@@ -1040,7 +1042,7 @@ def worker():
                         enhance_image = pipeline.process_diffusion(
                             positive_cond=positive_cond,
                             negative_cond=negative_cond,
-                            steps=15,
+                            steps=en_steps,
                             switch=switch,
                             width=width,
                             height=height,
@@ -1049,7 +1051,7 @@ def worker():
                             sampler_name=final_sampler_name,
                             scheduler_name=final_scheduler_name,
                             latent=ril,
-                            denoise=0.5,
+                            denoise=em+dem,
                             tiled=tiled,
                             cfg_scale=cfg_scale,
                             refiner_swap_method=refiner_swap_method,
@@ -1114,7 +1116,7 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        def blend_images(bg_path, fg_path, alpha=0.5):
+                        def blend_images(bg_path, fg_path, alpha=ins_dn):
                             # """
                             # Blends two images with a darkening effect on the top layer.
                             # Args:
