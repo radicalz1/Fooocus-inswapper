@@ -87,6 +87,13 @@ def worker():
         async_task.yields.append(['results', async_task.results])
         return
 
+    def ins_yield_result(async_task, imgs):
+        if not isinstance(imgs, list):
+            imgs = [imgs]        
+        async_task.results = async_task.results + imgs
+        async_task.yields.append(['results', async_task.results])
+        return
+
     def build_image_wall(async_task):
         results = []
 
@@ -931,6 +938,7 @@ def worker():
 
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
+                    ins_imgs=[]
                     print("=====================================")
                     print("Inswapper START - face swap py to async")
                     print("=====================================")
@@ -1076,15 +1084,15 @@ def worker():
                         # Combine result_image and resized_sim horizontally
                         combined_result_image = cv2.hconcat([rim_e, rim_r, resized_sim])
                         # Append combined_result_image to swapped_images
-                        imgs.append(combined_result_image)
+                        ins_imgs.append(combined_result_image)
                         print("===============")
                         print(f"Done combining and append {iinsim} / {tinsim}")
                         print("===============")
                         print("===============")
                         print(f"Start logging {iinsim} / {tinsim}")
                         print("===============")
-                        img_paths = []
-                        for x in imgs:
+                        ins_img_paths = []
+                        for x in ins_imgs:
                             d = [('Prompt', 'prompt', task['log_positive_prompt']),
                                  ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
                                  ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
@@ -1132,9 +1140,9 @@ def worker():
                                                          steps, base_model_name, refiner_model_name, loras)
                             d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
                             d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
-                            img_paths.append(log(x, d, metadata_parser, output_format))
+                            ins_img_paths.append(log(x, d, metadata_parser, output_format))
         
-                        yield_result(async_task, img_paths, do_not_show_finished_images=len(tasks) == 1 or disable_intermediate_results)
+                        ins_yield_result(async_task, ins_img_paths)
                         print("===============")
                         print(f"Finish logging {iinsim} / {tinsim}")
                         print("===============")
@@ -1142,7 +1150,7 @@ def worker():
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
 
-                if not (inswapper_enabled and ins_sims is not None):
+                if not inswapper_enabled and ins_sims is None:
                     img_paths = []
                     for x in imgs:
                         d = [('Prompt', 'prompt', task['log_positive_prompt']),
@@ -1195,6 +1203,7 @@ def worker():
                         img_paths.append(log(x, d, metadata_parser, output_format))
     
                     yield_result(async_task, img_paths, do_not_show_finished_images=len(tasks) == 1 or disable_intermediate_results)
+                    async_task.yields.append(['results', async_task.results])
             except ldm_patched.modules.model_management.InterruptProcessingException as e:
                 if async_task.last_stop == 'skip':
                     print('User skipped')
