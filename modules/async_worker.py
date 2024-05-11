@@ -1019,40 +1019,12 @@ def worker():
 
                     ins_imgs=[]
                     ins_imgs.extend(imgs)
-                    log(imgs[-1], d, metadata_parser, output_format)
-                    ins_yield_result(async_task, imgs[-1])
-                    tinsim = len(ins_sims)
-                    
-                    for item in ins_imgs:
-                      for idx, image in enumerate(ins_sims):
-                        sim = image
-                        sin = ins_sins[idx]
-                        tin = ins_tins[idx]
-                        iinsim = idx+1
-                        print("=================================")
-                        print(f"Start Inswap {iinsim} / {tinsim}")
-                        print("=================================")
-                        progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
-                        print(f"Inswapper: Source indicies: {sin}")
-                        print(f"Inswapper: Target indicies: {tin}")      
-                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
-                        print("==================================")
-                        print(f"Finish Inswap {iinsim} / {tinsim}")
-                        print("==================================")
-                        print("======================================")
-                        print(f"Start Restoration {iinsim} / {tinsim}")
-                        print("======================================")
-                        progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
-                        print("=======================================")
-                        print(f"Finish Restoration {iinsim} / {tinsim}")
-                        print("=======================================")
-                        print("======================================")
-                        print(f"Start Enhancement {iinsim} / {tinsim}")
-                        print("======================================")
-                        progressbar(async_task, 13, f'Start Enhancement {iinsim} / {tinsim}')
-                        rip = core.numpy_to_pytorch(rim_r) # initial_pixels
+                    def ins_y(img):
+                        log(imgs[-1], d, metadata_parser, output_format)
+                        ins_yield_result(async_task, imgs[-1])
+                    ins_y(imgs[-1])
+                    def ins_en(img):
+                        rip = core.numpy_to_pytorch(img) # initial_pixels
                         # progressbar(async_task, 13, 'VAE encoding ...')
                         ins_candidate_vae, _ = pipeline.get_candidate_vae(
                             steps=steps,
@@ -1083,7 +1055,55 @@ def worker():
                             refiner_swap_method=refiner_swap_method,
                         disable_preview=disable_preview
                         )
-                        rim_e = enhance_image[-1]
+                        return enhance_image[-1]
+                   
+                    tinsim = len(ins_sims)
+                    
+                    for item in ins_imgs:
+                      for idx, image in enumerate(ins_sims):
+                        sim = image
+                        sin = ins_sins[idx]
+                        tin = ins_tins[idx]
+                        iinsim = idx+1
+                        print("=================================")
+                        print(f"Start Inswap {iinsim} / {tinsim}")
+                        print("=================================")
+                        progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
+                        print(f"Inswapper: Source indicies: {sin}")
+                        print(f"Inswapper: Target indicies: {tin}")      
+                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
+                        ins_y(rim)
+                        print("==================================")
+                        print(f"Finish Inswap {iinsim} / {tinsim}")
+                        print("==================================")
+                        print("=========================================")
+                        print(f"Start Enhance Inswap {iinsim} / {tinsim}")
+                        print("=========================================")
+                        progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
+                        rim_en1 = ins_en(rim)
+                        ins_y(rim_en1)
+                        rim_en2 = ins_en(rim_en1)
+                        ins_y(rim_en2)
+                        print("=========================================")
+                        print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
+                        print("=========================================")
+                        print("======================================")
+                        print(f"Start Restoration {iinsim} / {tinsim}")
+                        print("======================================")
+                        progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
+                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
+                        print("=======================================")
+                        print(f"Finish Restoration {iinsim} / {tinsim}")
+                        print("=======================================")
+                        print("======================================")
+                        print(f"Start Enhancement {iinsim} / {tinsim}")
+                        print("======================================")
+                        progressbar(async_task, 13, f'Start Enhancement {iinsim} / {tinsim}')
+                        rim_re1 = ins_en(rim_r)
+                        ins_y(rim_re1)
+                        rim_re2 = ins_en(rim_re1)
+                        ins_y(rim_re2)
                         print("=======================================")
                         print(f"Finish Enhancement {iinsim} / {tinsim}")
                         print("=======================================")
@@ -1091,7 +1111,7 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        def blend_images(bg_path, fg_path, alpha=0.7):
+                        def blend_images(bg_path, fg_path, alpha=0.5):
                             # """
                             # Blends two images with a darkening effect on the top layer.
                             # Args:
@@ -1118,8 +1138,9 @@ def worker():
                             # blended_image.save(output_path)
                         # Example usage
                         bg_path = rim_r
-                        fg_path = rim_e
-                        rim_d = blend_images(bg_path, fg_path)
+                        fg_path = rim_re
+                        rim_red = blend_images(bg_path, fg_path)
+                        ins_y(rim_red)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
                         print("==================================")
@@ -1173,22 +1194,23 @@ def worker():
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
                         combined_result_image = cv2.hconcat([rim_d, rim_e, rim_r, resized_sim])
+                        ins_y(combined_result_image)
                         # Append combined_result_image to swapped_images
                         # ins_imgs.append(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
                         print("====================================================")
-                        print("==================================")
-                        print(f"Start Logging {iinsim} / {tinsim}")
-                        print("==================================")
-                        progressbar(async_task, 13, f'Start Logging {iinsim} / {tinsim}')
-                        # ins_img_paths = []
-                        # for x in ins_imgs:
-                        log(combined_result_image, d, metadata_parser, output_format)
-                        ins_yield_result(async_task, combined_result_image)
-                        print("===================================")
-                        print(f"Finish logging {iinsim} / {tinsim}")
-                        print("===================================")
+                        # print("==================================")
+                        # print(f"Start Logging {iinsim} / {tinsim}")
+                        # print("==================================")
+                        # progressbar(async_task, 13, f'Start Logging {iinsim} / {tinsim}')
+                        # # ins_img_paths = []
+                        # # for x in ins_imgs:
+                        # log(combined_result_image, d, metadata_parser, output_format)
+                        # ins_yield_result(async_task, combined_result_image)
+                        # print("===================================")
+                        # print(f"Finish logging {iinsim} / {tinsim}")
+                        # print("===================================")
 
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
