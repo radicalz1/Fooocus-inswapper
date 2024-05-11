@@ -941,7 +941,21 @@ def worker():
                 if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
 
+                    print("====================")
+                    print("Positive_Cond START")
+                    print("====================")
                     print(f"Type of positive_cond: {type(positive_cond)}")
+                    # Check the length of the list (optional)
+                    list_length = len(positive_cond)
+                    # print(f"List length: {list_length}")
+                    # Print each element in the list
+                    for i in range(list_length):
+                      element = positive_cond[i]
+                      print(f"Type Element {i+1}/{list_length}: type({element})")
+                      print(f"Element {i+1}/{list_length}: {element}")
+                    print("====================")
+                    print("Positive_Cond DONE")
+                    print("====================")
 
                     print("===============")
                     print("Inswapper START")
@@ -1102,6 +1116,7 @@ def worker():
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
                         rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
+                        ins_y(rim_r)
                         print("=======================================")
                         print(f"Finish Restoration {iinsim} / {tinsim}")
                         print("=======================================")
@@ -1144,12 +1159,12 @@ def worker():
                           blended_image.putalpha(inverted_alpha)
                           return blended_image
                         bg = rim_r
-                        fg = rim_re1
-                        rim_red1 = blend_images(bg, fg)
-                        ins_y(rim_red1)
-                        rim_red2 = blend_images(bg, rim_re2)
-                        ins_y(rim_red2)
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red1, rim_red2])
+                        fg = rim_re
+                        rim_red = blend_images(bg, fg)
+                        ins_y(rim_red)
+                        # rim_red2 = blend_images(bg, rim_re2)
+                        # ins_y(rim_red2)
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red])
                         ins_y(combined_result_image)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
@@ -1180,7 +1195,7 @@ def worker():
                         print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("=====================================================")
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red1, rim_red2, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_re, resized_sim])
                         ins_y(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
