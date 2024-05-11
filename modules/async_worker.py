@@ -1143,9 +1143,11 @@ def worker():
                             # blended_image.save(output_path)
                         # Example usage
                         bg_path = rim_r
-                        fg_path = rim_re
-                        rim_red = blend_images(bg_path, fg_path)
-                        ins_y(rim_red)
+                        fg_path = rim_re1
+                        rim_red1 = blend_images(bg_path, fg_path)
+                        ins_y(rim_red1)
+                        rim_red2 = blend_images(bg_path, rim_re2)
+                        ins_y(rim_red2)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
                         print("==================================")
@@ -1198,7 +1200,7 @@ def worker():
                         print(f"resized_sim.shape: {resized_sim.shape}")
                         print("===========================================")
                         # Combine result_image and resized_sim horizontally
-                        combined_result_image = cv2.hconcat([rim_d, rim_e, rim_r, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_red2, rim_red1, rim_re2, rim_re1, rim_d, rim_e, rim_r, resized_sim])
                         ins_y(combined_result_image)
                         # Append combined_result_image to swapped_images
                         # ins_imgs.append(combined_result_image)
