@@ -1020,8 +1020,8 @@ def worker():
                     ins_imgs=[]
                     ins_imgs.extend(imgs)
                     def ins_y(img):
-                        log(imgs[-1], d, metadata_parser, output_format)
-                        ins_yield_result(async_task, imgs[-1])
+                        log(img, d, metadata_parser, output_format)
+                        ins_yield_result(async_task, img)
                     ins_y(imgs[-1])
                     def ins_en(img):
                         rip = core.numpy_to_pytorch(img) # initial_pixels
@@ -1074,6 +1074,7 @@ def worker():
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
                         print(f"Type of img: {type(rim)}")
                         rim_im = np.array(rim)  # Convert to NumPy array before returning
+                        print(f"Type of img: {type(rim_im)}")
                         ins_y(rim_im)
                         print("==================================")
                         print(f"Finish Inswap {iinsim} / {tinsim}")
