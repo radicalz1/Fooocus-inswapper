@@ -935,8 +935,6 @@ def worker():
                     print("Inswapper START - face swap py to async")
                     print("=====================================")
                     import sys
-                    from PIL import Image
-                    import numpy as np
                     sys.path.append('../inswapper')
                     from inswapper.swapper import process
                     from inswapper.restoration import face_restoration, check_ckpts, set_realesrgan, torch, ARCH_REGISTRY, cv2
