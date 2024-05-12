@@ -1145,13 +1145,10 @@ def worker():
                             bg_im = bg_im.convert("RGBA")
                             fg_im = fg_im.convert("RGBA")
                             # Invert foreground alpha for darkening effect (more alpha = darker)
-                            # inverted_alpha = (1.0 - np.array(fg_im.split()[-1])) * 255
-                            inverted_alpha = 1.0 - np.array(fg_im.split()[-1])
-                            print(f"Inverted alpha values: {inverted_alpha}")  # Print the array contents
-                            print(f"Inverted alpha type: type({inverted_alpha})")  # Print the array contents
+                            inverted_alpha = (1.0 - np.array(fg_im.split()[-1])) * 255
+                            # Clip values to 0-255 range for valid alpha
+                            inverted_alpha = np.clip(inverted_alpha, 0, 255)
                             inverted_alpha = inverted_alpha.astype(np.uint8)  # Ensure type is uint8 for alpha
-                            # inverted_alpha = 1.0 - np.array(fg_im.split()[-1])
-                            # inverted_alpha = 1.0 - fg_im.split()[-1]
                             # Blend the images using weighted addition
                             blended_image = Image.blend(bg_im, fg_im, alpha=alpha)
                             # Apply the inverted alpha to the top layer
