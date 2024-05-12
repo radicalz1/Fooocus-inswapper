@@ -1137,6 +1137,8 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
+                        print(f"Type bg / rim_r: {type(rim_r)}")
+                        print(f"Type fg / rim_re: {type(rim_re)}")
                         # def blend_images(bg_image, fg_image, alpha=ins_dn):
                         #     print(f"Type bg: {type(bg_image)}")
                         #     print(f"Type fg: {type(fg_image)}")
