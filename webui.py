@@ -429,7 +429,7 @@ with shared.gradio_root:
                                     with gr.Row():
                                         en_den = gr.Slider(label='Enhance Denoise', minimum=0, maximum=1, step=0.001, value=0.3)
                                         en_steps = gr.Slider(label='Enhance Steps', minimum=0, maximum=200, step=1, value=15)
-                                        ins_dn = gr.Slider(label='Darken Alpha', minimum=0, maximum=255, step=1, value=125, info='Opacity of the top layer 0 - fully transparent, 255 - fully opaque')
+                                        ins_dn = gr.Slider(label='Darken Alpha', minimum=0, maximum=1, step=0.01, value=0.5, info='Opacity of the top layer 0 - fully transparent, 1 - fully opaque')
                                     for _ in range(flags.inswapper_image_count):
                                         with gr.Column():
                                             with gr.Row():
