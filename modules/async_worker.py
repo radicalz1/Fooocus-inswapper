@@ -1140,31 +1140,28 @@ def worker():
                         print(f"Type bg / rim_r: {type(rim_r)}")
                         print(f"Type fg / rim_re: {type(rim_re)}")
                         from blend_modes import darken_only
-                        # bg = rim_r
-                        # fg = rim_re
-                        background_img_float = rim_r.astype(float)  # Convert fg to float
-                        foreground_img_float = rim_re.astype(float)  # Convert fg to float
-                        # Use the NumPy arrays directly for blending
                         def add_alpha_channel(image):
                             height, width = image.shape[:2]
                             # Create an alpha channel with full opacity for every pixel
                             alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
                             return np.concatenate((image, alpha_channel), axis=-1)
-                            
                         # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
-                        background_img_float = add_alpha_channel(background_img_float)
-                        foreground_img_float = add_alpha_channel(foreground_img_float)
-
-                          
-                        opacity = ins_dn  # The opacity for blending
-                        blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
-                        # Convert the blended result (assuming it's a NumPy array) to uint8 for display
-                        blended = blended_img_float.astype(np.uint8)
-                          
-                        rim_red = blended
+                        def darken(bg,fg, opacity)
+                            background_img_float = rim_r.astype(float)  # Convert bg to float
+                            foreground_img_float = rim_re.astype(float)  # Convert fg to float
+                            background_img_float = add_alpha_channel(background_img_float)
+                            foreground_img_float = add_alpha_channel(foreground_img_float)
+                            blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
+                            blended = blended_img_float.astype(np.uint8)
+                            return blended
+                      
+                        rim_red = darken(rim_r, rim_re, ins_dn)
                         ins_y(rim_red)
                         # rim_red2 = blend_images(bg, rim_re2)
                         # ins_y(rim_red2)
+                        print(f"Type rim_r: {type(rim_r)}")
+                        print(f"Type rim_re: {type(rim_re)}")
+                        print(f"Type rim_red: {type(rim_red)}")
                         print(f'rim_i shape : {rim_i.shape}')
                         print(f'rim_i dtype : {rim_i.dtype}')
                         print(f'rim_r shape : {rim_r.shape}')
