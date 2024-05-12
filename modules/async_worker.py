@@ -1138,6 +1138,8 @@ def worker():
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
                         def blend_images(bg_image, fg_image, alpha=ins_dn):
+                            print(f"Type bg: {type(bg_image)}")
+                            print(f"Type fg: {type(fg_image)}")
                             bg_im = Image.fromarray(bg_image)  # Convert NumPy array to PIL Image
                             fg_im = Image.fromarray(fg_image)  # Convert NumPy array to PIL Image
                             bg_im = Image.open(bg_image)
