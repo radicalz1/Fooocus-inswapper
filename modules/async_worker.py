@@ -1159,7 +1159,7 @@ def worker():
                         opacity = ins_dn  # The opacity for blending
                         blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
                         # Convert the blended result (assuming it's a NumPy array) to uint8 for display
-                        blended = blended_img_float.astype(numpy.uint8)
+                        blended = blended_img_float.astype(np.uint8)
                           
                         rim_red = blended
                         ins_y(rim_red)
