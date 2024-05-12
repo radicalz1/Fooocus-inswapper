@@ -336,8 +336,6 @@ with shared.gradio_root:
                                         return default_interrogator_photo(img)
                                     desc_button_uv.click(trigger_desgen, inputs=[uov_input_image],
                                                    outputs=[prompt], show_progress=True, queue=True)
-                                    desgen_button_uv.click(trigger_desgen, inputs=[uov_input_image],
-                                                   outputs=[prompt], show_progress=True, queue=True)
 
                         with gr.TabItem(label='Inpaint or Outpaint') as inpaint_tab:
                             with gr.Column():
@@ -978,36 +976,157 @@ with shared.gradio_root:
         metadata_import_button.click(trigger_metadata_import, inputs=[metadata_input_image, state_is_generating], outputs=load_data_outputs, queue=False, show_progress=True) \
             .then(style_sorter.sort_styles, inputs=style_selections, outputs=style_selections, queue=False, show_progress=False)
 
-        generate_button.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True), outputs=[stop_button, skip_button, generate_button, generate_button_uv, desgen_button_uv, generate_button_io, gallery, state_is_generating]) \
+        generate_button.click(lambda: (
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False), 
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False), 
+            [],
+            True), outputs=[
+            stop_button, 
+            skip_button, 
+            generate_button, 
+            generate_button_uv, 
+            desgen_button_uv, 
+            generate_button_io, 
+            gallery, 
+            state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False), outputs=[generate_button, generate_button_uv, desgen_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: 
+                  (gr.update(visible=True, interactive=True), 
+                   gr.update(visible=True, interactive=True), 
+                   gr.update(visible=True, interactive=True), 
+                   gr.update(visible=True, interactive=True), 
+                   gr.update(visible=False, interactive=False), 
+                   gr.update(visible=False, interactive=False), 
+                   False), outputs=[
+                generate_button, 
+                generate_button_uv, 
+                desgen_button_uv, 
+                generate_button_io, 
+                stop_button, 
+                skip_button, 
+                state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
 
-        generate_button_uv.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True), outputs=[stop_button, skip_button, generate_button, generate_button_uv, desgen_button_uv, generate_button_io, gallery, state_is_generating]) \
+        generate_button_uv.click(lambda: (
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=False, interactive=False), 
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False), 
+            gr.update(visible=False, interactive=False), 
+            [], 
+            True), outputs=[
+            stop_button, 
+            skip_button, 
+            generate_button, 
+            generate_button_uv, 
+            desgen_button_uv, 
+            generate_button_io, 
+            gallery, 
+            state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
-                  outputs=[generate_button, generate_button_uv, desgen_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: (
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=False, interactive=False), 
+                gr.update(visible=False, interactive=False), 
+                False),
+                  outputs=[
+                      generate_button, 
+                      generate_button_uv, 
+                      desgen_button_uv, 
+                      generate_button_io, 
+                      stop_button, 
+                      skip_button, 
+                      state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
 
-        desgen_button_uv.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True), outputs=[stop_button, skip_button, generate_button, generate_button_uv, desgen_button_uv, generate_button_io, gallery, state_is_generating]) \
+        desgen_button_uv.click(trigger_desgen, inputs=[uov_input_image], outputs=[prompt], show_progress=True, queue=True) \
+            .then(lambda: (
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=True, interactive=True),
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False),
+            [], 
+            True), outputs=[
+            stop_button, 
+            skip_button, 
+            generate_button, 
+            generate_button_uv, 
+            desgen_button_uv, 
+            generate_button_io, 
+            gallery, 
+            state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
-                  outputs=[generate_button, generate_button_uv, desgen_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: (
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=False, interactive=False), 
+                gr.update(visible=False, interactive=False), 
+                False),
+                  outputs=[
+                      generate_button, 
+                      generate_button_uv, 
+                      desgen_button_uv, 
+                      generate_button_io, 
+                      stop_button, 
+                      skip_button, 
+                      state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
         
-        generate_button_io.click(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), [], True),
-                              outputs=[stop_button, skip_button, generate_button, generate_button_uv, desgen_button_uv, generate_button_io, gallery, state_is_generating]) \
+        generate_button_io.click(lambda: (
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=True, interactive=True), 
+            gr.update(visible=False, interactive=False), 
+            gr.update(visible=False, interactive=False),
+            gr.update(visible=False, interactive=False), 
+            gr.update(visible=False, interactive=False), 
+            [], 
+            True),
+                              outputs=[
+                                  stop_button, 
+                                  skip_button, 
+                                  generate_button, 
+                                  generate_button_uv, 
+                                  desgen_button_uv, 
+                                  generate_button_io, 
+                                  gallery, 
+                                  state_is_generating]) \
             .then(fn=refresh_seed, inputs=[seed_random, image_seed], outputs=image_seed) \
             .then(fn=get_task, inputs=ctrls, outputs=currentTask) \
             .then(fn=generate_clicked, inputs=currentTask, outputs=[progress_html, progress_window, progress_gallery, gallery]) \
-            .then(lambda: (gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=True, interactive=True), gr.update(visible=False, interactive=False), gr.update(visible=False, interactive=False), False),
-                  outputs=[generate_button, generate_button_uv, desgen_button_uv, generate_button_io, stop_button, skip_button, state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
+            .then(lambda: (
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True),
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=True, interactive=True), 
+                gr.update(visible=False, interactive=False), 
+                gr.update(visible=False, interactive=False), 
+                False),
+                  outputs=[
+                      generate_button, 
+                      generate_button_uv, 
+                      desgen_button_uv, 
+                      generate_button_io, 
+                      stop_button, 
+                      skip_button, 
+                      state_is_generating]).then(fn=lambda: None, _js='playNotification').then(fn=lambda: None, _js='refresh_grid_delayed') \
             .then(fn=update_history_link, outputs=history_link)
 
         for notification_file in ['notification.ogg', 'notification.mp3']:
