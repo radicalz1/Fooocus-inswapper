@@ -1145,6 +1145,17 @@ def worker():
                         background_img_float = rim_r.astype(float)  # Convert fg to float
                         foreground_img_float = rim_re.astype(float)  # Convert fg to float
                         # Use the NumPy arrays directly for blending
+                        def add_alpha_channel(image):
+                            height, width = image.shape[:2]
+                            # Create an alpha channel with full opacity for every pixel
+                            alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
+                            return np.concatenate((image, alpha_channel), axis=-1)
+                            
+                        # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
+                        background_img_float = add_alpha_channel(background_img_float)
+                        foreground_img_float = add_alpha_channel(foreground_img_float)
+
+                          
                         opacity = ins_dn  # The opacity for blending
                         blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
                         # Convert the blended result (assuming it's a NumPy array) to uint8 for display
