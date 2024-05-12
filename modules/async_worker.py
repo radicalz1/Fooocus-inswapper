@@ -1188,9 +1188,9 @@ def worker():
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         original_sim_height, original_sim_width = sim.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
-                        original_rimr_height, original_rimr_width = rim_r.shape[:2]
-                        aspect_ratio_rimr = original_rimr_width / original_rimr_height
-                        rim_height, rim_width = rim_e.shape[:2]
+                        # original_rimr_height, original_rimr_width = rim_r.shape[:2]
+                        # aspect_ratio_rimr = original_rimr_width / original_rimr_height
+                        rim_height, rim_width = rim_red.shape[:2]
                         if aspect_ratio_sim > 1:  # if wide image
                           target_width = rim_width
                           res_sim_height = int(target_width / aspect_ratio_sim)
