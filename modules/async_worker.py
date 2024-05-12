@@ -1156,22 +1156,21 @@ def worker():
                         #     # Apply the inverted alpha to the top layer
                         #     blended_image.putalpha(inverted_alpha)
                         #     return blended_image
-                        # bg = rim_r
-                        # fg = rim_re
+                        bg = rim_r
+                        fg = rim_re
                         # rim_red = blend_images(bg, fg)
 
-                        # ========================
-                        # Perplexity's Darken Code
-                        # ========================
-                        background = cv2.imread('rim_r')
-                        foreground = cv2.imread('rim_re')
-                        # Convert the images to floating point numbers for easier manipulation
-                        background = background.astype(np.float32) / 255.0
-                        foreground = foreground.astype(np.float32) / 255.0
-                        # Calculate the Darken blending mode
-                        blended = np.where((background <= foreground), foreground, background) * ins_dn
-                        # Convert the blended image back to uint8 for display
-                        blended = (blended * 255.0).astype(np.uint8)
+                        from blend_modes import darken_only
+                        # Import background image
+                        background_img_float = cv2.imread(rim_r,-1).astype(float)
+                        # Import foreground image
+                        foreground_img_float = cv2.imread(rim_re,-1).astype(float)
+                        # Blend images
+                        opacity = ins_dn  # The opacity of the foreground that is blended onto the background is 70 %.
+                        blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
+                        # Display blended image
+                        blended = blended_img_float.astype(numpy.uint8)  # Convert image to OpenCV native display format
+
                         rim_red = blended
                         ins_y(rim_red)
                         # rim_red2 = blend_images(bg, rim_re2)
