@@ -1142,14 +1142,12 @@ def worker():
                             print(f"Type fg: {type(fg_image)}")
                             bg_im = Image.fromarray(bg_image)  # Convert NumPy array to PIL Image
                             fg_im = Image.fromarray(fg_image)  # Convert NumPy array to PIL Image
-                            bg_im = Image.open(bg_image)
-                            fg_im = Image.open(fg_image)
-                            bg_image = bg_im.convert("RGBA")
-                            fg_image = fg_im.convert("RGBA")
+                            bg_im = bg_im.convert("RGBA")
+                            fg_im = fg_im.convert("RGBA")
                             # Invert foreground alpha for darkening effect (more alpha = darker)
                             inverted_alpha = 1.0 - fg_image.split()[-1]
                             # Blend the images using weighted addition
-                            blended_image = Image.blend(bg_image, fg_image, alpha=alpha)
+                            blended_image = Image.blend(bg_im, fg_im, alpha=alpha)
                             # Apply the inverted alpha to the top layer
                             blended_image.putalpha(inverted_alpha)
                             return blended_image
