@@ -1140,12 +1140,13 @@ def worker():
                         print(f"Type bg / rim_r: {type(rim_r)}")
                         print(f"Type fg / rim_re: {type(rim_re)}")
                         from blend_modes import darken_only
-                        bg = rim_r
-                        fg = rim_re
-                        foreground_img_float = fg.astype(float)  # Convert fg to float
+                        # bg = rim_r
+                        # fg = rim_re
+                        background_img_float = rim_r.astype(float)  # Convert fg to float
+                        foreground_img_float = rim_re.astype(float)  # Convert fg to float
                         # Use the NumPy arrays directly for blending
                         opacity = ins_dn  # The opacity for blending
-                        blended_img_float = darken_only(bg, foreground_img_float, opacity)
+                        blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
                         # Convert the blended result (assuming it's a NumPy array) to uint8 for display
                         blended = blended_img_float.astype(numpy.uint8)
                           
