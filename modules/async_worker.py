@@ -1146,7 +1146,7 @@ def worker():
                             alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
                             return np.concatenate((image, alpha_channel), axis=-1)
                         # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
-                        def darken(bg,fg, opacity)
+                        def darken(bg,fg, opacity):
                             background_img_float = rim_r.astype(float)  # Convert bg to float
                             foreground_img_float = rim_re.astype(float)  # Convert fg to float
                             background_img_float = add_alpha_channel(background_img_float)
