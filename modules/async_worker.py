@@ -1167,7 +1167,7 @@ def worker():
                         background = background.astype(np.float32) / 255.0
                         foreground = foreground.astype(np.float32) / 255.0
                         # Calculate the Darken blending mode
-                        blended = np.where((background <= foreground), foreground, background)
+                        blended = np.where((background <= foreground), foreground, background) * ins_dn
                         # Convert the blended image back to uint8 for display
                         blended = (blended * 255.0).astype(np.uint8)
                         rim_red = blended
