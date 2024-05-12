@@ -1153,7 +1153,10 @@ def worker():
                             foreground_img_float = add_alpha_channel(foreground_img_float)
                             blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
                             blended = blended_img_float.astype(np.uint8)
-                            return blended
+                            # Assuming rim_red has shape (height, width, 4)
+                            blended_no_alpha = blended[:, :, :3]  # Select the first 3 channels (RGB)
+
+                            return blended_no_alpha
                       
                         rim_red = darken(rim_r, rim_re, ins_dn)
                         ins_y(rim_red)
