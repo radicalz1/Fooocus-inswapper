@@ -1177,6 +1177,8 @@ def worker():
                         print(f'rim_ired dtype : {rim_red.dtype}')
                         combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red])
                         ins_y(combined_result_image)
+                        combined_result_image = cv2.hconcat([rim_r, rim_red])
+                        ins_y(combined_result_image)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
                         print("==================================")
