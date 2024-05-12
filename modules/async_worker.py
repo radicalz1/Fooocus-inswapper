@@ -1046,9 +1046,9 @@ def worker():
                         rip = core.numpy_to_pytorch(img) # initial_pixels
                         # progressbar(async_task, 13, 'VAE encoding ...')
                         ins_candidate_vae, _ = pipeline.get_candidate_vae(
-                            steps=steps,
+                            steps=en_steps,
                             switch=switch,
-                            denoise=denoising_strength,
+                            denoise=en_den,
                             refiner_swap_method=refiner_swap_method
                         )
                         ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
