@@ -1137,26 +1137,40 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        def blend_images(bg_image, fg_image, alpha=ins_dn):
-                            print(f"Type bg: {type(bg_image)}")
-                            print(f"Type fg: {type(fg_image)}")
-                            bg_im = Image.fromarray(bg_image)  # Convert NumPy array to PIL Image
-                            fg_im = Image.fromarray(fg_image)  # Convert NumPy array to PIL Image
-                            bg_im = bg_im.convert("RGBA")
-                            fg_im = fg_im.convert("RGBA")
-                            # Invert foreground alpha for darkening effect (more alpha = darker)
-                            inverted_alpha = (1.0 - np.array(fg_im.split()[-1])) * 255
-                            # Clip values to 0-255 range for valid alpha
-                            inverted_alpha = np.clip(inverted_alpha, 0, 255)
-                            inverted_alpha = inverted_alpha.astype(np.uint8)  # Ensure type is uint8 for alpha
-                            # Blend the images using weighted addition
-                            blended_image = Image.blend(bg_im, fg_im, alpha=alpha)
-                            # Apply the inverted alpha to the top layer
-                            blended_image.putalpha(inverted_alpha)
-                            return blended_image
-                        bg = rim_r
-                        fg = rim_re
-                        rim_red = blend_images(bg, fg)
+                        # def blend_images(bg_image, fg_image, alpha=ins_dn):
+                        #     print(f"Type bg: {type(bg_image)}")
+                        #     print(f"Type fg: {type(fg_image)}")
+                        #     bg_im = Image.fromarray(bg_image)  # Convert NumPy array to PIL Image
+                        #     fg_im = Image.fromarray(fg_image)  # Convert NumPy array to PIL Image
+                        #     bg_im = bg_im.convert("RGBA")
+                        #     fg_im = fg_im.convert("RGBA")
+                        #     # Invert foreground alpha for darkening effect (more alpha = darker)
+                        #     inverted_alpha = (1.0 - np.array(fg_im.split()[-1])) * 255
+                        #     # Clip values to 0-255 range for valid alpha
+                        #     inverted_alpha = np.clip(inverted_alpha, 0, 255)
+                        #     inverted_alpha = inverted_alpha.astype(np.uint8)  # Ensure type is uint8 for alpha
+                        #     # Blend the images using weighted addition
+                        #     blended_image = Image.blend(bg_im, fg_im, alpha=alpha)
+                        #     # Apply the inverted alpha to the top layer
+                        #     blended_image.putalpha(inverted_alpha)
+                        #     return blended_image
+                        # bg = rim_r
+                        # fg = rim_re
+                        # rim_red = blend_images(bg, fg)
+
+                        # ========================
+                        # Perplexity's Darken Code
+                        # ========================
+                        background = cv2.imread('rim_r')
+                        foreground = cv2.imread('rim_re')
+                        # Convert the images to floating point numbers for easier manipulation
+                        background = background.astype(np.float32) / 255.0
+                        foreground = foreground.astype(np.float32) / 255.0
+                        # Calculate the Darken blending mode
+                        blended = np.where((background <= foreground), foreground, background)
+                        # Convert the blended image back to uint8 for display
+                        blended = (blended * 255.0).astype(np.uint8)
+                        rim_red = blended
                         ins_y(rim_red)
                         # rim_red2 = blend_images(bg, rim_re2)
                         # ins_y(rim_red2)
