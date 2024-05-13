@@ -894,6 +894,15 @@ with shared.gradio_root:
                     gr.Dataset.update(visible=True, samples=modules.config.example_inpaint_prompts),
                     False, 'None', 0.5, 0.0
                 ]
+            # inpaint_additional_prompt = True ==> Don't need, use current prompt
+            # outpaint_selections = False, blank, ==> No outpaint
+            # example_inpaint_prompts = True, detailed, ==> No need example
+            # === Improve detail Settings ===
+            # inpaint_disable_initial_latent = False ==> Initial latent use face
+            # inpaint_engine = 'None',
+            # inpaint_strength = 0.5, 
+            # inpaint_respective_field = 0
+
 
             if mode == modules.flags.inpaint_option_modify:
                 return [
