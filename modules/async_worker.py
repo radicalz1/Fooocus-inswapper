@@ -1194,7 +1194,7 @@ def worker():
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
 
-                if not inswapper_enabled and ins_sims is None:
+                if not ins_sims:
                     img_paths = []
                     for x in imgs:
                         d = [('Prompt', 'prompt', task['log_positive_prompt']),
