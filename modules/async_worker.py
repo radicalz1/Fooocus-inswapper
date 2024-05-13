@@ -237,9 +237,7 @@ def worker():
         en_steps = args.pop()
         ins_dn = args.pop()
         # print(f"Inswapper: {'ENABLED' if inswapper_enabled and ins_sims is not None else 'DISABLED'}")
-        print(f"Inswapper: {'ENABLED' if ins_sims is not None else 'DISABLED'}")
-        print(f"  - No images loaded.")
-        print(f"  - Images: {ins_sims}")
+        print(f"Inswapper: {'ENABLED' if ins_sims else 'DISABLED'}")
 
         photomaker_enabled = args.pop()
         photomaker_images = args.pop()
@@ -941,7 +939,7 @@ def worker():
                 if inpaint_worker.current_task is not None:
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
-                if ins_sims is not None:
+                if ins_sims:
                 # if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
 
