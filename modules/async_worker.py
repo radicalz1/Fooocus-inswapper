@@ -1190,63 +1190,63 @@ def worker():
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
                         print("====================================================")
 
-
-                del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
-
-                if not inswapper_enabled and ins_sims is None:
-                    img_paths = []
-                    for x in imgs:
-                        d = [('Prompt', 'prompt', task['log_positive_prompt']),
-                             ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
-                             ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
-                             ('Styles', 'styles', str(raw_style_selections)),
-                             ('Performance', 'performance', performance_selection.value)]
+                else:
+                    del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
     
-                        if performance_selection.steps() != steps:
-                            d.append(('Steps', 'steps', steps))
-    
-                        d += [('Resolution', 'resolution', str((width, height))),
-                              ('Guidance Scale', 'guidance_scale', guidance_scale),
-                              ('Sharpness', 'sharpness', sharpness),
-                              ('ADM Guidance', 'adm_guidance', str((
-                                  modules.patch.patch_settings[pid].positive_adm_scale,
-                                  modules.patch.patch_settings[pid].negative_adm_scale,
-                                  modules.patch.patch_settings[pid].adm_scaler_end))),
-                              ('Base Model', 'base_model', base_model_name),
-                              ('Refiner Model', 'refiner_model', refiner_model_name),
-                              ('Refiner Switch', 'refiner_switch', refiner_switch)]
-    
-                        if refiner_model_name != 'None':
-                            if overwrite_switch > 0:
-                                d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
-                            if refiner_swap_method != flags.refiner_swap_method:
-                                d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
-                        if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
-                            d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
-    
-                        d.append(('Sampler', 'sampler', sampler_name))
-                        d.append(('Scheduler', 'scheduler', scheduler_name))
-                        d.append(('Seed', 'seed', str(task['task_seed'])))
-    
-                        if freeu_enabled:
-                            d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
-    
-                        for li, (n, w) in enumerate(loras):
-                            if n != 'None':
-                                d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
-    
-                        metadata_parser = None
-                        if save_metadata_to_images:
-                            metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
-                            metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
-                                                     task['log_negative_prompt'], task['negative'],
-                                                     steps, base_model_name, refiner_model_name, loras)
-                        d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
-                        d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
-                        img_paths.append(log(x, d, metadata_parser, output_format))
-    
-                    yield_result(async_task, img_paths, do_not_show_finished_images=len(tasks) == 1 or disable_intermediate_results)
-                    async_task.yields.append(['results', async_task.results])
+                    if not inswapper_enabled and ins_sims is None:
+                        img_paths = []
+                        for x in imgs:
+                            d = [('Prompt', 'prompt', task['log_positive_prompt']),
+                                 ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
+                                 ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
+                                 ('Styles', 'styles', str(raw_style_selections)),
+                                 ('Performance', 'performance', performance_selection.value)]
+        
+                            if performance_selection.steps() != steps:
+                                d.append(('Steps', 'steps', steps))
+        
+                            d += [('Resolution', 'resolution', str((width, height))),
+                                  ('Guidance Scale', 'guidance_scale', guidance_scale),
+                                  ('Sharpness', 'sharpness', sharpness),
+                                  ('ADM Guidance', 'adm_guidance', str((
+                                      modules.patch.patch_settings[pid].positive_adm_scale,
+                                      modules.patch.patch_settings[pid].negative_adm_scale,
+                                      modules.patch.patch_settings[pid].adm_scaler_end))),
+                                  ('Base Model', 'base_model', base_model_name),
+                                  ('Refiner Model', 'refiner_model', refiner_model_name),
+                                  ('Refiner Switch', 'refiner_switch', refiner_switch)]
+        
+                            if refiner_model_name != 'None':
+                                if overwrite_switch > 0:
+                                    d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
+                                if refiner_swap_method != flags.refiner_swap_method:
+                                    d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
+                            if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
+                                d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
+        
+                            d.append(('Sampler', 'sampler', sampler_name))
+                            d.append(('Scheduler', 'scheduler', scheduler_name))
+                            d.append(('Seed', 'seed', str(task['task_seed'])))
+        
+                            if freeu_enabled:
+                                d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
+        
+                            for li, (n, w) in enumerate(loras):
+                                if n != 'None':
+                                    d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
+        
+                            metadata_parser = None
+                            if save_metadata_to_images:
+                                metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
+                                metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
+                                                         task['log_negative_prompt'], task['negative'],
+                                                         steps, base_model_name, refiner_model_name, loras)
+                            d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
+                            d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
+                            img_paths.append(log(x, d, metadata_parser, output_format))
+        
+                        yield_result(async_task, img_paths, do_not_show_finished_images=len(tasks) == 1 or disable_intermediate_results)
+                        async_task.yields.append(['results', async_task.results])
             except ldm_patched.modules.model_management.InterruptProcessingException as e:
                 if async_task.last_stop == 'skip':
                     print('User skipped')
