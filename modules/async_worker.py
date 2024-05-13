@@ -938,7 +938,8 @@ def worker():
                 if inpaint_worker.current_task is not None:
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
-                if inswapper_enabled and ins_sims is not None:
+                if ins_sims is not None:
+                # if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
 
                     # print("====================")
