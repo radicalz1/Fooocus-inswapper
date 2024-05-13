@@ -133,49 +133,58 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
 
             if inpaint:
                 import modules.inpaint_worker as inpaint_worker
-                from modules.async_worker import
+                from modules.async_worker import progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method
+                import modules.default_pipeline as pipeline
+                import modules.core as core
+                import modules.flags as flags
+                import modules.config
+                 # === Improve detail Settings === Use face for initial latent
+            # inpaint_disable_initial_latent = False
+            # inpaint_engine = 'None'
+            # inpaint_strength = ins_en_den
+            # inpaint_respective_field = 0
+
 # =============================================
-                inpaint_image = inpaint_input_image['image']
-                inpaint_mask = inpaint_input_image['mask'][:, :, 0]
-
-                if inpaint_mask_upload_checkbox:
-                    if isinstance(inpaint_mask_image_upload, np.ndarray):
-                        if inpaint_mask_image_upload.ndim == 3:
-                            H, W, C = inpaint_image.shape
-                            inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
-                            inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
-                            inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
-                            inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
-
-                if int(inpaint_erode_or_dilate) != 0:
-                    inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
-
-                if invert_mask_checkbox:
-                    inpaint_mask = 255 - inpaint_mask
-
+                steps=ins_en_steps
+                inpaint_image = restored_face
+                H, W = inpaint_image.shape[:2]  # Get image height and width
+                inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
+                # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
+                # if inpaint_mask_upload_checkbox:
+                #     if isinstance(inpaint_mask_image_upload, np.ndarray):
+                #         if inpaint_mask_image_upload.ndim == 3:
+                #             H, W, C = inpaint_image.shape
+                #             inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
+                #             inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
+                #             inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
+                #             inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
+                # if int(inpaint_erode_or_dilate) != 0:
+                #     inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
+                # if invert_mask_checkbox:
+                #     inpaint_mask = 255 - inpaint_mask
                 inpaint_image = HWC3(inpaint_image)
-                if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
-                        and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                    progressbar(async_task, 1, 'Downloading upscale models ...')
-                    modules.config.downloading_upscale_model()
-                    if inpaint_parameterized:
-                        progressbar(async_task, 1, 'Downloading inpainter ...')
-                        inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
-                            inpaint_engine)
-                        base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
-                        print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
-                        if refiner_model_name == 'None':
-                            use_synthetic_refiner = True
-                            refiner_switch = 0.8
-                    else:
-                        inpaint_head_model_path, inpaint_patch_model_path = None, None
-                        print(f'[Inpaint] Parameterized inpaint is disabled.')
-                    if inpaint_additional_prompt != '':
-                        if prompt == '':
-                            prompt = inpaint_additional_prompt
-                        else:
-                            prompt = inpaint_additional_prompt + '\n' + prompt
-                    goals.append('inpaint')
+                # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
+                #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
+                progressbar(async_task, 1, 'Downloading upscale models ...')
+                modules.config.downloading_upscale_model()
+                # if inpaint_parameterized:
+                #     progressbar(async_task, 1, 'Downloading inpainter ...')
+                #     inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
+                #         inpaint_engine)
+                #     base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
+                #     print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
+                #     if refiner_model_name == 'None':
+                #         use_synthetic_refiner = True
+                #         refiner_switch = 0.8
+                # else:
+                inpaint_head_model_path, inpaint_patch_model_path = None, None
+                print(f'[Inpaint] Parameterized inpaint is disabled.')
+                # if inpaint_additional_prompt != '':
+                #     if prompt == '':
+                #         prompt = inpaint_additional_prompt
+                #     else:
+                #         prompt = inpaint_additional_prompt + '\n' + prompt
+                # goals.append('inpaint')
             
             denoising_strength = inpaint_strength
 
@@ -186,10 +195,10 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 k=inpaint_respective_field
             )
 
-            if debugging_inpaint_preprocessor:
-                yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-                             do_not_show_finished_images=True)
-                return
+            # if debugging_inpaint_preprocessor:
+            #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
+            #                  do_not_show_finished_images=True)
+            #     return
 
             progressbar(async_task, 13, 'VAE Inpaint encoding ...')
 
