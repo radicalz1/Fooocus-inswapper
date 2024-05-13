@@ -1091,7 +1091,7 @@ def worker():
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
-                        print(f"Type of img: {type(rim)}")
+                        # print(f"Type of img: {type(rim)}")
                         rim_i = np.array(rim)  # Convert to NumPy array before returning
                         ins_y(rim_i)
                         print("==================================")
@@ -1103,13 +1103,9 @@ def worker():
                         progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
                         rim_ie = ins_en(rim_i)
                         ins_y(rim_ie)
-                        # rim_ie2 = ins_en(rim_ie1)
-                        # ins_y(rim_ie2)
                         print("=========================================")
                         print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
                         print("=========================================")
-                    
-
                         print("======================================")
                         print(f"Start Restoration {iinsim} / {tinsim}")
                         print("======================================")
@@ -1126,8 +1122,6 @@ def worker():
                         progressbar(async_task, 13, f'Start Restoration Enhancement {iinsim} / {tinsim}')
                         rim_re = ins_en(rim_r)
                         ins_y(rim_re)
-                        # rim_re2 = ins_en(rim_re1)
-                        # ins_y(rim_re2)
                         print("=======================================")
                         print(f"Finish Restoration Enhancement {iinsim} / {tinsim}")
                         print("=======================================")
@@ -1137,8 +1131,6 @@ def worker():
                         print(f"Start Darken {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        print(f"Type bg / rim_r: {type(rim_r)}")
-                        print(f"Type fg / rim_re: {type(rim_re)}")
                         from blend_modes import darken_only
                         def add_alpha_channel(image):
                             height, width = image.shape[:2]
@@ -1155,29 +1147,15 @@ def worker():
                             blended = blended_img_float.astype(np.uint8)
                             # Assuming rim_red has shape (height, width, 4)
                             blended_no_alpha = blended[:, :, :3]  # Select the first 3 channels (RGB)
-
                             return blended_no_alpha
                       
-                        rim_red = darken(rim_r, rim_re, ins_dn)
+                        rim_ied = darken(rim_i, rim_ie, ins_dn) # inswapped darkened with inswapped enhanced
+                        ins_y(rim_ied)
+                        rim_rid = darken(rim_r, rim_i, ins_dn) # restored darkened with inswapped
+                        ins_y(rim_rid)
+                        rim_red = darken(rim_r, rim_re, ins_dn) # restored darkened with restored enhanced
                         ins_y(rim_red)
-                        # rim_red2 = blend_images(bg, rim_re2)
-                        # ins_y(rim_red2)
-                        print(f"Type rim_r: {type(rim_r)}")
-                        print(f"Type rim_re: {type(rim_re)}")
-                        print(f"Type rim_red: {type(rim_red)}")
-                        print(f'rim_i shape : {rim_i.shape}')
-                        print(f'rim_i dtype : {rim_i.dtype}')
-                        print(f'rim_r shape : {rim_r.shape}')
-                        print(f'rim_r dtype : {rim_r.dtype}')
-                        print(f'rim_ie shape : {rim_ie.shape}')
-                        print(f'rim_ie dtype : {rim_ie.dtype}')
-                        print(f'rim_re shape : {rim_re.shape}')
-                        print(f'rim_re dtype : {rim_re.dtype}')
-                        print(f'rim_red shape : {rim_red.shape}')
-                        print(f'rim_ired dtype : {rim_red.dtype}')
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_red])
-                        ins_y(combined_result_image)
-                        combined_result_image = cv2.hconcat([rim_r, rim_red])
+                        combined_result_image = cv2.hconcat([rim_ied, rim_rid, rim_red])
                         ins_y(combined_result_image)
                         print("==================================")
                         print(f"Finish Darken {iinsim} / {tinsim}")
@@ -1188,8 +1166,6 @@ def worker():
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         original_sim_height, original_sim_width = sim.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
-                        # original_rimr_height, original_rimr_width = rim_r.shape[:2]
-                        # aspect_ratio_rimr = original_rimr_width / original_rimr_height
                         rim_height, rim_width = rim_red.shape[:2]
                         if aspect_ratio_sim > 1:  # if wide image
                           target_width = rim_width
@@ -1208,7 +1184,7 @@ def worker():
                         print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("=====================================================")
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re, rim_re, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_i, rim_ie, rim_ied, rim_r, rim_re, rim_rid, rim_red, resized_sim])
                         ins_y(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
