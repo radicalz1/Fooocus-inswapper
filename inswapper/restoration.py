@@ -133,11 +133,12 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
 
             if inpaint:
                 import modules.inpaint_worker as inpaint_worker
-                from modules.async_worker import progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method
+                from modules.async_worker import async_task, progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method,
+                positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
                 import modules.default_pipeline as pipeline
                 import modules.core as core
-                import modules.flags as flags
                 import modules.config
+                import modules.async_worker as async_worker
                  # === Improve detail Settings === Use face for initial latent
             # inpaint_disable_initial_latent = False
             # inpaint_engine = 'None'
@@ -165,7 +166,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 inpaint_image = HWC3(inpaint_image)
                 # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
                 #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                progressbar(async_task, 1, 'Downloading upscale models ...')
+                async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
                 modules.config.downloading_upscale_model()
                 # if inpaint_parameterized:
                 #     progressbar(async_task, 1, 'Downloading inpainter ...')
@@ -186,93 +187,94 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 #         prompt = inpaint_additional_prompt + '\n' + prompt
                 # goals.append('inpaint')
             
-            denoising_strength = inpaint_strength
-
-            inpaint_worker.current_task = inpaint_worker.InpaintWorker(
-                image=inpaint_image,
-                mask=inpaint_mask,
-                use_fill=denoising_strength > 0.99,
-                k=inpaint_respective_field
-            )
-
-            # if debugging_inpaint_preprocessor:
-            #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-            #                  do_not_show_finished_images=True)
-            #     return
-
-            progressbar(async_task, 13, 'VAE Inpaint encoding ...')
-
-
-            inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
-            inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
-            inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
-
-            candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
-                steps=steps,
-                switch=switch,
-                denoise=denoising_strength,
-                refiner_swap_method=refiner_swap_method
-            )
-
-            latent_inpaint, latent_mask = core.encode_vae_inpaint(
-                mask=inpaint_pixel_mask,
-                vae=candidate_vae,
-                pixels=inpaint_pixel_image)
-
-            latent_swap = None
-            if candidate_vae_swap is not None:
-                progressbar(async_task, 13, 'VAE SD15 encoding ...')
-                latent_swap = core.encode_vae(
-                    vae=candidate_vae_swap,
-                    pixels=inpaint_pixel_fill)['samples']
-
-            progressbar(async_task, 13, 'VAE encoding ...')
-            latent_fill = core.encode_vae(
-                vae=candidate_vae,
-                pixels=inpaint_pixel_fill)['samples']
-
-            inpaint_worker.current_task.load_latent(
-                latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
-
-            if inpaint_parameterized:
-                pipeline.final_unet = inpaint_worker.current_task.patch(
-                    inpaint_head_model_path=inpaint_head_model_path,
-                    inpaint_latent=latent_inpaint,
-                    inpaint_latent_mask=latent_mask,
-                    model=pipeline.final_unet
+                denoising_strength = inpaint_strength
+    
+                inpaint_worker.current_task = inpaint_worker.InpaintWorker(
+                    image=inpaint_image,
+                    mask=inpaint_mask,
+                    use_fill=denoising_strength > 0.99,
+                    k=inpaint_respective_field
                 )
-
-            if not inpaint_disable_initial_latent:
+    
+                # if debugging_inpaint_preprocessor:
+                #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
+                #                  do_not_show_finished_images=True)
+                #     return
+    
+                async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
+    
+    
+                inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
+                inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
+                inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
+    
+                candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
+                    steps=steps,
+                    switch=switch,
+                    denoise=denoising_strength,
+                    refiner_swap_method=refiner_swap_method
+                )
+    
+                latent_inpaint, latent_mask = core.encode_vae_inpaint(
+                    mask=inpaint_pixel_mask,
+                    vae=candidate_vae,
+                    pixels=inpaint_pixel_image)
+    
+                latent_swap = None
+                if candidate_vae_swap is not None:
+                    async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
+                    latent_swap = core.encode_vae(
+                        vae=candidate_vae_swap,
+                        pixels=inpaint_pixel_fill)['samples']
+    
+                async_worker.progressbar(async_task, 13, 'VAE encoding ...')
+                latent_fill = core.encode_vae(
+                    vae=candidate_vae,
+                    pixels=inpaint_pixel_fill)['samples']
+    
+                inpaint_worker.current_task.load_latent(
+                    latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
+    
+                # if inpaint_parameterized:
+                #     pipeline.final_unet = inpaint_worker.current_task.patch(
+                #         inpaint_head_model_path=inpaint_head_model_path,
+                #         inpaint_latent=latent_inpaint,
+                #         inpaint_latent_mask=latent_mask,
+                #         model=pipeline.final_unet
+                #     )
+    
+                # if not inpaint_disable_initial_latent:
                 initial_latent = {'samples': latent_fill}
+    
+                B, C, H, W = latent_fill.shape
+                height, width = H * 8, W * 8
+                final_height, final_width = inpaint_worker.current_task.image.shape[:2]
+                print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
+                imgs = pipeline.process_diffusion(
+                    positive_cond=positive_cond,
+                    negative_cond=negative_cond,
+                    steps=steps,
+                    switch=switch,
+                    width=width,
+                    height=height,
+                    image_seed=task['task_seed'],
+                    callback=callback,
+                    sampler_name=final_sampler_name,
+                    scheduler_name=final_scheduler_name,
+                    latent=initial_latent,
+                    denoise=denoising_strength,
+                    tiled=tiled,
+                    cfg_scale=cfg_scale,
+                    refiner_swap_method=refiner_swap_method,
+                disable_preview=disable_preview
+                )
+            # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
+#                 if inpaint_worker.current_task is not None:
+                imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
+                restored_face = imgs.astype("uint8")
+                face_helper.add_restored_face(restored_face)
 
-            B, C, H, W = latent_fill.shape
-            height, width = H * 8, W * 8
-            final_height, final_width = inpaint_worker.current_task.image.shape[:2]
-            print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
-                    imgs = pipeline.process_diffusion(
-                        positive_cond=positive_cond,
-                        negative_cond=negative_cond,
-                        steps=steps,
-                        switch=switch,
-                        width=width,
-                        height=height,
-                        image_seed=task['task_seed'],
-                        callback=callback,
-                        sampler_name=final_sampler_name,
-                        scheduler_name=final_scheduler_name,
-                        latent=initial_latent,
-                        denoise=denoising_strength,
-                        tiled=tiled,
-                        cfg_scale=cfg_scale,
-                        refiner_swap_method=refiner_swap_method,
-                    disable_preview=disable_preview
-                    )
-
-                # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
-
-                if inpaint_worker.current_task is not None:
-                    imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
-
+        
         # paste_back
         if not has_aligned:
             # upsample the background
