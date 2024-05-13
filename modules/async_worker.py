@@ -236,7 +236,10 @@ def worker():
         en_den = args.pop()
         en_steps = args.pop()
         ins_dn = args.pop()
-        print(f"Inswapper: {'ENABLED' if inswapper_enabled and ins_sims is not None else 'DISABLED'}")
+        # print(f"Inswapper: {'ENABLED' if inswapper_enabled and ins_sims is not None else 'DISABLED'}")
+        print(f"Inswapper: {'ENABLED' if ins_sims is not None else 'DISABLED'}")
+        print(f"  - No images loaded.")
+        print(f"  - Images: {ins_sims}")
 
         photomaker_enabled = args.pop()
         photomaker_images = args.pop()
