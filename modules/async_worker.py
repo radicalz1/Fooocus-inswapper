@@ -1197,7 +1197,7 @@ def worker():
                                 )
                 
                             ins_y(restored_face)
-                            print('tensor2img rgb2bgr)
+                            print('tensor2img rgb2bgr')
                             print(restored_face.__dict__)
 
                             restored_face = restored_face.astype("uint8")
