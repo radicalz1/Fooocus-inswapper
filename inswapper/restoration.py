@@ -307,7 +307,6 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 )
             else:
                 print("=================================")
-                print(f"else face_upsample and face_upsampler is not None {bg_img}, {draw_box}")
                 restored_img = face_helper.paste_faces_to_input_image(
                     upsample_img=bg_img, draw_box=draw_box
                 )
