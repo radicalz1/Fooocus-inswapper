@@ -1150,6 +1150,28 @@ def worker():
                         # rim_rd = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device, True)
                         # ins_y(rim_rd)
                         from facelib.utils.face_restoration_helper import FaceRestoreHelper
+                        detection_model = "retinaface_resnet50"
+
+                        face_helper = FaceRestoreHelper(
+                            1,
+                            face_size=512,
+                            crop_ratio=(1, 1),
+                            det_model=detection_model,
+                            save_ext="png",
+                            use_parse=True,
+                        )
+                        bg_upsampler = upsampler
+                        face_upsampler = upsampler
+
+                        # face_helper.read_image(img)
+                        # # get face landmarks for each face
+                        # num_det_faces = face_helper.get_face_landmarks_5(
+                        # only_center_face=only_center_face, resize=640, eye_dist_threshold=5
+                        # )
+                        # # align and warp each face
+                        # face_helper.align_warp_face()
+
+
                         steps=ins_en_steps
                         inpaint_image = face
                         H, W = inpaint_image.shape[:2]  # Get image height and width
@@ -1277,9 +1299,14 @@ def worker():
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
                         face_helper.add_restored_face(restored_face)
-        
-
-            #             # ins_y(rim_re)
+                        bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
+                        restored_img = face_helper.paste_faces_to_input_image(
+                            upsample_img=bg_img,
+                            draw_box=False,
+                            face_upsampler=face_upsampler
+                        )
+                        rim_rd = cv2.cvtColor(restored_img, cv2.COLOR_BGR2RGB)
+                        ins_y(rim_rd)
 # ============================================================================
                         # print("=======================================")
                         # print(f"Finish Improve Detail {iinsim} / {tinsim}")
