@@ -131,13 +131,13 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
             restored_face = restored_face.astype("uint8")
             face_helper.add_restored_face(restored_face)
 
-            if inpaint:
-                import modules.inpaint_worker as inpaint_worker
-                from modules.async_worker import inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
-                import modules.default_pipeline as pipeline
-                import modules.core as core
-                import modules.config
-                import modules.async_worker as async_worker
+            # if inpaint:
+            #     import modules.inpaint_worker as inpaint_worker
+            #     from modules.async_worker import inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
+            #     import modules.default_pipeline as pipeline
+            #     import modules.core as core
+            #     import modules.config
+            #     import modules.async_worker as async_worker
                  # === Improve detail Settings === Use face for initial latent
             # inpaint_disable_initial_latent = False
             # inpaint_engine = 'None'
@@ -145,133 +145,133 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
             # inpaint_respective_field = 0
 
 # =============================================
-                steps=ins_en_steps
-                inpaint_image = restored_face
-                H, W = inpaint_image.shape[:2]  # Get image height and width
-                inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
-                # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
-                # if inpaint_mask_upload_checkbox:
-                #     if isinstance(inpaint_mask_image_upload, np.ndarray):
-                #         if inpaint_mask_image_upload.ndim == 3:
-                #             H, W, C = inpaint_image.shape
-                #             inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
-                #             inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
-                #             inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
-                #             inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
-                # if int(inpaint_erode_or_dilate) != 0:
-                #     inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
-                # if invert_mask_checkbox:
-                #     inpaint_mask = 255 - inpaint_mask
-                inpaint_image = HWC3(inpaint_image)
-                # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
-                #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                # async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
-                modules.config.downloading_upscale_model()
-                # if inpaint_parameterized:
-                #     progressbar(async_task, 1, 'Downloading inpainter ...')
-                #     inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
-                #         inpaint_engine)
-                #     base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
-                #     print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
-                #     if refiner_model_name == 'None':
-                #         use_synthetic_refiner = True
-                #         refiner_switch = 0.8
-                # else:
-                inpaint_head_model_path, inpaint_patch_model_path = None, None
-                print(f'[Inpaint] Parameterized inpaint is disabled.')
-                # if inpaint_additional_prompt != '':
-                #     if prompt == '':
-                #         prompt = inpaint_additional_prompt
-                #     else:
-                #         prompt = inpaint_additional_prompt + '\n' + prompt
-                # goals.append('inpaint')
+#                 steps=ins_en_steps
+#                 inpaint_image = restored_face
+#                 H, W = inpaint_image.shape[:2]  # Get image height and width
+#                 inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
+#                 # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
+#                 # if inpaint_mask_upload_checkbox:
+#                 #     if isinstance(inpaint_mask_image_upload, np.ndarray):
+#                 #         if inpaint_mask_image_upload.ndim == 3:
+#                 #             H, W, C = inpaint_image.shape
+#                 #             inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
+#                 #             inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
+#                 #             inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
+#                 #             inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
+#                 # if int(inpaint_erode_or_dilate) != 0:
+#                 #     inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
+#                 # if invert_mask_checkbox:
+#                 #     inpaint_mask = 255 - inpaint_mask
+#                 inpaint_image = HWC3(inpaint_image)
+#                 # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
+#                 #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
+#                 # async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
+#                 modules.config.downloading_upscale_model()
+#                 # if inpaint_parameterized:
+#                 #     progressbar(async_task, 1, 'Downloading inpainter ...')
+#                 #     inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
+#                 #         inpaint_engine)
+#                 #     base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
+#                 #     print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
+#                 #     if refiner_model_name == 'None':
+#                 #         use_synthetic_refiner = True
+#                 #         refiner_switch = 0.8
+#                 # else:
+#                 inpaint_head_model_path, inpaint_patch_model_path = None, None
+#                 print(f'[Inpaint] Parameterized inpaint is disabled.')
+#                 # if inpaint_additional_prompt != '':
+#                 #     if prompt == '':
+#                 #         prompt = inpaint_additional_prompt
+#                 #     else:
+#                 #         prompt = inpaint_additional_prompt + '\n' + prompt
+#                 # goals.append('inpaint')
             
-                denoising_strength = inpaint_strength
+#                 denoising_strength = inpaint_strength
     
-                inpaint_worker.current_task = inpaint_worker.InpaintWorker(
-                    image=inpaint_image,
-                    mask=inpaint_mask,
-                    use_fill=denoising_strength > 0.99,
-                    k=inpaint_respective_field
-                )
+#                 inpaint_worker.current_task = inpaint_worker.InpaintWorker(
+#                     image=inpaint_image,
+#                     mask=inpaint_mask,
+#                     use_fill=denoising_strength > 0.99,
+#                     k=inpaint_respective_field
+#                 )
     
-                # if debugging_inpaint_preprocessor:
-                #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-                #                  do_not_show_finished_images=True)
-                #     return
+#                 # if debugging_inpaint_preprocessor:
+#                 #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
+#                 #                  do_not_show_finished_images=True)
+#                 #     return
     
-                # async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
+#                 # async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
     
     
-                inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
-                inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
-                inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
+#                 inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
+#                 inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
+#                 inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
     
-                candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
-                    steps=steps,
-                    switch=switch,
-                    denoise=denoising_strength,
-                    refiner_swap_method=refiner_swap_method
-                )
+#                 candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
+#                     steps=steps,
+#                     switch=switch,
+#                     denoise=denoising_strength,
+#                     refiner_swap_method=refiner_swap_method
+#                 )
     
-                latent_inpaint, latent_mask = core.encode_vae_inpaint(
-                    mask=inpaint_pixel_mask,
-                    vae=candidate_vae,
-                    pixels=inpaint_pixel_image)
+#                 latent_inpaint, latent_mask = core.encode_vae_inpaint(
+#                     mask=inpaint_pixel_mask,
+#                     vae=candidate_vae,
+#                     pixels=inpaint_pixel_image)
     
-                latent_swap = None
-                if candidate_vae_swap is not None:
-                    # async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
-                    latent_swap = core.encode_vae(
-                        vae=candidate_vae_swap,
-                        pixels=inpaint_pixel_fill)['samples']
+#                 latent_swap = None
+#                 if candidate_vae_swap is not None:
+#                     # async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
+#                     latent_swap = core.encode_vae(
+#                         vae=candidate_vae_swap,
+#                         pixels=inpaint_pixel_fill)['samples']
     
-                async_worker.progressbar(async_task, 13, 'VAE encoding ...')
-                latent_fill = core.encode_vae(
-                    vae=candidate_vae,
-                    pixels=inpaint_pixel_fill)['samples']
+#                 async_worker.progressbar(async_task, 13, 'VAE encoding ...')
+#                 latent_fill = core.encode_vae(
+#                     vae=candidate_vae,
+#                     pixels=inpaint_pixel_fill)['samples']
     
-                inpaint_worker.current_task.load_latent(
-                    latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
+#                 inpaint_worker.current_task.load_latent(
+#                     latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
     
-                # if inpaint_parameterized:
-                #     pipeline.final_unet = inpaint_worker.current_task.patch(
-                #         inpaint_head_model_path=inpaint_head_model_path,
-                #         inpaint_latent=latent_inpaint,
-                #         inpaint_latent_mask=latent_mask,
-                #         model=pipeline.final_unet
-                #     )
+#                 # if inpaint_parameterized:
+#                 #     pipeline.final_unet = inpaint_worker.current_task.patch(
+#                 #         inpaint_head_model_path=inpaint_head_model_path,
+#                 #         inpaint_latent=latent_inpaint,
+#                 #         inpaint_latent_mask=latent_mask,
+#                 #         model=pipeline.final_unet
+#                 #     )
     
-                # if not inpaint_disable_initial_latent:
-                initial_latent = {'samples': latent_fill}
+#                 # if not inpaint_disable_initial_latent:
+#                 initial_latent = {'samples': latent_fill}
     
-                B, C, H, W = latent_fill.shape
-                height, width = H * 8, W * 8
-                final_height, final_width = inpaint_worker.current_task.image.shape[:2]
-                print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
-                imgs = pipeline.process_diffusion(
-                    positive_cond=positive_cond,
-                    negative_cond=negative_cond,
-                    steps=steps,
-                    switch=switch,
-                    width=width,
-                    height=height,
-                    image_seed=task['task_seed'],
-                    callback=callback,
-                    sampler_name=final_sampler_name,
-                    scheduler_name=final_scheduler_name,
-                    latent=initial_latent,
-                    denoise=denoising_strength,
-                    tiled=tiled,
-                    cfg_scale=cfg_scale,
-                    refiner_swap_method=refiner_swap_method,
-                disable_preview=disable_preview
-                )
-            # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
-#                 if inpaint_worker.current_task is not None:
-                imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
-                restored_face = imgs.astype("uint8")
-                face_helper.add_restored_face(restored_face)
+#                 B, C, H, W = latent_fill.shape
+#                 height, width = H * 8, W * 8
+#                 final_height, final_width = inpaint_worker.current_task.image.shape[:2]
+#                 print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
+#                 imgs = pipeline.process_diffusion(
+#                     positive_cond=positive_cond,
+#                     negative_cond=negative_cond,
+#                     steps=steps,
+#                     switch=switch,
+#                     width=width,
+#                     height=height,
+#                     image_seed=task['task_seed'],
+#                     callback=callback,
+#                     sampler_name=final_sampler_name,
+#                     scheduler_name=final_scheduler_name,
+#                     latent=initial_latent,
+#                     denoise=denoising_strength,
+#                     tiled=tiled,
+#                     cfg_scale=cfg_scale,
+#                     refiner_swap_method=refiner_swap_method,
+#                 disable_preview=disable_preview
+#                 )
+#             # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
+# #                 if inpaint_worker.current_task is not None:
+#                 imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
+#                 restored_face = imgs.astype("uint8")
+#                 face_helper.add_restored_face(restored_face)
 
         
         # paste_back
@@ -296,7 +296,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 )
 
         restored_img = cv2.cvtColor(restored_img, cv2.COLOR_BGR2RGB)
-        return restored_img
+        return restored_img, restored_face
     except Exception as error:
         print('Global exception', error)
         return None, None
