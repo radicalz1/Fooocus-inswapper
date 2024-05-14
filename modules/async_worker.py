@@ -1227,7 +1227,7 @@ def worker():
                                 vae=candidate_vae_swap,
                                 pixels=inpaint_pixel_fill)['samples']
             
-                        async_worker.progressbar(async_task, 13, 'VAE encoding ...')
+                        progressbar(async_task, 13, 'VAE encoding ...')
                         latent_fill = core.encode_vae(
                             vae=candidate_vae,
                             pixels=inpaint_pixel_fill)['samples']
