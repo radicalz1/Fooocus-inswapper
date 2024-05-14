@@ -133,7 +133,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
 
             if inpaint:
                 import modules.inpaint_worker as inpaint_worker
-                from modules.async_worker import progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
+                from modules.async_worker import inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
                 import modules.default_pipeline as pipeline
                 import modules.core as core
                 import modules.config
