@@ -1341,7 +1341,7 @@ def worker():
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=1)[0]
 
-                        restored_faces_len = len(self.restored_faces)
+                        restored_faces_len = len(restored_faces)
                         affine_matrices_len = len(affine_matrices)
                         print(f"Error: Mismatched lengths! restored_faces: {restored_faces_len}, affine_matrices: {affine_matrices_len}")
 
