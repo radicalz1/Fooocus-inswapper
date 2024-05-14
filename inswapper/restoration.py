@@ -133,7 +133,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
 
             if inpaint:
                 import modules.inpaint_worker as inpaint_worker
-                from modules.async_worker import async_task, progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
+                from modules.async_worker import progressbar, inpaint_strength, inpaint_disable_initial_latent, inpaint_respective_field, ins_en_steps, switch, refiner_swap_method, positive_cond, negative_cond, task, callback, final_sampler_name, final_scheduler_name, tiled, cfg_scale, refiner_swap_method, disable_preview
                 import modules.default_pipeline as pipeline
                 import modules.core as core
                 import modules.config
@@ -165,7 +165,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 inpaint_image = HWC3(inpaint_image)
                 # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
                 #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
+                # async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
                 modules.config.downloading_upscale_model()
                 # if inpaint_parameterized:
                 #     progressbar(async_task, 1, 'Downloading inpainter ...')
@@ -200,7 +200,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 #                  do_not_show_finished_images=True)
                 #     return
     
-                async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
+                # async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
     
     
                 inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
@@ -221,7 +221,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
     
                 latent_swap = None
                 if candidate_vae_swap is not None:
-                    async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
+                    # async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
                     latent_swap = core.encode_vae(
                         vae=candidate_vae_swap,
                         pixels=inpaint_pixel_fill)['samples']
