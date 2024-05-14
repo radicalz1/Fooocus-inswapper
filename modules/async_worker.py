@@ -1207,14 +1207,12 @@ def worker():
                 
                             ins_y(restored_face)
                             print('tensor2img rgb2bgr')
-                            print(restored_face.__dict__)
 
                             restored_face = restored_face.astype("uint8")
                             face_helper.add_restored_face(restored_face)
 
                             ins_y(restored_face)
                             print('changed to astype uint8')
-                            print(restored_face.__dict__)
 
                         steps=ins_en_steps
                         # inpaint_image = restored_face
@@ -1344,7 +1342,7 @@ def worker():
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
                         ins_y(restored_face)
-                        print(restored_face.__dict__)
+                        print(restored_face after detailed)
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
                         restored_img = face_helper.paste_faces_to_input_image(
