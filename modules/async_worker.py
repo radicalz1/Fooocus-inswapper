@@ -1130,6 +1130,9 @@ def worker():
                         ins_y(rim_r)
                         rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
                         ins_y(rim_r)
+                        ins_y(face)
+                        restored_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+                        ins_y(restored_face)
                         # print("=======================================")
                         # print(f"Finish Restoration {iinsim} / {tinsim}")
                         # print("=======================================")
@@ -1163,17 +1166,42 @@ def worker():
                         bg_upsampler = upsampler
                         face_upsampler = upsampler
 
-                        # face_helper.read_image(img)
-                        # # get face landmarks for each face
-                        # num_det_faces = face_helper.get_face_landmarks_5(
-                        # only_center_face=only_center_face, resize=640, eye_dist_threshold=5
-                        # )
-                        # # align and warp each face
-                        # face_helper.align_warp_face()
+                        face_helper.read_image(img)
+                        # get face landmarks for each face
+                        num_det_faces = face_helper.get_face_landmarks_5(
+                        only_center_face=only_center_face, resize=640, eye_dist_threshold=5
+                        )
+                        # align and warp each face
+                        face_helper.align_warp_face()
+
+                        for idx, cropped_face in enumerate(face_helper.cropped_faces):
+                            # prepare data
+                            cropped_face_t = img2tensor(
+                                cropped_face / 255.0, bgr2rgb=True, float32=True
+                            )
+                            normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
+                            cropped_face_t = cropped_face_t.unsqueeze(0).to(device)
+                
+                            try:
+                                with torch.no_grad():
+                                    output = codeformer_net(
+                                        cropped_face_t, w=codeformer_fidelity, adain=True
+                                    )[0]
+                                    restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
+                                del output
+                                torch.cuda.empty_cache()
+                            except RuntimeError as error:
+                                print(f"Failed inference for CodeFormer: {error}")
+                                restored_face = tensor2img(
+                                    cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
+                                )
+                
+                            restored_face = restored_face.astype("uint8")
+                            face_helper.add_restored_face(restored_face)
 
 
                         steps=ins_en_steps
-                        inpaint_image = face
+                        inpaint_image = restored_face
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
                         # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
@@ -1298,6 +1326,7 @@ def worker():
         #                 if inpaint_worker.current_task is not None:
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
+                        print(restored_face.__dict__)
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
                         restored_img = face_helper.paste_faces_to_input_image(
