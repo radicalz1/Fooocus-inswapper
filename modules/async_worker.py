@@ -1124,8 +1124,12 @@ def worker():
                         # print("======================================")
                         # progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        rim_r, face = face_restoration(rim, True, True, 1, 0.2, upsampler, codeformer_net, device)
+                        ins_y(rim_r)
                         rim_r, face = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
-                        # ins_y(rim_r)
+                        ins_y(rim_r)
+                        rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
+                        ins_y(rim_r)
                         # print("=======================================")
                         # print(f"Finish Restoration {iinsim} / {tinsim}")
                         # print("=======================================")
@@ -1271,7 +1275,7 @@ def worker():
                     # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
         #                 if inpaint_worker.current_task is not None:
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
-                        restored_face = imgs.astype("uint8")
+                        restored_face = imgs[-1].astype("uint8")
                         face_helper.add_restored_face(restored_face)
         
 
