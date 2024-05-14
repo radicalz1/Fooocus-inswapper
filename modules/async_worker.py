@@ -1169,7 +1169,7 @@ def worker():
                         face_helper.read_image(rim)
                         # get face landmarks for each face
                         num_det_faces = face_helper.get_face_landmarks_5(
-                        only_center_face=only_center_face, resize=640, eye_dist_threshold=5
+                        only_center_face=False, resize=640, eye_dist_threshold=5
                         )
                         # align and warp each face
                         face_helper.align_warp_face()
@@ -1185,7 +1185,7 @@ def worker():
                             try:
                                 with torch.no_grad():
                                     output = codeformer_net(
-                                        cropped_face_t, w=codeformer_fidelity, adain=True
+                                        cropped_face_t, w=1, adain=True
                                     )[0]
                                     restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
                                 del output
@@ -1196,9 +1196,16 @@ def worker():
                                     cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
                                 )
                 
+                            ins_y(restored_face)
+                            print('tensor2img rgb2bgr)
+                            print(restored_face.__dict__)
+
                             restored_face = restored_face.astype("uint8")
                             face_helper.add_restored_face(restored_face)
 
+                            ins_y(restored_face)
+                            print('changed to astype uint8')
+                            print(restored_face.__dict__)
 
                         steps=ins_en_steps
                         # inpaint_image = restored_face
