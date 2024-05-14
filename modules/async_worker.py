@@ -1131,8 +1131,8 @@ def worker():
                         rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
                         ins_y(rim_r)
                         ins_y(face)
-                        restored_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-                        ins_y(restored_face)
+                        r_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+                        ins_y(r_face)
                         # print("=======================================")
                         # print(f"Finish Restoration {iinsim} / {tinsim}")
                         # print("=======================================")
@@ -1166,7 +1166,7 @@ def worker():
                         bg_upsampler = upsampler
                         face_upsampler = upsampler
 
-                        face_helper.read_image(img)
+                        face_helper.read_image(rim)
                         # get face landmarks for each face
                         num_det_faces = face_helper.get_face_landmarks_5(
                         only_center_face=only_center_face, resize=640, eye_dist_threshold=5
@@ -1201,7 +1201,8 @@ def worker():
 
 
                         steps=ins_en_steps
-                        inpaint_image = restored_face
+                        # inpaint_image = restored_face
+                        inpaint_image = r_face
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
                         # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
@@ -1326,6 +1327,7 @@ def worker():
         #                 if inpaint_worker.current_task is not None:
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
+                        ins_y(restored_face)
                         print(restored_face.__dict__)
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
