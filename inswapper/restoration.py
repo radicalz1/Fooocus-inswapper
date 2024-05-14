@@ -57,7 +57,7 @@ def set_realesrgan():
     return upsampler
 
 
-def face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device, inpaint):
+def face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
     """Run a single prediction on the model"""
     try: # global try
         # take the default setting for the demo
@@ -92,11 +92,18 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
         face_upsampler = upsampler if face_upsample else None
 
         if has_aligned:
+            print("=================================")
+            print(f"has aligned {has_aligned}")
+            print("=================================")
+
             # the input faces are already cropped and aligned
             img = cv2.resize(img, (512, 512), interpolation=cv2.INTER_LINEAR)
             face_helper.is_gray = is_gray(img, threshold=5)
             face_helper.cropped_faces = [img]
         else:
+            print("=================================")
+            print(f"else has aligned {has_aligned}")
+            print("=================================")
             face_helper.read_image(img)
             # get face landmarks for each face
             num_det_faces = face_helper.get_face_landmarks_5(
@@ -276,21 +283,35 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
         
         # paste_back
         if not has_aligned:
+            print("=================================")
+            print(f"not has aligned {has_aligned}")
+            print("=================================")
             # upsample the background
             if bg_upsampler is not None:
+                print("=================================")
+                print(f"bg_upsampler is not None has aligned {bg_upsampler}")
+                print(f"img {img}")
+                print(f'bg_img {bg_img}')
+                print("=================================")
                 # Now only support RealESRGAN for upsampling background
                 bg_img = bg_upsampler.enhance(img, outscale=upscale)[0]
             else:
+                print("=================================")
+                print(f"else bg_upsampler is not None has aligned {bg_upsampler}")
                 bg_img = None
             face_helper.get_inverse_affine(None)
             # paste each restored face to the input image
             if face_upsample and face_upsampler is not None:
+                print("=================================")
+                print(f"face_upsample and face_upsampler is not None {bg_img}, {draw_box}, {face_upsampler}")
                 restored_img = face_helper.paste_faces_to_input_image(
                     upsample_img=bg_img,
                     draw_box=draw_box,
                     face_upsampler=face_upsampler,
                 )
             else:
+                print("=================================")
+                print(f"else face_upsample and face_upsampler is not None {bg_img}, {draw_box}")
                 restored_img = face_helper.paste_faces_to_input_image(
                     upsample_img=bg_img, draw_box=draw_box
                 )
