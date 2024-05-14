@@ -1339,7 +1339,7 @@ def worker():
                         ins_y(restored_face)
                         print(f'restored_face after detailed')
                         face_helper.add_restored_face(restored_face)
-                        bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
+                        bg_img = bg_upsampler.enhance(rim, outscale=1)[0]
                         restored_img = face_helper.paste_faces_to_input_image(
                             upsample_img=bg_img,
                             draw_box=False,
@@ -1409,7 +1409,7 @@ def worker():
                         print("=====================================================")
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
                         # combined_result_image = cv2.hconcat([rim_i, rim_ie, rim_ied, rim_r, rim_re, rim_rid, rim_red, resized_sim])
-                        combined_result_image = cv2.hconcat([rim_i, rim_rd])
+                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_rd])
                         ins_y(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
