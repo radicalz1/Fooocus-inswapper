@@ -1342,7 +1342,7 @@ def worker():
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
                         ins_y(restored_face)
-                        print(restored_face after detailed)
+                        print(f'restored_face after detailed, {dtype}')
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
                         restored_img = face_helper.paste_faces_to_input_image(
