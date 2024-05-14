@@ -1005,47 +1005,47 @@ def worker():
                     # ======================
                     # START LOG REQUIREMENTS
                     # ======================
-                    progressbar(async_task, 13, '=== Start INSWAPPER : Log Requirements')
-                    d = [('Prompt', 'prompt', task['log_positive_prompt']),
-                         ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
-                         ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
-                         ('Styles', 'styles', str(raw_style_selections)),
-                         ('Performance', 'performance', performance_selection.value)]
-                    if performance_selection.steps() != steps:
-                        d.append(('Steps', 'steps', steps))
-                    d += [('Resolution', 'resolution', str((width, height))),
-                          ('Guidance Scale', 'guidance_scale', guidance_scale),
-                          ('Sharpness', 'sharpness', sharpness),
-                          ('ADM Guidance', 'adm_guidance', str((
-                              modules.patch.patch_settings[pid].positive_adm_scale,
-                              modules.patch.patch_settings[pid].negative_adm_scale,
-                              modules.patch.patch_settings[pid].adm_scaler_end))),
-                          ('Base Model', 'base_model', base_model_name),
-                          ('Refiner Model', 'refiner_model', refiner_model_name),
-                          ('Refiner Switch', 'refiner_switch', refiner_switch)]
-                    if refiner_model_name != 'None':
-                        if overwrite_switch > 0:
-                            d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
-                        if refiner_swap_method != flags.refiner_swap_method:
-                            d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
-                    if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
-                        d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
-                    d.append(('Sampler', 'sampler', sampler_name))
-                    d.append(('Scheduler', 'scheduler', scheduler_name))
-                    d.append(('Seed', 'seed', str(task['task_seed'])))
-                    if freeu_enabled:
-                        d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
-                    for li, (n, w) in enumerate(loras):
-                        if n != 'None':
-                            d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
-                    metadata_parser = None
-                    if save_metadata_to_images:
-                        metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
-                        metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
-                                                 task['log_negative_prompt'], task['negative'],
-                                                 steps, base_model_name, refiner_model_name, loras)
-                    d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
-                    d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
+                    # progressbar(async_task, 13, '=== Start INSWAPPER : Log Requirements')
+                    # d = [('Prompt', 'prompt', task['log_positive_prompt']),
+                    #      ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
+                    #      ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
+                    #      ('Styles', 'styles', str(raw_style_selections)),
+                    #      ('Performance', 'performance', performance_selection.value)]
+                    # if performance_selection.steps() != steps:
+                    #     d.append(('Steps', 'steps', steps))
+                    # d += [('Resolution', 'resolution', str((width, height))),
+                    #       ('Guidance Scale', 'guidance_scale', guidance_scale),
+                    #       ('Sharpness', 'sharpness', sharpness),
+                    #       ('ADM Guidance', 'adm_guidance', str((
+                    #           modules.patch.patch_settings[pid].positive_adm_scale,
+                    #           modules.patch.patch_settings[pid].negative_adm_scale,
+                    #           modules.patch.patch_settings[pid].adm_scaler_end))),
+                    #       ('Base Model', 'base_model', base_model_name),
+                    #       ('Refiner Model', 'refiner_model', refiner_model_name),
+                    #       ('Refiner Switch', 'refiner_switch', refiner_switch)]
+                    # if refiner_model_name != 'None':
+                    #     if overwrite_switch > 0:
+                    #         d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
+                    #     if refiner_swap_method != flags.refiner_swap_method:
+                    #         d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
+                    # if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
+                    #     d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
+                    # d.append(('Sampler', 'sampler', sampler_name))
+                    # d.append(('Scheduler', 'scheduler', scheduler_name))
+                    # d.append(('Seed', 'seed', str(task['task_seed'])))
+                    # if freeu_enabled:
+                    #     d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
+                    # for li, (n, w) in enumerate(loras):
+                    #     if n != 'None':
+                    #         d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
+                    # metadata_parser = None
+                    # if save_metadata_to_images:
+                    #     metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
+                    #     metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
+                    #                              task['log_negative_prompt'], task['negative'],
+                    #                              steps, base_model_name, refiner_model_name, loras)
+                    # d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
+                    # d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
                     # ====================
                     # END LOG REQUIREMENTS
                     # ====================
@@ -1053,12 +1053,11 @@ def worker():
                     ins_imgs=[]
                     ins_imgs.extend(imgs)
                     def ins_y(img):
-                        log(img, d, metadata_parser, output_format)
+                        # log(img, d, metadata_parser, output_format)
                         ins_yield_result(async_task, img)
                     ins_y(imgs[-1])
                     def ins_en(img):
                         rip = core.numpy_to_pytorch(img) # initial_pixels
-                        # progressbar(async_task, 13, 'VAE encoding ...')
                         ins_candidate_vae, _ = pipeline.get_candidate_vae(
                             steps=ins_en_steps,
                             switch=switch,
@@ -1111,173 +1110,176 @@ def worker():
                         print("==================================")
                         print(f"Finish Inswap {iinsim} / {tinsim}")
                         print("==================================")
-                        print("=========================================")
-                        print(f"Start Enhance Inswap {iinsim} / {tinsim}")
-                        print("=========================================")
-                        progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
-                        rim_ie = ins_en(rim_i)
-                        ins_y(rim_ie)
-                        print("=========================================")
-                        print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
-                        print("=========================================")
-                        print("======================================")
-                        print(f"Start Restoration {iinsim} / {tinsim}")
-                        print("======================================")
-                        progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
-                        ins_y(rim_r)
-                        print("=======================================")
-                        print(f"Finish Restoration {iinsim} / {tinsim}")
-                        print("=======================================")
-                        print("======================================")
-                        print(f"Start Restoration Enhancement {iinsim} / {tinsim}")
-                        print("======================================")
-                        progressbar(async_task, 13, f'Start Restoration Enhancement {iinsim} / {tinsim}')
-                        rim_re = ins_en(rim_r)
-                        ins_y(rim_re)
-                        print("=======================================")
-                        print(f"Finish Restoration Enhancement {iinsim} / {tinsim}")
-                        print("=======================================")
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re])
-                        ins_y(combined_result_image)
+                        # print("=========================================")
+                        # print(f"Start Enhance Inswap {iinsim} / {tinsim}")
+                        # print("=========================================")
+                        # progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
+                        # rim_ie = ins_en(rim_i)
+                        # ins_y(rim_ie)
+                        # print("=========================================")
+                        # print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
+                        # print("=========================================")
+                        # print("======================================")
+                        # print(f"Start Restoration {iinsim} / {tinsim}")
+                        # print("======================================")
+                        # progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
+                        # rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        # rim_r = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
+                        # ins_y(rim_r)
+                        # print("=======================================")
+                        # print(f"Finish Restoration {iinsim} / {tinsim}")
+                        # print("=======================================")
+                        # print("======================================")
+                        # print(f"Start Restoration Enhancement {iinsim} / {tinsim}")
+                        # print("======================================")
+                        # progressbar(async_task, 13, f'Start Restoration Enhancement {iinsim} / {tinsim}')
+                        # rim_re = ins_en(rim_r)
+                        # ins_y(rim_re)
+                        # print("=======================================")
+                        # print(f"Finish Restoration Enhancement {iinsim} / {tinsim}")
+                        # print("=======================================")
+                        # combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re])
+                        # ins_y(combined_result_image)
                         print("=================================")
                         print(f"Start Inpaint Improve Detail {iinsim} / {tinsim}")
                         print("=================================")
+                        rim_rd = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device, True)
+                        ins_y(rim_rd)
+
 # ============================================================================
                     #     if (current_tab == 'inpaint' or (
                     # current_tab == 'ip' and mixing_image_prompt_and_inpaint)) \
                     # and isinstance(inpaint_input_image, dict):
-                inpaint_image = inpaint_input_image['image']
-                inpaint_mask = inpaint_input_image['mask'][:, :, 0]
+            #     inpaint_image = inpaint_input_image['image']
+            #     inpaint_mask = inpaint_input_image['mask'][:, :, 0]
 
-                if inpaint_mask_upload_checkbox:
-                    if isinstance(inpaint_mask_image_upload, np.ndarray):
-                        if inpaint_mask_image_upload.ndim == 3:
-                            H, W, C = inpaint_image.shape
-                            inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
-                            inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
-                            inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
-                            inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
+            #     if inpaint_mask_upload_checkbox:
+            #         if isinstance(inpaint_mask_image_upload, np.ndarray):
+            #             if inpaint_mask_image_upload.ndim == 3:
+            #                 H, W, C = inpaint_image.shape
+            #                 inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
+            #                 inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
+            #                 inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
+            #                 inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
 
-                if int(inpaint_erode_or_dilate) != 0:
-                    inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
+            #     if int(inpaint_erode_or_dilate) != 0:
+            #         inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
 
-                if invert_mask_checkbox:
-                    inpaint_mask = 255 - inpaint_mask
+            #     if invert_mask_checkbox:
+            #         inpaint_mask = 255 - inpaint_mask
 
-                inpaint_image = HWC3(inpaint_image)
-                if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
-                        and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                    progressbar(async_task, 1, 'Downloading upscale models ...')
-                    modules.config.downloading_upscale_model()
-                    if inpaint_parameterized:
-                        progressbar(async_task, 1, 'Downloading inpainter ...')
-                        inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
-                            inpaint_engine)
-                        base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
-                        print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
-                        if refiner_model_name == 'None':
-                            use_synthetic_refiner = True
-                            refiner_switch = 0.8
-                    else:
-                        inpaint_head_model_path, inpaint_patch_model_path = None, None
-                        print(f'[Inpaint] Parameterized inpaint is disabled.')
-                    if inpaint_additional_prompt != '':
-                        if prompt == '':
-                            prompt = inpaint_additional_prompt
-                        else:
-                            prompt = inpaint_additional_prompt + '\n' + prompt
-                    goals.append('inpaint')
+            #     inpaint_image = HWC3(inpaint_image)
+            #     if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
+            #             and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
+            #         progressbar(async_task, 1, 'Downloading upscale models ...')
+            #         modules.config.downloading_upscale_model()
+            #         if inpaint_parameterized:
+            #             progressbar(async_task, 1, 'Downloading inpainter ...')
+            #             inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
+            #                 inpaint_engine)
+            #             base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
+            #             print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
+            #             if refiner_model_name == 'None':
+            #                 use_synthetic_refiner = True
+            #                 refiner_switch = 0.8
+            #         else:
+            #             inpaint_head_model_path, inpaint_patch_model_path = None, None
+            #             print(f'[Inpaint] Parameterized inpaint is disabled.')
+            #         if inpaint_additional_prompt != '':
+            #             if prompt == '':
+            #                 prompt = inpaint_additional_prompt
+            #             else:
+            #                 prompt = inpaint_additional_prompt + '\n' + prompt
+            #         goals.append('inpaint')
             
-            denoising_strength = inpaint_strength
+            # denoising_strength = inpaint_strength
 
-            inpaint_worker.current_task = inpaint_worker.InpaintWorker(
-                image=inpaint_image,
-                mask=inpaint_mask,
-                use_fill=denoising_strength > 0.99,
-                k=inpaint_respective_field
-            )
+            # inpaint_worker.current_task = inpaint_worker.InpaintWorker(
+            #     image=inpaint_image,
+            #     mask=inpaint_mask,
+            #     use_fill=denoising_strength > 0.99,
+            #     k=inpaint_respective_field
+            # )
 
-            if debugging_inpaint_preprocessor:
-                yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-                             do_not_show_finished_images=True)
-                return
+            # if debugging_inpaint_preprocessor:
+            #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
+            #                  do_not_show_finished_images=True)
+            #     return
 
-            progressbar(async_task, 13, 'VAE Inpaint encoding ...')
+            # progressbar(async_task, 13, 'VAE Inpaint encoding ...')
 
 
-            inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
-            inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
-            inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
+            # inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
+            # inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
+            # inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
 
-            candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
-                steps=steps,
-                switch=switch,
-                denoise=denoising_strength,
-                refiner_swap_method=refiner_swap_method
-            )
+            # candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
+            #     steps=steps,
+            #     switch=switch,
+            #     denoise=denoising_strength,
+            #     refiner_swap_method=refiner_swap_method
+            # )
 
-            latent_inpaint, latent_mask = core.encode_vae_inpaint(
-                mask=inpaint_pixel_mask,
-                vae=candidate_vae,
-                pixels=inpaint_pixel_image)
+            # latent_inpaint, latent_mask = core.encode_vae_inpaint(
+            #     mask=inpaint_pixel_mask,
+            #     vae=candidate_vae,
+            #     pixels=inpaint_pixel_image)
 
-            latent_swap = None
-            if candidate_vae_swap is not None:
-                progressbar(async_task, 13, 'VAE SD15 encoding ...')
-                latent_swap = core.encode_vae(
-                    vae=candidate_vae_swap,
-                    pixels=inpaint_pixel_fill)['samples']
+            # latent_swap = None
+            # if candidate_vae_swap is not None:
+            #     progressbar(async_task, 13, 'VAE SD15 encoding ...')
+            #     latent_swap = core.encode_vae(
+            #         vae=candidate_vae_swap,
+            #         pixels=inpaint_pixel_fill)['samples']
 
-            progressbar(async_task, 13, 'VAE encoding ...')
-            latent_fill = core.encode_vae(
-                vae=candidate_vae,
-                pixels=inpaint_pixel_fill)['samples']
+            # progressbar(async_task, 13, 'VAE encoding ...')
+            # latent_fill = core.encode_vae(
+            #     vae=candidate_vae,
+            #     pixels=inpaint_pixel_fill)['samples']
 
-            inpaint_worker.current_task.load_latent(
-                latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
+            # inpaint_worker.current_task.load_latent(
+            #     latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
 
-            if inpaint_parameterized:
-                pipeline.final_unet = inpaint_worker.current_task.patch(
-                    inpaint_head_model_path=inpaint_head_model_path,
-                    inpaint_latent=latent_inpaint,
-                    inpaint_latent_mask=latent_mask,
-                    model=pipeline.final_unet
-                )
+            # if inpaint_parameterized:
+            #     pipeline.final_unet = inpaint_worker.current_task.patch(
+            #         inpaint_head_model_path=inpaint_head_model_path,
+            #         inpaint_latent=latent_inpaint,
+            #         inpaint_latent_mask=latent_mask,
+            #         model=pipeline.final_unet
+            #     )
 
-            if not inpaint_disable_initial_latent:
-                initial_latent = {'samples': latent_fill}
+            # if not inpaint_disable_initial_latent:
+            #     initial_latent = {'samples': latent_fill}
 
-            B, C, H, W = latent_fill.shape
-            height, width = H * 8, W * 8
-            final_height, final_width = inpaint_worker.current_task.image.shape[:2]
-            print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
-                    imgs = pipeline.process_diffusion(
-                        positive_cond=positive_cond,
-                        negative_cond=negative_cond,
-                        steps=steps,
-                        switch=switch,
-                        width=width,
-                        height=height,
-                        image_seed=task['task_seed'],
-                        callback=callback,
-                        sampler_name=final_sampler_name,
-                        scheduler_name=final_scheduler_name,
-                        latent=initial_latent,
-                        denoise=denoising_strength,
-                        tiled=tiled,
-                        cfg_scale=cfg_scale,
-                        refiner_swap_method=refiner_swap_method,
-                    disable_preview=disable_preview
-                    )
+            # B, C, H, W = latent_fill.shape
+            # height, width = H * 8, W * 8
+            # final_height, final_width = inpaint_worker.current_task.image.shape[:2]
+            # print(f'Final resolution is {str((final_height, final_width))}, latent is {str((height, width))}.')
+            #         imgs = pipeline.process_diffusion(
+            #             positive_cond=positive_cond,
+            #             negative_cond=negative_cond,
+            #             steps=steps,
+            #             switch=switch,
+            #             width=width,
+            #             height=height,
+            #             image_seed=task['task_seed'],
+            #             callback=callback,
+            #             sampler_name=final_sampler_name,
+            #             scheduler_name=final_scheduler_name,
+            #             latent=initial_latent,
+            #             denoise=denoising_strength,
+            #             tiled=tiled,
+            #             cfg_scale=cfg_scale,
+            #             refiner_swap_method=refiner_swap_method,
+            #         disable_preview=disable_preview
+            #         )
 
-                # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
+            #     # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
 
-                if inpaint_worker.current_task is not None:
-                    imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
+            #     if inpaint_worker.current_task is not None:
+            #         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
-                        # ins_y(rim_re)
+            #             # ins_y(rim_re)
 # ============================================================================
                         print("=======================================")
                         print(f"Finish Improve Detail {iinsim} / {tinsim}")
