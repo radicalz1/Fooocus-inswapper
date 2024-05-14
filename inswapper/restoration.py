@@ -101,7 +101,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
             face_helper.cropped_faces = [img]
         else:
             print("=================================")
-            print(f"else has aligned {has_aligned}" vvvv)
+            print(f"else has aligned {has_aligned} vvvv")
             print("=================================")
             face_helper.read_image(img)
             # get face landmarks for each face
@@ -288,9 +288,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
             # upsample the background
             if bg_upsampler is not None:
                 print("=================================")
-                print(f"bg_upsampler is not None has aligned {bg_upsampler}" bbvccvvv)
-                print(f"img {img}") 
-                print(f'bg_img {bg_img}')
+                print(f"bg_upsampler is not None has aligned {bg_upsampler} bbvccvvvj")
                 print("=================================")
                 # Now only support RealESRGAN for upsampling background
                 bg_img = bg_upsampler.enhance(img, outscale=upscale)[0]
