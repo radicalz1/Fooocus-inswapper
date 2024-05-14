@@ -1207,7 +1207,7 @@ def worker():
                 
                             print(f'restored_face type before uint8 {type(restored_face)}')
                             restored_face = restored_face.astype("uint8")
-                            face_helper.add_restored_face(restored_face)
+                            # face_helper.add_restored_face(restored_face)
 
                         steps=ins_en_steps
                         # inpaint_image = restored_face
