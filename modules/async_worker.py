@@ -1130,7 +1130,7 @@ def worker():
                         ins_y(rim_r)
                         rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
                         ins_y(rim_r)
-                        ins_y(face)
+                        # face = blue color
                         r_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
                         ins_y(r_face)
                         # print("=======================================")
@@ -1205,14 +1205,9 @@ def worker():
                                     cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
                                 )
                 
-                            ins_y(restored_face)
-                            print('tensor2img rgb2bgr')
-
+                            print(f'restored_face type before uint8 {type(restored_face)}')
                             restored_face = restored_face.astype("uint8")
                             face_helper.add_restored_face(restored_face)
-
-                            ins_y(restored_face)
-                            print('changed to astype uint8')
 
                         steps=ins_en_steps
                         # inpaint_image = restored_face
@@ -1342,7 +1337,7 @@ def worker():
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
                         restored_face = imgs[-1].astype("uint8")
                         ins_y(restored_face)
-                        print(f'restored_face after detailed, {dtype}')
+                        print(f'restored_face after detailed')
                         face_helper.add_restored_face(restored_face)
                         bg_img = bg_upsampler.enhance(rim, outscale=upscale)[0]
                         restored_img = face_helper.paste_faces_to_input_image(
