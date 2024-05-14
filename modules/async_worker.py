@@ -1152,6 +1152,7 @@ def worker():
                         print("=================================")
                         # rim_rd = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device, True)
                         # ins_y(rim_rd)
+                        from basicsr.utils import imwrite, img2tensor, tensor2img
                         from facelib.utils.face_restoration_helper import FaceRestoreHelper
                         detection_model = "retinaface_resnet50"
 
