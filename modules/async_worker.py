@@ -1114,7 +1114,7 @@ def worker():
                         # Create a new black image with the same dimensions as the input image
                         black_image = np.zeros_like(img)
                         # Sort faces from left to right
-                        faces = sorted(faces, key=lambda rect: rect.left())
+                        # faces = sorted(faces, key=lambda rect:  rect[3])
                         # If face_number is specified, make sure it's within the valid range
                         # if face_number is not None:
                         #     if face_number < 0 or face_number >= len(faces):
