@@ -1056,40 +1056,86 @@ def worker():
                         # log(img, d, metadata_parser, output_format)
                         ins_yield_result(async_task, img)
                     ins_y(imgs[-1])
-                    def ins_en(img):
-                        rip = core.numpy_to_pytorch(img) # initial_pixels
-                        ins_candidate_vae, _ = pipeline.get_candidate_vae(
-                            steps=ins_en_steps,
-                            switch=switch,
-                            denoise=ins_en_den,
-                            refiner_swap_method=refiner_swap_method
-                        )
-                        ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
-                        rB, rC, rH, rW = ril['samples'].shape
-                        rwidth = rW * 8
-                        rheight = rH * 8
-                        print(f'Final resolution is {str((rheight, rwidth))}.')
-                        enhance_image = pipeline.process_diffusion(
-                            positive_cond=positive_cond,
-                            negative_cond=negative_cond,
-                            steps=ins_en_steps,
-                            switch=switch,
-                            width=width,
-                            height=height,
-                            image_seed=task['task_seed'],
-                            callback=callback,
-                            sampler_name=final_sampler_name,
-                            scheduler_name=final_scheduler_name,
-                            latent=ril,
-                            denoise=ins_en_den,
-                            tiled=tiled,
-                            cfg_scale=cfg_scale,
-                            refiner_swap_method=refiner_swap_method,
-                        disable_preview=disable_preview
-                        )
-                        return enhance_image[-1]
+                    # def ins_en(img):
+                    #     rip = core.numpy_to_pytorch(img) # initial_pixels
+                    #     ins_candidate_vae, _ = pipeline.get_candidate_vae(
+                    #         steps=ins_en_steps,
+                    #         switch=switch,
+                    #         denoise=ins_en_den,
+                    #         refiner_swap_method=refiner_swap_method
+                    #     )
+                    #     ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
+                    #     rB, rC, rH, rW = ril['samples'].shape
+                    #     rwidth = rW * 8
+                    #     rheight = rH * 8
+                    #     print(f'Final resolution is {str((rheight, rwidth))}.')
+                    #     enhance_image = pipeline.process_diffusion(
+                    #         positive_cond=positive_cond,
+                    #         negative_cond=negative_cond,
+                    #         steps=ins_en_steps,
+                    #         switch=switch,
+                    #         width=width,
+                    #         height=height,
+                    #         image_seed=task['task_seed'],
+                    #         callback=callback,
+                    #         sampler_name=final_sampler_name,
+                    #         scheduler_name=final_scheduler_name,
+                    #         latent=ril,
+                    #         denoise=ins_en_den,
+                    #         tiled=tiled,
+                    #         cfg_scale=cfg_scale,
+                    #         refiner_swap_method=refiner_swap_method,
+                    #     disable_preview=disable_preview
+                    #     )
+                    #     return enhance_image[-1]
                    
                     tinsim = len(ins_sims)
+
+                
+                    print("========================================")
+                    print(f"Start Mask Creation {iinsim} / {tinsim}")
+                    print("========================================")
+                    import dlib
+                    def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog", face_number=None):
+                        """
+                        Detects faces in an image and returns a new image with the same dimensions as the input image,
+                        filled with black color and white rectangles drawn around detected faces.
+                    
+                        :param img: An image (as a numpy array)
+                        :param number_of_times_to_upsample: How many times to upsample the image looking for faces. Higher numbers find smaller faces.
+                        :param model: Which face detection model to use. "hog" is less accurate but faster on CPUs. "cnn" is a more accurate
+                                      deep-learning model which is GPU/CUDA accelerated (if available). The default is "hog".
+                        :param face_number: Optional. If provided, only the specific face number (from left to right) will be highlighted.
+                        :return: A numpy array image with detected face rectangles drawn.
+                        """
+                        # Detect faces using the specified model
+                        faces = _raw_face_locations(img, number_of_times_to_upsample, model)
+                        # Create a new black image with the same dimensions as the input image
+                        black_image = np.zeros_like(img)
+                        # Sort faces from left to right
+                        faces = sorted(faces, key=lambda rect: rect.left())
+                        # If face_number is specified, make sure it's within the valid range
+                        if face_number is not None:
+                            if face_number < 0 or face_number >= len(faces):
+                                raise ValueError("face_number is out of range")
+                            faces = [faces[face_number]]
+                        # Draw white rectangles around the detected faces
+                        for face in faces:
+                            top, right, bottom, left = face.top(), face.right(), face.bottom(), face.left()
+                            cv2.rectangle(black_image, (left, top), (right, bottom), (255, 255, 255), thickness=2)
+                        return black_image
+                    
+                    # Usage example:
+                    # img = cv2.imread('path_to_image.jpg')  # Load your image
+                    inpaint_mask = draw_face_rectangles(imgs[-1], model="hog", face_number=0)  # Specify the face number if needed
+                    # cv2.imshow("Detected Face", output_img)
+                    ins_y(inpaint_mask)
+
+                    print("=========================================")
+                    print(f"Finish Mask Creation {iinsim} / {tinsim}")
+                    print("=========================================")
+
+
                     
                     for item in ins_imgs:
                       for idx, image in enumerate(ins_sims):
@@ -1146,6 +1192,10 @@ def worker():
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
                         print("====================================================")
 
+                        import face_recognition
+                        image = face_recognition.load_image_file("your_file.jpg")
+                        face_locations = face_recognition.face_locations(image)
+
                           
                         # print("=========================================")
                         # print(f"Start Enhance Inswap {iinsim} / {tinsim}")
@@ -1189,73 +1239,80 @@ def worker():
                         # print("=======================================")
                         # combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re])
                         # ins_y(combined_result_image)
-                        print("=================================")
+                        print("=================================================")
                         print(f"Start Inpaint Improve Detail {iinsim} / {tinsim}")
-                        print("=================================")
+                        print("=================================================")
                         # rim_rd = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device, True)
                         # ins_y(rim_rd)
-                        import torch.nn.functional as F
-                        from torchvision.transforms.functional import normalize
-                        
-                        from basicsr.utils import imwrite, img2tensor, tensor2img
-                        from basicsr.utils.download_util import load_file_from_url
-                        from facelib.utils.face_restoration_helper import FaceRestoreHelper
-                        from facelib.utils.misc import is_gray
-                        from basicsr.archs.rrdbnet_arch import RRDBNet
-                        from basicsr.utils.realesrgan_utils import RealESRGANer
-                        from basicsr.utils.registry import ARCH_REGISTRY
-                        detection_model = "retinaface_resnet50"
 
-                        face_helper = FaceRestoreHelper(
-                            1,
-                            face_size=512,
-                            crop_ratio=(1, 1),
-                            det_model=detection_model,
-                            save_ext="png",
-                            use_parse=True,
-                        )
-                        bg_upsampler = upsampler
-                        face_upsampler = upsampler
+                        # import torch.nn.functional as F
+                        # from torchvision.transforms.functional import normalize
+                        # from basicsr.utils import imwrite, img2tensor, tensor2img
+                        # from basicsr.utils.download_util import load_file_from_url
+                        # from facelib.utils.face_restoration_helper import FaceRestoreHelper
+                        # from facelib.utils.misc import is_gray
+                        # from basicsr.archs.rrdbnet_arch import RRDBNet
+                        # from basicsr.utils.realesrgan_utils import RealESRGANer
+                        # from basicsr.utils.registry import ARCH_REGISTRY
+                        # detection_model = "retinaface_resnet50"
 
-                        face_helper.read_image(rim)
-                        # get face landmarks for each face
-                        num_det_faces = face_helper.get_face_landmarks_5(
-                        only_center_face=False, resize=640, eye_dist_threshold=5
-                        )
-                        # align and warp each face
-                        face_helper.align_warp_face()
+                        # face_helper = FaceRestoreHelper(
+                        #     1,
+                        #     face_size=512,
+                        #     crop_ratio=(1, 1),
+                        #     det_model=detection_model,
+                        #     save_ext="png",
+                        #     use_parse=True,
+                        # )
+                        # bg_upsampler = upsampler
+                        # face_upsampler = upsampler
 
-                        for idx, cropped_face in enumerate(face_helper.cropped_faces):
-                            # prepare data
-                            cropped_face_t = img2tensor(
-                                cropped_face / 255.0, bgr2rgb=True, float32=True
-                            )
-                            normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
-                            cropped_face_t = cropped_face_t.unsqueeze(0).to(device)
+                        # face_helper.read_image(rim)
+                        # # get face landmarks for each face
+                        # num_det_faces = face_helper.get_face_landmarks_5(
+                        # only_center_face=False, resize=640, eye_dist_threshold=5
+                        # )
+                        # # align and warp each face
+                        # face_helper.align_warp_face()
+
+                        # for idx, cropped_face in enumerate(face_helper.cropped_faces):
+                        #     # prepare data
+                        #     cropped_face_t = img2tensor(
+                        #         cropped_face / 255.0, bgr2rgb=True, float32=True
+                        #     )
+                        #     normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
+                        #     cropped_face_t = cropped_face_t.unsqueeze(0).to(device)
                 
-                            try:
-                                with torch.no_grad():
-                                    output = codeformer_net(
-                                        cropped_face_t, w=1, adain=True
-                                    )[0]
-                                    restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
-                                del output
-                                torch.cuda.empty_cache()
-                            except RuntimeError as error:
-                                print(f"Failed inference for CodeFormer: {error}")
-                                restored_face = tensor2img(
-                                    cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
-                                )
+                        #     try:
+                        #         with torch.no_grad():
+                        #             output = codeformer_net(
+                        #                 cropped_face_t, w=1, adain=True
+                        #             )[0]
+                        #             restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
+                        #         del output
+                        #         torch.cuda.empty_cache()
+                        #     except RuntimeError as error:
+                        #         print(f"Failed inference for CodeFormer: {error}")
+                        #         restored_face = tensor2img(
+                        #             cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
+                        #         )
                 
-                            print(f'restored_face type before uint8 {type(restored_face)}')
-                            restored_face = restored_face.astype("uint8")
+                        #     print(f'restored_face type before uint8 {type(restored_face)}')
+                        #     restored_face = restored_face.astype("uint8")
                             # face_helper.add_restored_face(restored_face)
 
+
+                          
+                        # =====================
+                        # IMPROVE DETAIL ENGINE
+                        # =====================
                         steps=ins_en_steps
                         # inpaint_image = restored_face
-                        inpaint_image = r_face
+                        inpaint_image = rim_r
+
                         H, W = inpaint_image.shape[:2]  # Get image height and width
-                        inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
+                        # inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
+
                         # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
                         # if inpaint_mask_upload_checkbox:
                         #     if isinstance(inpaint_mask_image_upload, np.ndarray):
