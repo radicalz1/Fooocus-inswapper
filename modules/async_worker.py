@@ -1092,9 +1092,9 @@ def worker():
                     tinsim = len(ins_sims)
 
                 
-                    print("========================================")
-                    print(f"Start Mask Creation {iinsim} / {tinsim}")
-                    print("========================================")
+                    print("====================")
+                    print(f"Start Mask Creation")
+                    print("====================")
                     import dlib
                     def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog", face_number=None):
                         """
