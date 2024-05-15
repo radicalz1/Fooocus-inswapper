@@ -1097,6 +1097,7 @@ def worker():
                         sin = ins_sins[idx]
                         tin = ins_tins[idx]
                         iinsim = idx+1
+
                         print("=================================")
                         print(f"Start Inswap {iinsim} / {tinsim}")
                         print("=================================")
@@ -1105,11 +1106,47 @@ def worker():
                         print(f"Inswapper: Target indicies: {tin}")      
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
                         # print(f"Type of img: {type(rim)}")
-                        rim_i = np.array(rim)  # Convert to NumPy array before returning
-                        ins_y(rim_i)
+                        rim = np.array(rim)  # Convert to NumPy array before returning
+                        # ins_y(rim)
                         print("==================================")
                         print(f"Finish Inswap {iinsim} / {tinsim}")
                         print("==================================")
+
+                        print("=======================================================")
+                        print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
+                        print("=======================================================")
+                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
+                        original_sim_height, original_sim_width = sim.shape[:2]
+                        aspect_ratio_sim = original_sim_width / original_sim_height
+                        rim_height, rim_width = rim.shape[:2]
+                        if aspect_ratio_sim > 1:  # if wide image
+                          target_width = rim_width
+                          res_sim_height = int(target_width / aspect_ratio_sim)
+                          diff_sim_height = max(0, rim_height - res_sim_height)  # Ensure non-negative diff
+                          # Add black padding (assuming black padding)
+                          padding_top = int(diff_sim_height / 2)
+                          padding_bottom = diff_sim_height - padding_top
+                          resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
+                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
+                          target_height = rim_height
+                          target_width = int(target_height * aspect_ratio_sim)
+                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                        print("========================================================")
+                        print(f"Finish Resizing Inswap Source Image {iinsim} / {tinsim}")
+                        print("========================================================")
+
+                        print("===================================================")
+                        print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
+                        print("===================================================")
+                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
+                        combined_result_image = cv2.hconcat([rim, resized_sim)
+                        ins_y(combined_result_image)
+                        print("====================================================")
+                        print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
+                        print("====================================================")
+
+                          
                         # print("=========================================")
                         # print(f"Start Enhance Inswap {iinsim} / {tinsim}")
                         # print("=========================================")
@@ -1123,16 +1160,21 @@ def worker():
                         # print(f"Start Restoration {iinsim} / {tinsim}")
                         # print("======================================")
                         # progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
+                        # face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
+                        ins_face_restoration_bg_enhance = True
+                        ins_face_restoration_upsample = True
+                        ins_face_restoration_upscale = 2
+                        ins_face_restoration_codeformer_fidelity = 1
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r, face = face_restoration(rim, True, True, 1, 0.2, upsampler, codeformer_net, device)
+                        rim_r, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
                         ins_y(rim_r)
-                        rim_r, face = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device)
+                        rim_r, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
                         ins_y(rim_r)
-                        rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
-                        ins_y(rim_r)
-                        # face = blue color
-                        r_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-                        ins_y(r_face)
+                        # rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
+                        # ins_y(rim_r)
+                            # face = blue color, unused
+                            # r_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+                            # ins_y(r_face)
                         # print("=======================================")
                         # print(f"Finish Restoration {iinsim} / {tinsim}")
                         # print("=======================================")
@@ -1389,26 +1431,6 @@ def worker():
                         # print("==================================")
                         # print(f"Finish Darken {iinsim} / {tinsim}")
                         # print("==================================")
-                        # print("=======================================================")
-                        # print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
-                        # print("=======================================================")
-                        # progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
-                        # original_sim_height, original_sim_width = sim.shape[:2]
-                        # aspect_ratio_sim = original_sim_width / original_sim_height
-                        # rim_height, rim_width = rim_red.shape[:2]
-                        # if aspect_ratio_sim > 1:  # if wide image
-                        #   target_width = rim_width
-                        #   res_sim_height = int(target_width / aspect_ratio_sim)
-                        #   diff_sim_height = max(0, rim_height - res_sim_height)  # Ensure non-negative diff
-                        #   # Add black padding (assuming black padding)
-                        #   padding_top = int(diff_sim_height / 2)
-                        #   padding_bottom = diff_sim_height - padding_top
-                        #   resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
-                        #                                    padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-                        # if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
-                        #   target_height = rim_height
-                        #   target_width = int(target_height * aspect_ratio_sim)
-                        #   resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         print("=====================================================")
                         print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("=====================================================")
