@@ -1110,7 +1110,7 @@ def worker():
                         :return: A numpy array image with detected face rectangles drawn.
                         """
                         # Detect faces using the specified model
-                        faces = face_recognition._raw_face_locations(img, number_of_times_to_upsample, model)
+                        faces = face_recognition.face_locations(img, number_of_times_to_upsample, model)
                         # Create a new black image with the same dimensions as the input image
                         black_image = np.zeros_like(img)
                         # Sort faces from left to right
