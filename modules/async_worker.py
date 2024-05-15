@@ -1186,7 +1186,7 @@ def worker():
                         print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         print("===================================================")
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim, resized_sim)
+                        combined_result_image = cv2.hconcat([rim, resized_sim])
                         ins_y(combined_result_image)
                         print("====================================================")
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
