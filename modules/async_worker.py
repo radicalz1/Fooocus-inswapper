@@ -1097,7 +1097,7 @@ def worker():
                     print("====================")
                     import dlib
                     import face_recognition
-                    def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog", face_number=None):
+                    def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog"):
                         """
                         Detects faces in an image and returns a new image with the same dimensions as the input image,
                         filled with black color and white rectangles drawn around detected faces.
@@ -1116,10 +1116,10 @@ def worker():
                         # Sort faces from left to right
                         faces = sorted(faces, key=lambda rect: rect.left())
                         # If face_number is specified, make sure it's within the valid range
-                        if face_number is not None:
-                            if face_number < 0 or face_number >= len(faces):
-                                raise ValueError("face_number is out of range")
-                            faces = [faces[face_number]]
+                        # if face_number is not None:
+                        #     if face_number < 0 or face_number >= len(faces):
+                        #         raise ValueError("face_number is out of range")
+                        #     faces = [faces[face_number]]
                         # Draw white rectangles around the detected faces
                         for face in faces:
                             top, right, bottom, left = face.top(), face.right(), face.bottom(), face.left()
@@ -1128,7 +1128,8 @@ def worker():
                     
                     # Usage example:
                     # img = cv2.imread('path_to_image.jpg')  # Load your image
-                    inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog", face_number=0)  # Specify the face number if needed
+                    # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog", face_number=0)  # Specify the face number if needed
+                    inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
                     # cv2.imshow("Detected Face", output_img)
                     ins_y(inpaint_mask)
 
