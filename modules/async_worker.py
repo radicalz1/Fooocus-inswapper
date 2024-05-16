@@ -1134,9 +1134,9 @@ def worker():
                     # cv2.imshow("Detected Face", output_img)
                     ins_y(inpaint_mask)
 
-                    print("=========================================")
-                    print(f"Finish Mask Creation {iinsim} / {tinsim}")
-                    print("=========================================")
+                    print("=====================")
+                    print(f"Finish Mask Creation")
+                    print("=====================")
 
 
                     
