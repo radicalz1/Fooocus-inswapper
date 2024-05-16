@@ -1095,48 +1095,88 @@ def worker():
                     print("====================")
                     print(f"Start Mask Creation")
                     print("====================")
-                    import dlib
-                    import face_recognition
-                    def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog"):
-                        """
-                        Detects faces in an image and returns a new image with the same dimensions as the input image,
-                        filled with black color and white rectangles drawn around detected faces.
-                    
-                        :param img: An image (as a numpy array)
-                        :param number_of_times_to_upsample: How many times to upsample the image looking for faces. Higher numbers find smaller faces.
-                        :param model: Which face detection model to use. "hog" is less accurate but faster on CPUs. "cnn" is a more accurate
-                                      deep-learning model which is GPU/CUDA accelerated (if available). The default is "hog".
-                        :param face_number: Optional. If provided, only the specific face number (from left to right) will be highlighted.
-                        :return: A numpy array image with detected face rectangles drawn.
-                        """
-                        # Detect faces using the specified model
-                        faces = face_recognition.face_locations(img, number_of_times_to_upsample, model)
-                        # Create a new black image with the same dimensions as the input image
-                        black_image = np.zeros_like(img)
-                        # Sort faces from left to right
-                        # faces = sorted(faces, key=lambda rect:  rect[3])
-                        # If face_number is specified, make sure it's within the valid range
-                        # if face_number is not None:
-                        #     if face_number < 0 or face_number >= len(faces):
-                        #         raise ValueError("face_number is out of range")
-                        #     faces = [faces[face_number]]
-                        # Draw white rectangles around the detected faces
-                        for face in faces:
-                            print(face)
-                            top, right, bottom, left = face
-                            mask = cv2.rectangle(black_image.copy(), (left, top), (right, bottom), (255, 255, 255), thickness=2)
-                        return mask
-                    
-                    # Usage example:
-                    # img = cv2.imread('path_to_image.jpg')  # Load your image
-                    # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog", face_number=0)  # Specify the face number if needed
-                    inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
-                    # cv2.imshow("Detected Face", output_img)
-                    ins_y(inpaint_mask)
 
-                    print("=====================")
-                    print(f"Finish Mask Creation")
-                    print("=====================")
+# ================ only rectangle of face from eyes, not the whole face                    
+                    # import dlib
+                    # import face_recognition
+                    # def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog"):
+                    #     faces = face_recognition.face_locations(img, number_of_times_to_upsample, model)
+                    #     black_image = np.zeros_like(img)
+                    #     for face in faces:
+                    #         print(face)
+                    #         top, right, bottom, left = face
+                    #         mask = cv2.rectangle(black_image.copy(), (left, top), (right, bottom), (255, 255, 255), thickness=2)
+                    #     return mask
+    
+                    import argparse
+                    import insightface
+                    import onnxruntime
+                    from typing import List, Union, Dict, Set, Tuple
+                    
+                    def getFaceAnalyser(model_path: str, providers,
+                                        det_size=(320, 320)):
+                        face_analyser = insightface.app.FaceAnalysis(name="buffalo_l", root="./checkpoints", providers=providers)
+                        face_analyser.prepare(ctx_id=0, det_size=det_size)
+                        return face_analyser
+                    def get_many_faces(face_analyser,
+                                       frame:np.ndarray):
+                        """
+                        get faces from left to right by order
+                        """
+                        try:
+                            face = face_analyser.get(frame)
+                            return sorted(face, key=lambda x: x.bbox[0])
+                        except IndexError:
+                            return None
+                    def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
+                        # load machine default available providers
+                        providers = onnxruntime.get_available_providers()
+                        # load face_analyser
+                        face_analyser = getFaceAnalyser(model, providers)
+                        # read input image
+                        if isinstance(input_img, str):
+                            input_img = Image.open(input_img)
+                        input_img = cv2.cvtColor(np.array(input_img), cv2.COLOR_RGB2BGR)
+                        # detect faces in the input image
+                        faces = get_many_faces(face_analyser, input_img)
+                        if faces is None:
+                            raise Exception("No faces found!")
+                        # create a new black image of the same size
+                        black_image = np.zeros_like(input_img)
+                        # draw white rectangles around detected faces
+                        for face in faces:
+                            x1, y1, x2, y2 = [int(coord) for coord in face.bbox]
+                            cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
+                        result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
+                        return result_image
+                    
+                    # def parse_args():
+                    #     parser = argparse.ArgumentParser(description="Face detection and drawing boxes.")
+                    #     parser.add_argument("--input_img", type=str, required=True, help="The path of input image.")
+                    #     parser.add_argument("--output_img", type=str, required=False, default="result.png", help="The path and filename of output image.")
+                    #     args = parser.parse_args()
+                    #     return args
+                    
+                    # if __name__ == "__main__":
+                    #     args = parse_args()
+                        
+                    #     input_img_path = args.input_img
+                    
+                    #     # download from https://huggingface.co/deepinsight/inswapper/tree/main
+                        model = "./checkpoints/inswapper_128.onnx"
+                        inpaint_mask = draw_face_boxes(imgs[-1], model)
+                        
+                    #     # save result
+                    #     result_image.save(args.output_img)
+                    #     print(f'Result saved successfully: {args.output_img}')
+                    
+                        
+                        # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
+                        ins_y(inpaint_mask)
+    
+                        print("=====================")
+                        print(f"Finish Mask Creation")
+                        print("=====================")
 
 
                     
