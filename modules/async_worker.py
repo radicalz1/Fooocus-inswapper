@@ -1113,7 +1113,7 @@ def worker():
                     # import onnxruntime
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
-                    def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
+                    def draw_face_boxes(input_img: Union[Image.Image, str] model: str):
                         # load machine default available providers
                         providers = onnxruntime.get_available_providers()
                         # load face_analyser
@@ -1148,7 +1148,7 @@ def worker():
                     #     input_img_path = args.input_img
                     
                     # download from https://huggingface.co/deepinsight/inswapper/tree/main
-                    # model = "./checkpoints/models/buffalo_l/inswapper_128.onnx"
+                    model = "../inswapper/checkpoints/inswapper_128.onnx"
                     inpaint_mask = draw_face_boxes(imgs[-1], model)
                     
                     #     # save result
