@@ -1141,8 +1141,9 @@ def worker():
                             # Draw rectangle with adjusted coordinates
                             cv2.rectangle(black_image, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), cv2.FILLED)
                             # cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
-                        result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
-                        cv2.cvtColor(result_image, cv2.COLOR_BGR2GRAY)
+                        # result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
+                        # cv2.cvtColor(result_image, cv2.COLOR_BGR2GRAY)
+                        result_image = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
                         return result_image
                     
                     # def parse_args():
