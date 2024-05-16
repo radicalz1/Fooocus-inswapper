@@ -1122,9 +1122,10 @@ def worker():
                         #     faces = [faces[face_number]]
                         # Draw white rectangles around the detected faces
                         for face in faces:
-                            top, right, bottom, left = face.top(), face.right(), face.bottom(), face.left()
-                            cv2.rectangle(black_image, (left, top), (right, bottom), (255, 255, 255), thickness=2)
-                        return black_image
+                            print(face)
+                            top, right, bottom, left = face
+                            mask = cv2.rectangle(black_image, (left, top), (right, bottom), (255, 255, 255), thickness=2)
+                        return mask
                     
                     # Usage example:
                     # img = cv2.imread('path_to_image.jpg')  # Load your image
