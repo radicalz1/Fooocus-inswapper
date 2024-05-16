@@ -1154,7 +1154,7 @@ def worker():
                         inpaint_image = img
                         steps=ins_en_steps
                         if img.shape != face_mask.shape:
-                            inpaint_mask = draw_face_mask(imgs[-1])
+                            inpaint_mask = draw_face_mask(img)
                         else:
                             inpaint_mask = face_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
