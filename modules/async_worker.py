@@ -1143,8 +1143,7 @@ def worker():
                         return result_image
 
                     face_mask = draw_face_mask(imgs[-1])
-
-                    ins_y(face_mask)
+                    # ins_y(face_mask)
 
                     print("=====================")
                     print(f"Finish Mask Creation")
@@ -1256,16 +1255,14 @@ def worker():
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
                         # print(f"Type of img: {type(rim)}")
                         rim = np.array(rim)  # Convert to NumPy array before returning
+                        ins_y(rim)
+                        rim_i = improve_face(cv2.cvtColor(rim, cv2.COLOR_BGR2RGB))                          
+                        ins_y(rim_i)
                           
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         resized_sim=resize_inswap_source(sim, rim)
                           
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        # face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
-                        # ins_face_restoration_bg_enhance = True
-                        # ins_face_restoration_upsample = True
-                        # ins_face_restoration_upscale = 2
-                        # ins_face_restoration_codeformer_fidelity = 1
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
                         rim_r1, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
                         ins_y(rim_r1)
@@ -1273,15 +1270,13 @@ def worker():
                         ins_y(rim_r2)
                           
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
-                        rim_i = improve_face(rim)
-                        ins_y(rim_i)
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
                         rim_ri2 = improve_face(rim_r2)
                         ins_y(rim_ri2)
                           
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_r2, rim_i, rim_ri1, rim_ri2, resized_sim])
+                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
                         ins_y(combined_result_image)
 # ============================================================================
                         # print("=================================")
