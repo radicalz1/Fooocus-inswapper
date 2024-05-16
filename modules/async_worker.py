@@ -1108,26 +1108,11 @@ def worker():
                     #         mask = cv2.rectangle(black_image.copy(), (left, top), (right, bottom), (255, 255, 255), thickness=2)
                     #     return mask
     
-                    import argparse
-                    import insightface
-                    import onnxruntime
-                    from typing import List, Union, Dict, Set, Tuple
-                    
-                    def getFaceAnalyser(model_path: str, providers,
-                                        det_size=(320, 320)):
-                        face_analyser = insightface.app.FaceAnalysis(name="buffalo_l", root="./checkpoints", providers=providers)
-                        face_analyser.prepare(ctx_id=0, det_size=det_size)
-                        return face_analyser
-                    def get_many_faces(face_analyser,
-                                       frame:np.ndarray):
-                        """
-                        get faces from left to right by order
-                        """
-                        try:
-                            face = face_analyser.get(frame)
-                            return sorted(face, key=lambda x: x.bbox[0])
-                        except IndexError:
-                            return None
+                    # import argparse
+                    # import insightface
+                    # import onnxruntime
+                    # from typing import List, Union, Dict, Set, Tuple
+                    from inswapper.swapper import getFaceAnalyser, get_many_faces, get_available_providers
                     def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
                         # load machine default available providers
                         providers = onnxruntime.get_available_providers()
@@ -1162,8 +1147,8 @@ def worker():
                         
                     #     input_img_path = args.input_img
                     
-                    #     # download from https://huggingface.co/deepinsight/inswapper/tree/main
-                        model = "./checkpoints/inswapper_128.onnx"
+                        # download from https://huggingface.co/deepinsight/inswapper/tree/main
+                        # model = "./checkpoints/models/buffalo_l/inswapper_128.onnx"
                         inpaint_mask = draw_face_boxes(imgs[-1], model)
                         
                     #     # save result
@@ -1235,9 +1220,9 @@ def worker():
                         print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
                         print("====================================================")
 
-                        import face_recognition
-                        image = face_recognition.load_image_file("your_file.jpg")
-                        face_locations = face_recognition.face_locations(image)
+                        # import face_recognition
+                        # image = face_recognition.load_image_file("your_file.jpg")
+                        # face_locations = face_recognition.face_locations(image)
 
                           
                         # print("=========================================")
