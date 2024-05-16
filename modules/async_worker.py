@@ -1113,7 +1113,7 @@ def worker():
                     import onnxruntime
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
-                    def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
+                    def draw_face_mask(input_img: Union[Image.Image, str], model: str, enlargement_factor):
                         # load machine default available providers
                         providers = onnxruntime.get_available_providers()
                         # load face_analyser
@@ -1131,7 +1131,16 @@ def worker():
                         # draw white rectangles around detected faces
                         for face in faces:
                             x1, y1, x2, y2 = [int(coord) for coord in face.bbox]
-                            cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
+                            enlargement_width = (x2 - x1) * enlargement_factor
+                            enlargement_height = (y2 - y1) * enlargement_factor
+                            # Adjust coordinates to create a larger box
+                            new_x1 = int(max(0, x1 - enlargement_width / 2))  # Avoid going negative
+                            new_y1 = int(max(0, y1 - enlargement_height / 2))
+                            new_x2 = int(min(black_image.shape[1], x2 + enlargement_width / 2))  # Avoid exceeding image width
+                            new_y2 = int(min(black_image.shape[0], y2 + enlargement_height / 2))  # Avoid exceeding image height
+                            # Draw rectangle with adjusted coordinates
+                            cv2.rectangle(black_image, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), cv2.FILLED)
+                            # cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
                         result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
                         cv2.cvtColor(result_image, cv2.COLOR_BGR2GRAY)
                         return result_image
@@ -1150,7 +1159,7 @@ def worker():
                     
                     # download from https://huggingface.co/deepinsight/inswapper/tree/main
                     model = "../inswapper/checkpoints/inswapper_128.onnx"
-                    inpaint_mask = draw_face_boxes(imgs[-1], model)
+                    inpaint_mask = draw_face_mask(imgs[-1], model, 0.25)
                     
                     #     # save result
                     #     result_image.save(args.output_img)
