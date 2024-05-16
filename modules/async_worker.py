@@ -1147,21 +1147,21 @@ def worker():
                         
                     #     input_img_path = args.input_img
                     
-                        # download from https://huggingface.co/deepinsight/inswapper/tree/main
-                        # model = "./checkpoints/models/buffalo_l/inswapper_128.onnx"
-                        inpaint_mask = draw_face_boxes(imgs[-1], model)
-                        
+                    # download from https://huggingface.co/deepinsight/inswapper/tree/main
+                    # model = "./checkpoints/models/buffalo_l/inswapper_128.onnx"
+                    inpaint_mask = draw_face_boxes(imgs[-1], model)
+                    
                     #     # save result
                     #     result_image.save(args.output_img)
                     #     print(f'Result saved successfully: {args.output_img}')
                     
                         
-                        # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
-                        ins_y(inpaint_mask)
-    
-                        print("=====================")
-                        print(f"Finish Mask Creation")
-                        print("=====================")
+                    # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
+                    ins_y(inpaint_mask)
+
+                    print("=====================")
+                    print(f"Finish Mask Creation")
+                    print("=====================")
 
 
                     
