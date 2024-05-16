@@ -1112,7 +1112,7 @@ def worker():
                     # import insightface
                     # import onnxruntime
                     # from typing import List, Union, Dict, Set, Tuple
-                    from inswapper.swapper import getFaceAnalyser, get_many_faces, get_available_providers
+                    from inswapper.swapper import getFaceAnalyser, get_many_faces
                     def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
                         # load machine default available providers
                         providers = onnxruntime.get_available_providers()
