@@ -1220,7 +1220,7 @@ def worker():
                         improved_face = imgs[-1].astype("uint8")
                         return improved_face
 
-                    def resize_inswap_source(source_img, target_img)
+                    def resize_inswap_source(source_img, target_img):
                         original_sim_height, original_sim_width = source_img.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         target_height, target_width = target_img.shape[:2]
