@@ -1112,11 +1112,11 @@ def worker():
                     import onnxruntime
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
-                    def draw_face_mask(input_img: Union[Image.Image, str], model: str, enlargement_factor):
+                    def draw_face_mask(input_img: Union[Image.Image, str]):
                         # load machine default available providers
                         providers = onnxruntime.get_available_providers()
                         # load face_analyser
-                        face_analyser = getFaceAnalyser(model, providers)
+                        face_analyser = getFaceAnalyser("../inswapper/checkpoints/inswapper_128.onnx", providers)
                         # read input image
                         if isinstance(input_img, str):
                             input_img = Image.open(input_img)
@@ -1130,8 +1130,8 @@ def worker():
                         # draw white rectangles around detected faces
                         for face in faces:
                             x1, y1, x2, y2 = [int(coord) for coord in face.bbox]
-                            enlargement_width = (x2 - x1) * enlargement_factor
-                            enlargement_height = (y2 - y1) * enlargement_factor
+                            enlargement_width = (x2 - x1) * 0.45
+                            enlargement_height = (y2 - y1) * 0.45
                             # Adjust coordinates to create a larger box
                             new_x1 = int(max(0, x1 - enlargement_width / 2))  # Avoid going negative
                             new_y1 = int(max(0, y1 - enlargement_height / 2))
@@ -1142,8 +1142,7 @@ def worker():
                         result_image = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
                         return result_image
 
-                    model = "../inswapper/checkpoints/inswapper_128.onnx"
-                    face_mask = draw_face_mask(imgs[-1], model, 0.45)
+                    face_mask = draw_face_mask(imgs[-1])
 
                     ins_y(face_mask)
 
@@ -1154,7 +1153,10 @@ def worker():
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        inpaint_mask = face_mask
+                        if img.shape != face_mask.shape:
+                            inpaint_mask = draw_face_mask(imgs[-1])
+                        else:
+                            inpaint_mask = face_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_image = HWC3(inpaint_image)
                         modules.config.downloading_upscale_model()
@@ -1250,11 +1252,14 @@ def worker():
                         progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
+                          
                         rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
                         # print(f"Type of img: {type(rim)}")
                         rim = np.array(rim)  # Convert to NumPy array before returning
+                          
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         resized_sim=resize_inswap_source(sim, rim)
+                          
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         # face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
                         # ins_face_restoration_bg_enhance = True
@@ -1266,10 +1271,15 @@ def worker():
                         ins_y(rim_r1)
                         rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
                         ins_y(rim_r2)
+                          
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
                         rim_i = improve_face(rim)
+                        ins_y(rim_i)
                         rim_ri1 = improve_face(rim_r1)
+                        ins_y(rim_ri1)
                         rim_ri2 = improve_face(rim_r2)
+                        ins_y(rim_ri2)
+                          
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
                         combined_result_image = cv2.hconcat([rim, rim_r1, rim_r2, rim_i, rim_ri1, rim_ri2, resized_sim])
                         ins_y(combined_result_image)
