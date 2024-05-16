@@ -951,6 +951,39 @@ def worker():
                 if inpaint_worker.current_task is not None:
                     imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
 
+                # def i2i(img, i2i_steps, i2i_den):
+                #     rip = core.numpy_to_pytorch(img) # initial_pixels
+                #     ins_candidate_vae, _ = pipeline.get_candidate_vae(
+                #         steps=i2i_steps,
+                #         switch=switch,
+                #         denoise=i2i_den,
+                #         refiner_swap_method=refiner_swap_method
+                #     )
+                #     ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
+                #     rB, rC, rH, rW = ril['samples'].shape
+                #     rwidth = rW * 8
+                #     rheight = rH * 8
+                #     print(f'Final resolution is {str((rheight, rwidth))}.')
+                #     img_to_img = pipeline.process_diffusion(
+                #         positive_cond=positive_cond,
+                #         negative_cond=negative_cond,
+                #         steps=i2i_steps,
+                #         switch=switch,
+                #         width=width,
+                #         height=height,
+                #         image_seed=task['task_seed'],
+                #         callback=callback,
+                #         sampler_name=final_sampler_name,
+                #         scheduler_name=final_scheduler_name,
+                #         latent=ril,
+                #         denoise=i2i_den,
+                #         tiled=tiled,
+                #         cfg_scale=cfg_scale,
+                #         refiner_swap_method=refiner_swap_method,
+                #     disable_preview=disable_preview
+                #     )
+                #     return img_to_img[-1]
+
                 if ins_sims:
                 # if inswapper_enabled and ins_sims is not None:
                     # imgs = perform_face_swap(imgs, ins_sims, ins_sins, ins_tins)
@@ -982,7 +1015,7 @@ def worker():
                     # ==============================
                     # START RESTORATION REQUIREMENTS
                     # ==============================
-                    progressbar(async_task, 13, '=== Start INSWAPPER : Restoration Requirements')
+                    # progressbar(async_task, 13, '=== Start INSWAPPER : Restoration Requirements')
                     # make sure the ckpts downloaded successfully
                     check_ckpts()
                     # https://huggingface.co/spaces/sczhou/CodeFormer
@@ -1052,51 +1085,19 @@ def worker():
 
                     ins_imgs=[]
                     ins_imgs.extend(imgs)
+
                     def ins_y(img):
                         # log(img, d, metadata_parser, output_format)
                         ins_yield_result(async_task, img)
                     ins_y(imgs[-1])
-                    # def ins_en(img):
-                    #     rip = core.numpy_to_pytorch(img) # initial_pixels
-                    #     ins_candidate_vae, _ = pipeline.get_candidate_vae(
-                    #         steps=ins_en_steps,
-                    #         switch=switch,
-                    #         denoise=ins_en_den,
-                    #         refiner_swap_method=refiner_swap_method
-                    #     )
-                    #     ril = core.encode_vae(vae=ins_candidate_vae, pixels=rip) # initial_latent
-                    #     rB, rC, rH, rW = ril['samples'].shape
-                    #     rwidth = rW * 8
-                    #     rheight = rH * 8
-                    #     print(f'Final resolution is {str((rheight, rwidth))}.')
-                    #     enhance_image = pipeline.process_diffusion(
-                    #         positive_cond=positive_cond,
-                    #         negative_cond=negative_cond,
-                    #         steps=ins_en_steps,
-                    #         switch=switch,
-                    #         width=width,
-                    #         height=height,
-                    #         image_seed=task['task_seed'],
-                    #         callback=callback,
-                    #         sampler_name=final_sampler_name,
-                    #         scheduler_name=final_scheduler_name,
-                    #         latent=ril,
-                    #         denoise=ins_en_den,
-                    #         tiled=tiled,
-                    #         cfg_scale=cfg_scale,
-                    #         refiner_swap_method=refiner_swap_method,
-                    #     disable_preview=disable_preview
-                    #     )
-                    #     return enhance_image[-1]
                    
                     tinsim = len(ins_sims)
 
-                
                     print("====================")
                     print(f"Start Mask Creation")
                     print("====================")
-
-# ================ only rectangle of face from eyes, not the whole face                    
+                    progressbar(async_task, 13, '=== Start INSWAPPER : Mask Creation')
+# ================ only rectangle of face from eyes, not the whole face ===== different engine                   
                     # import dlib
                     # import face_recognition
                     # def draw_face_rectangles(img, number_of_times_to_upsample=1, model="hog"):
@@ -1107,9 +1108,7 @@ def worker():
                     #         top, right, bottom, left = face
                     #         mask = cv2.rectangle(black_image.copy(), (left, top), (right, bottom), (255, 255, 255), thickness=2)
                     #     return mask
-    
-                    # import argparse
-                    # import insightface
+# ================ only rectangle of face from eyes, not the whole face ===== different engine
                     import onnxruntime
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
@@ -1140,314 +1139,61 @@ def worker():
                             new_y2 = int(min(black_image.shape[0], y2 + enlargement_height / 2))  # Avoid exceeding image height
                             # Draw rectangle with adjusted coordinates
                             cv2.rectangle(black_image, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), cv2.FILLED)
-                            # cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
-                        # result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
-                        # cv2.cvtColor(result_image, cv2.COLOR_BGR2GRAY)
                         result_image = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
                         return result_image
-                    
-                    # def parse_args():
-                    #     parser = argparse.ArgumentParser(description="Face detection and drawing boxes.")
-                    #     parser.add_argument("--input_img", type=str, required=True, help="The path of input image.")
-                    #     parser.add_argument("--output_img", type=str, required=False, default="result.png", help="The path and filename of output image.")
-                    #     args = parser.parse_args()
-                    #     return args
-                    
-                    # if __name__ == "__main__":
-                    #     args = parse_args()
-                        
-                    #     input_img_path = args.input_img
-                    
-                    # download from https://huggingface.co/deepinsight/inswapper/tree/main
+
                     model = "../inswapper/checkpoints/inswapper_128.onnx"
-                    inpaint_mask = draw_face_mask(imgs[-1], model, 0.25)
-                    
-                    #     # save result
-                    #     result_image.save(args.output_img)
-                    #     print(f'Result saved successfully: {args.output_img}')
-                    
-                        
-                    # inpaint_mask = draw_face_rectangles(imgs[-1], 1, model="hog")  # Specify the face number if needed
+                    inpaint_mask = draw_face_mask(imgs[-1], model, 0.45)
+
                     ins_y(inpaint_mask)
 
                     print("=====================")
                     print(f"Finish Mask Creation")
                     print("=====================")
 
-
-                    
-                    for item in ins_imgs:
-                      for idx, image in enumerate(ins_sims):
-                        sim = image
-                        sin = ins_sins[idx]
-                        tin = ins_tins[idx]
-                        iinsim = idx+1
-
-                        print("=================================")
-                        print(f"Start Inswap {iinsim} / {tinsim}")
-                        print("=================================")
-                        progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
-                        print(f"Inswapper: Source indicies: {sin}")
-                        print(f"Inswapper: Target indicies: {tin}")      
-                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
-                        # print(f"Type of img: {type(rim)}")
-                        rim = np.array(rim)  # Convert to NumPy array before returning
-                        # ins_y(rim)
-                        print("==================================")
-                        print(f"Finish Inswap {iinsim} / {tinsim}")
-                        print("==================================")
-
-                        print("=======================================================")
-                        print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
-                        print("=======================================================")
-                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
-                        original_sim_height, original_sim_width = sim.shape[:2]
-                        aspect_ratio_sim = original_sim_width / original_sim_height
-                        rim_height, rim_width = rim.shape[:2]
-                        if aspect_ratio_sim > 1:  # if wide image
-                          target_width = rim_width
-                          res_sim_height = int(target_width / aspect_ratio_sim)
-                          diff_sim_height = max(0, rim_height - res_sim_height)  # Ensure non-negative diff
-                          # Add black padding (assuming black padding)
-                          padding_top = int(diff_sim_height / 2)
-                          padding_bottom = diff_sim_height - padding_top
-                          resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
-                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
-                        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
-                          target_height = rim_height
-                          target_width = int(target_height * aspect_ratio_sim)
-                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
-                        print("========================================================")
-                        print(f"Finish Resizing Inswap Source Image {iinsim} / {tinsim}")
-                        print("========================================================")
-
-                        print("===================================================")
-                        print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
-                        print("===================================================")
-                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim, resized_sim])
-                        ins_y(combined_result_image)
-                        print("====================================================")
-                        print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
-                        print("====================================================")
-
-                        # import face_recognition
-                        # image = face_recognition.load_image_file("your_file.jpg")
-                        # face_locations = face_recognition.face_locations(image)
-
-                          
-                        # print("=========================================")
-                        # print(f"Start Enhance Inswap {iinsim} / {tinsim}")
-                        # print("=========================================")
-                        # progressbar(async_task, 13, f'Start Enhance Inswap {iinsim} / {tinsim}')
-                        # rim_ie = ins_en(rim_i)
-                        # ins_y(rim_ie)
-                        # print("=========================================")
-                        # print(f"Finish Enhance Inswap {iinsim} / {tinsim}")
-                        # print("=========================================")
-                        # print("======================================")
-                        # print(f"Start Restoration {iinsim} / {tinsim}")
-                        # print("======================================")
-                        # progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        # face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
-                        ins_face_restoration_bg_enhance = True
-                        ins_face_restoration_upsample = True
-                        ins_face_restoration_upscale = 2
-                        ins_face_restoration_codeformer_fidelity = 1
-                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
-                        ins_y(rim_r)
-                        rim_r, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
-                        ins_y(rim_r)
-                        # rim_r, face = face_restoration(rim, True, True, 1, 0.8, upsampler, codeformer_net, device)
-                        # ins_y(rim_r)
-                            # face = blue color, unused
-                            # r_face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-                            # ins_y(r_face)
-                        # print("=======================================")
-                        # print(f"Finish Restoration {iinsim} / {tinsim}")
-                        # print("=======================================")
-                        # print("======================================")
-                        # print(f"Start Restoration Enhancement {iinsim} / {tinsim}")
-                        # print("======================================")
-                        # progressbar(async_task, 13, f'Start Restoration Enhancement {iinsim} / {tinsim}')
-                        # rim_re = ins_en(rim_r)
-                        # ins_y(rim_re)
-                        # print("=======================================")
-                        # print(f"Finish Restoration Enhancement {iinsim} / {tinsim}")
-                        # print("=======================================")
-                        # combined_result_image = cv2.hconcat([rim_i, rim_r, rim_ie, rim_re])
-                        # ins_y(combined_result_image)
-                        print("=================================================")
-                        print(f"Start Inpaint Improve Detail {iinsim} / {tinsim}")
-                        print("=================================================")
-                        # rim_rd = face_restoration(rim, True, True, 1, 0.5, upsampler, codeformer_net, device, True)
-                        # ins_y(rim_rd)
-
-                        # import torch.nn.functional as F
-                        # from torchvision.transforms.functional import normalize
-                        # from basicsr.utils import imwrite, img2tensor, tensor2img
-                        # from basicsr.utils.download_util import load_file_from_url
-                        # from facelib.utils.face_restoration_helper import FaceRestoreHelper
-                        # from facelib.utils.misc import is_gray
-                        # from basicsr.archs.rrdbnet_arch import RRDBNet
-                        # from basicsr.utils.realesrgan_utils import RealESRGANer
-                        # from basicsr.utils.registry import ARCH_REGISTRY
-                        # detection_model = "retinaface_resnet50"
-
-                        # face_helper = FaceRestoreHelper(
-                        #     1,
-                        #     face_size=512,
-                        #     crop_ratio=(1, 1),
-                        #     det_model=detection_model,
-                        #     save_ext="png",
-                        #     use_parse=True,
-                        # )
-                        # bg_upsampler = upsampler
-                        # face_upsampler = upsampler
-
-                        # face_helper.read_image(rim)
-                        # # get face landmarks for each face
-                        # num_det_faces = face_helper.get_face_landmarks_5(
-                        # only_center_face=False, resize=640, eye_dist_threshold=5
-                        # )
-                        # # align and warp each face
-                        # face_helper.align_warp_face()
-
-                        # for idx, cropped_face in enumerate(face_helper.cropped_faces):
-                        #     # prepare data
-                        #     cropped_face_t = img2tensor(
-                        #         cropped_face / 255.0, bgr2rgb=True, float32=True
-                        #     )
-                        #     normalize(cropped_face_t, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)
-                        #     cropped_face_t = cropped_face_t.unsqueeze(0).to(device)
-                
-                        #     try:
-                        #         with torch.no_grad():
-                        #             output = codeformer_net(
-                        #                 cropped_face_t, w=1, adain=True
-                        #             )[0]
-                        #             restored_face = tensor2img(output, rgb2bgr=True, min_max=(-1, 1))
-                        #         del output
-                        #         torch.cuda.empty_cache()
-                        #     except RuntimeError as error:
-                        #         print(f"Failed inference for CodeFormer: {error}")
-                        #         restored_face = tensor2img(
-                        #             cropped_face_t, rgb2bgr=True, min_max=(-1, 1)
-                        #         )
-                
-                        #     print(f'restored_face type before uint8 {type(restored_face)}')
-                        #     restored_face = restored_face.astype("uint8")
-                            # face_helper.add_restored_face(restored_face)
-
-
-                          
-                        # =====================
-                        # IMPROVE DETAIL ENGINE
-                        # =====================
+                    def improve_face(img):
+                        inpaint_image = img
                         steps=ins_en_steps
-                        # inpaint_image = restored_face
-                        inpaint_image = rim_r
-
+                        inpaint_mask = inpaint_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
-                        # inpaint_mask = np.ones((H, W), dtype=np.uint8) * 255  # Create a mask filled with 255 (masked)
-
-                        # inpaint_mask = inpaint_input_image['mask'][:, :, 0]
-                        # if inpaint_mask_upload_checkbox:
-                        #     if isinstance(inpaint_mask_image_upload, np.ndarray):
-                        #         if inpaint_mask_image_upload.ndim == 3:
-                        #             H, W, C = inpaint_image.shape
-                        #             inpaint_mask_image_upload = resample_image(inpaint_mask_image_upload, width=W, height=H)
-                        #             inpaint_mask_image_upload = np.mean(inpaint_mask_image_upload, axis=2)
-                        #             inpaint_mask_image_upload = (inpaint_mask_image_upload > 127).astype(np.uint8) * 255
-                        #             inpaint_mask = np.maximum(inpaint_mask, inpaint_mask_image_upload)
-                        # if int(inpaint_erode_or_dilate) != 0:
-                        #     inpaint_mask = erode_or_dilate(inpaint_mask, inpaint_erode_or_dilate)
-                        # if invert_mask_checkbox:
-                        #     inpaint_mask = 255 - inpaint_mask
                         inpaint_image = HWC3(inpaint_image)
-                        # if isinstance(inpaint_image, np.ndarray) and isinstance(inpaint_mask, np.ndarray) \
-                        #         and (np.any(inpaint_mask > 127) or len(outpaint_selections) > 0):
-                        # async_worker.progressbar(async_task, 1, 'Downloading upscale models ...')
                         modules.config.downloading_upscale_model()
-                        # if inpaint_parameterized:
-                        #     progressbar(async_task, 1, 'Downloading inpainter ...')
-                        #     inpaint_head_model_path, inpaint_patch_model_path = modules.config.downloading_inpaint_models(
-                        #         inpaint_engine)
-                        #     base_model_additional_loras += [(inpaint_patch_model_path, 1.0)]
-                        #     print(f'[Inpaint] Current inpaint model is {inpaint_patch_model_path}')
-                        #     if refiner_model_name == 'None':
-                        #         use_synthetic_refiner = True
-                        #         refiner_switch = 0.8
-                        # else:
                         inpaint_head_model_path, inpaint_patch_model_path = None, None
                         print(f'[Inpaint] Parameterized inpaint is disabled.')
-                        # if inpaint_additional_prompt != '':
-                        #     if prompt == '':
-                        #         prompt = inpaint_additional_prompt
-                        #     else:
-                        #         prompt = inpaint_additional_prompt + '\n' + prompt
-                        # goals.append('inpaint')
-                    
                         denoising_strength = inpaint_strength
-            
                         inpaint_worker.current_task = inpaint_worker.InpaintWorker(
                             image=inpaint_image,
                             mask=inpaint_mask,
                             use_fill=denoising_strength > 0.99,
                             k=inpaint_respective_field
                         )
-            
-                        # if debugging_inpaint_preprocessor:
-                        #     yield_result(async_task, inpaint_worker.current_task.visualize_mask_processing(),
-                        #                  do_not_show_finished_images=True)
-                        #     return
-            
-                        # async_worker.progressbar(async_task, 13, 'VAE Inpaint encoding ...')
-            
-            
+                        progressbar(async_task, 13, 'VAE Inpaint encoding ...')
                         inpaint_pixel_fill = core.numpy_to_pytorch(inpaint_worker.current_task.interested_fill)
                         inpaint_pixel_image = core.numpy_to_pytorch(inpaint_worker.current_task.interested_image)
                         inpaint_pixel_mask = core.numpy_to_pytorch(inpaint_worker.current_task.interested_mask)
-            
                         candidate_vae, candidate_vae_swap = pipeline.get_candidate_vae(
                             steps=steps,
                             switch=switch,
                             denoise=denoising_strength,
                             refiner_swap_method=refiner_swap_method
                         )
-            
                         latent_inpaint, latent_mask = core.encode_vae_inpaint(
                             mask=inpaint_pixel_mask,
                             vae=candidate_vae,
                             pixels=inpaint_pixel_image)
-            
                         latent_swap = None
                         if candidate_vae_swap is not None:
-                            # async_worker.progressbar(async_task, 13, 'VAE SD15 encoding ...')
+                            progressbar(async_task, 13, 'VAE SD15 encoding ...')
                             latent_swap = core.encode_vae(
                                 vae=candidate_vae_swap,
                                 pixels=inpaint_pixel_fill)['samples']
-            
                         progressbar(async_task, 13, 'VAE encoding ...')
                         latent_fill = core.encode_vae(
                             vae=candidate_vae,
                             pixels=inpaint_pixel_fill)['samples']
-            
                         inpaint_worker.current_task.load_latent(
                             latent_fill=latent_fill, latent_mask=latent_mask, latent_swap=latent_swap)
-            
-                        # if inpaint_parameterized:
-                        #     pipeline.final_unet = inpaint_worker.current_task.patch(
-                        #         inpaint_head_model_path=inpaint_head_model_path,
-                        #         inpaint_latent=latent_inpaint,
-                        #         inpaint_latent_mask=latent_mask,
-                        #         model=pipeline.final_unet
-                        #     )
-            
-                        # if not inpaint_disable_initial_latent:
                         initial_latent = {'samples': latent_fill}
-            
                         B, C, H, W = latent_fill.shape
                         height, width = H * 8, W * 8
                         final_height, final_width = inpaint_worker.current_task.image.shape[:2]
@@ -1470,30 +1216,64 @@ def worker():
                             refiner_swap_method=refiner_swap_method,
                         disable_preview=disable_preview
                         )
-                    # del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
-        #                 if inpaint_worker.current_task is not None:
                         imgs = [inpaint_worker.current_task.post_process(x) for x in imgs]
-                        restored_face = imgs[-1].astype("uint8")
-                        ins_y(restored_face)
-                        print(f'restored_face after detailed')
-                        face_helper.add_restored_face(restored_face)
-                        bg_img = bg_upsampler.enhance(rim, outscale=1)[0]
+                        improved_face = imgs[-1].astype("uint8")
+                        return improved_face
 
-                        restored_faces_len = len(restored_faces)
-                        affine_matrices_len = len(affine_matrices)
-                        print(f"Error: Mismatched lengths! restored_faces: {restored_faces_len}, affine_matrices: {affine_matrices_len}")
+                    def resize_inswap_source(source_img, target_img)
+                        original_sim_height, original_sim_width = source_img.shape[:2]
+                        aspect_ratio_sim = original_sim_width / original_sim_height
+                        target_height, target_width = target_img.shape[:2]
+                        if aspect_ratio_sim > 1:  # if wide image
+                          target_width = rim_width
+                          res_sim_height = int(target_width / aspect_ratio_sim)
+                          diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
+                          # Add black padding (assuming black padding)
+                          padding_top = int(diff_sim_height / 2)
+                          padding_bottom = diff_sim_height - padding_top
+                          resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
+                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                        if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
+                          target_width = int(target_height * aspect_ratio_sim)
+                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
-                        restored_img = face_helper.paste_faces_to_input_image(
-                            upsample_img=bg_img,
-                            draw_box=False,
-                            face_upsampler=face_upsampler
-                        )
-                        rim_rd = cv2.cvtColor(restored_img, cv2.COLOR_BGR2RGB)
-                        ins_y(rim_rd)
+                    for item in ins_imgs:
+                      for idx, image in enumerate(ins_sims):
+                        sim = image
+                        sin = ins_sins[idx]
+                        tin = ins_tins[idx]
+                        iinsim = idx+1
+
+                        print("=================================")
+                        print(f"Start Inswap {iinsim} / {tinsim}")
+                        print("=================================")
+                        progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
+                        print(f"Inswapper: Source indicies: {sin}")
+                        print(f"Inswapper: Target indicies: {tin}")      
+                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
+                        # print(f"Type of img: {type(rim)}")
+                        rim = np.array(rim)  # Convert to NumPy array before returning
+                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
+                        resized_sim=resize_inswap_source(sim, rim)
+                        progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
+                        # face_restoration(img, background_enhance, face_upsample, upscale, codeformer_fidelity, upsampler, codeformer_net, device):
+                        # ins_face_restoration_bg_enhance = True
+                        # ins_face_restoration_upsample = True
+                        # ins_face_restoration_upscale = 2
+                        # ins_face_restoration_codeformer_fidelity = 1
+                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        rim_r1, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
+                        ins_y(rim_r1)
+                        rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
+                        ins_y(rim_r2)
+                        progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
+                        rim_i = improve_face(rim)
+                        rim_ri1 = improve_face(rim_r1)
+                        rim_ri2 = improve_face(rim_r2)
+                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
+                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_r2, rim_i, rim_ri1, rim_ri2, resized_sim])
+                        ins_y(combined_result_image)
 # ============================================================================
-                        # print("=======================================")
-                        # print(f"Finish Improve Detail {iinsim} / {tinsim}")
-                        # print("=======================================")
                         # print("=================================")
                         # print(f"Start Darken {iinsim} / {tinsim}")
                         # print("=================================")
@@ -1527,16 +1307,16 @@ def worker():
                         # print("==================================")
                         # print(f"Finish Darken {iinsim} / {tinsim}")
                         # print("==================================")
-                        print("=====================================================")
-                        print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
-                        print("=====================================================")
-                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        # combined_result_image = cv2.hconcat([rim_i, rim_ie, rim_ied, rim_r, rim_re, rim_rid, rim_red, resized_sim])
-                        combined_result_image = cv2.hconcat([rim_i, rim_r, rim_rd])
-                        ins_y(combined_result_image)
-                        print("====================================================")
-                        print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
-                        print("====================================================")
+                        # print("=====================================================")
+                        # print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
+                        # print("=====================================================")
+                        # progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
+                        # # combined_result_image = cv2.hconcat([rim_i, rim_ie, rim_ied, rim_r, rim_re, rim_rid, rim_red, resized_sim])
+                        # combined_result_image = cv2.hconcat([rim_i, rim_r, rim_rd])
+                        # ins_y(combined_result_image)
+                        # print("====================================================")
+                        # print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
+                        # print("====================================================")
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
 
