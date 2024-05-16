@@ -1133,6 +1133,7 @@ def worker():
                             x1, y1, x2, y2 = [int(coord) for coord in face.bbox]
                             cv2.rectangle(black_image, (x1, y1), (x2, y2), (255, 255, 255), cv2.FILLED)
                         result_image = Image.fromarray(cv2.cvtColor(black_image, cv2.COLOR_BGR2RGB))
+                        cv2.cvtColor(result_image, cv2.COLOR_BGR2GRAY)
                         return result_image
                     
                     # def parse_args():
