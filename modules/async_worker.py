@@ -1143,9 +1143,9 @@ def worker():
                         return result_image
 
                     model = "../inswapper/checkpoints/inswapper_128.onnx"
-                    inpaint_mask = draw_face_mask(imgs[-1], model, 0.45)
+                    face_mask = draw_face_mask(imgs[-1], model, 0.45)
 
-                    ins_y(inpaint_mask)
+                    ins_y(face_mask)
 
                     print("=====================")
                     print(f"Finish Mask Creation")
@@ -1154,7 +1154,7 @@ def worker():
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        inpaint_mask = inpaint_mask
+                        inpaint_mask = face_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_image = HWC3(inpaint_image)
                         modules.config.downloading_upscale_model()
