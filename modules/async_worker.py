@@ -1110,7 +1110,7 @@ def worker():
     
                     # import argparse
                     # import insightface
-                    # import onnxruntime
+                    import onnxruntime
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
                     def draw_face_boxes(input_img: Union[Image.Image, str], model: str):
