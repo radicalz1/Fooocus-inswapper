@@ -1124,7 +1124,7 @@ def worker():
                         for face in faces:
                             print(face)
                             top, right, bottom, left = face
-                            mask = cv2.rectangle(black_image, (left, top), (right, bottom), (255, 255, 255), thickness=2)
+                            mask = cv2.rectangle(black_image.copy(), (left, top), (right, bottom), (255, 255, 255), thickness=2)
                         return mask
                     
                     # Usage example:
