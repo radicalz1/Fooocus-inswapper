@@ -1338,8 +1338,8 @@ def worker():
                             return np.concatenate((image, alpha_channel), axis=-1)
                         # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
                         def darken(bg,fg, opacity):
-                            background_img_float = rim_r.astype(float)  # Convert bg to float
-                            foreground_img_float = rim_re.astype(float)  # Convert fg to float
+                            background_img_float = bg.astype(float)  # Convert bg to float
+                            foreground_img_float = fg.astype(float)  # Convert fg to float
                             background_img_float = add_alpha_channel(background_img_float)
                             foreground_img_float = add_alpha_channel(foreground_img_float)
                             blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
