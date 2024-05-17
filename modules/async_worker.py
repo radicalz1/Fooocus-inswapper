@@ -1093,10 +1093,6 @@ def worker():
                    
                     tinsim = len(ins_sims)
 
-                    print("====================")
-                    print(f"Start Mask Creation")
-                    print("====================")
-                    progressbar(async_task, 13, '=== Start INSWAPPER : Mask Creation')
 # ================ only rectangle of face from eyes, not the whole face ===== different engine                   
                     # import dlib
                     # import face_recognition
@@ -1113,51 +1109,34 @@ def worker():
                     from typing import List, Union, Dict, Set, Tuple
                     from inswapper.swapper import getFaceAnalyser, get_many_faces
                     def draw_face_mask(input_img: Union[Image.Image, str]):
-                        # load machine default available providers
                         providers = onnxruntime.get_available_providers()
-                        # load face_analyser
                         face_analyser = getFaceAnalyser("../inswapper/checkpoints/inswapper_128.onnx", providers)
-                        # read input image
                         if isinstance(input_img, str):
                             input_img = Image.open(input_img)
                         input_img = cv2.cvtColor(np.array(input_img), cv2.COLOR_RGB2BGR)
-                        # detect faces in the input image
                         faces = get_many_faces(face_analyser, input_img)
                         if faces is None:
                             raise Exception("No faces found!")
-                        # create a new black image of the same size
                         black_image = np.zeros_like(input_img)
-                        # draw white rectangles around detected faces
                         for face in faces:
                             x1, y1, x2, y2 = [int(coord) for coord in face.bbox]
                             enlargement_width = (x2 - x1) * 0.45
                             enlargement_height = (y2 - y1) * 0.45
-                            # Adjust coordinates to create a larger box
                             new_x1 = int(max(0, x1 - enlargement_width / 2))  # Avoid going negative
                             new_y1 = int(max(0, y1 - enlargement_height / 2))
                             new_x2 = int(min(black_image.shape[1], x2 + enlargement_width / 2))  # Avoid exceeding image width
                             new_y2 = int(min(black_image.shape[0], y2 + enlargement_height / 2))  # Avoid exceeding image height
-                            # Draw rectangle with adjusted coordinates
                             cv2.rectangle(black_image, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), cv2.FILLED)
                         face_mask = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
                         return face_mask
 
-                    face_mask = draw_face_mask(imgs[-1])
-                    # ins_y(face_mask)
-
-                    print("=====================")
-                    print(f"Finish Mask Creation")
-                    print("=====================")
-
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        # inpaint_mask = draw_face_mask(img)
-                        inpaint_mask = face_mask
-                        # if img.shape != face_mask.shape:
-                        #     inpaint_mask = draw_face_mask(img)
-                        # else:
-                        #     inpaint_mask = face_mask
+                        if face_mask.shape[:2] != img.shape[:2]:
+                            inpaint_mask = draw_face_mask(img)
+                        else:
+                            inpaint_mask = face_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_image = HWC3(inpaint_image)
                         modules.config.downloading_upscale_model()
@@ -1227,147 +1206,74 @@ def worker():
                         original_sim_height, original_sim_width = source_img.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         target_height, target_width = target_img.shape[:2]
-                        print(f'sim shape {source_img.shape[:2]}, sim aspect ratio {aspect_ratio_sim}, tim shape {target_img.shape[:2]}')
                         if aspect_ratio_sim > 1:  # if wide image
-                            # target_width = rim_width
                             res_sim_height = int(target_width / aspect_ratio_sim)
                             diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
-                            # Add black padding (assuming black padding)
                             padding = int(diff_sim_height / 2)
-                            # padding_bottom = diff_sim_height - padding_top
-                            print(f'res sim height {res_sim_height}, diff_sim_height {diff_sim_height}, padding {padding}')
                             resized_sim = cv2.copyMakeBorder(cv2.resize(source_img, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                                            padding, padding, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
                             target_width = int(target_height * aspect_ratio_sim)
-                            print(f'target_width {target_width}')
                             resized_sim = cv2.resize(source_img, (target_width, target_height), interpolation=cv2.INTER_AREA)
                         return resized_sim
+                        
+                    from blend_modes import darken_only
+                    def add_alpha_channel(image):
+                        height, width = image.shape[:2]
+                        alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
+                        return np.concatenate((image, alpha_channel), axis=-1)
+                    def darken(bg,fg, opacity):
+                        background_img_float = bg.astype(float)  # Convert bg to float
+                        foreground_img_float = fg.astype(float)  # Convert fg to float
+                        background_img_float = add_alpha_channel(background_img_float)
+                        foreground_img_float = add_alpha_channel(foreground_img_float)
+                        blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
+                        blended = blended_img_float.astype(np.uint8)
+                        darken_img = blended[:, :, :3]  # Select the first 3 channels (RGB)
+                        return darken_img
 
+                    progressbar(async_task, 13, '=== Start INSWAPPER : Mask Creation')
+                    face_mask = draw_face_mask(imgs[-1])
                     for item in ins_imgs:
-                      for idx, image in enumerate(ins_sims):
-                        sim = image
-                        sin = ins_sins[idx]
-                        tin = ins_tins[idx]
-                        iinsim = idx+1
-
+                        for idx, image in enumerate(ins_sims):
+                            sim = image
+                            sin = ins_sins[idx]
+                            tin = ins_tins[idx]
+                            iinsim = idx+1
                         print("=================================")
                         print(f"Start Inswap {iinsim} / {tinsim}")
                         print("=================================")
+                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
+                        resized_sim = resize_inswap_source(sim, item)
                         progressbar(async_task, 13, f'Start Inswap {iinsim} / {tinsim}')
                         print(f"Inswapper: Source indicies: {sin}")
                         print(f"Inswapper: Target indicies: {tin}")      
-                          
-                        rim = process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx") # result_image
-                        # print(f"Type of img: {type(rim)}")
-                        rim = np.array(rim)  # Convert to NumPy array before returning
-                        ins_y(rim)
-                        print("=================================")
-                        print(f"Start Inswap Improve Face {iinsim} / {tinsim}")
-                        print("=================================")
+                        rim = np.array(process([sim], item, sin, tin, "../inswapper/checkpoints/inswapper_128.onnx")) # result_image
                         rim_i = improve_face(rim)                          
                         ins_y(rim_i)
-                        # combined_result_image = cv2.hconcat([rim, rim_i])
-                        # ins_y(combined_result_image)
-                        # print("=================================")
-                        print(f"Finish Inswap Improve Face {iinsim} / {tinsim}")
-                        print("=================================")
-                        print("=================================")
-                        print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
-                        print("=================================")
-                        progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
-                        print("sim shape:", sim.shape, "dtype:", sim.dtype)
-                        print("rim shape:", rim.shape, "dtype:", rim.dtype)
-                        print("rim_i shape:", rim_i.shape, "dtype:", rim_i.dtype)
-                        resized_sim=resize_inswap_source(sim, rim)
-                        # ins_y(resized_sim)
-
-                        # print("resized_sim shape:", resized_sim.shape, "dtype:", resized_sim.dtype)
-
-                        # combined_result_image = cv2.hconcat([rim, rim_i, resized_sim])
-                        # ins_y(combined_result_image)
-                        print("=================================")
-                        print(f"Finish Resizing Inswap Source Image {iinsim} / {tinsim}")
-                        print("=================================")
-                        print("=================================")
-                        print(f"Start Inswap Restoration {iinsim} / {tinsim}")
-                        print("=================================")
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        # rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR) # blue
-                        print(f"Type of img: {type(rim)}")
-                        # print(f"Image before restoration: {rim}")
                         rim_r1 = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
                         rim_r1 = cv2.cvtColor(np.array(rim_r1), cv2.COLOR_BGR2RGB)
-                        print(f"Type of img: {type(rim_r1)} ")
-                        print(f"D Type of img: {rim_r1.dtype} ")
                         ins_y(rim_r1)
-                        # combined_result_image = cv2.hconcat([rim, rim_i, rim_r1, resized_sim])
-                        # ins_y(combined_result_image)
-                        # rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
-                        # ins_y(rim_r2)
-                        print("=================================")
-                        print(f"Finish Inswap Restoration {iinsim} / {tinsim}")
-                        print("=================================")
-                        print("=================================")
-                        print(f"Start Restored Improve Face {iinsim} / {tinsim}")
-                        print("=================================")
+                        rim_r2 = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
+                        rim_r2 = cv2.cvtColor(np.array(rim_r2), cv2.COLOR_BGR2RGB)
+                        ins_y(rim_r2)
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
-                        print(f"Type of img: {type(rim_r1)}")
-                        print(f"Image before restoration: {rim_r1}")
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
+                        rim_ri2 = improve_face(rim_r2)
+                        ins_y(rim_ri2)                         
+                        progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
                         combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
                         ins_y(combined_result_image)
-                        # rim_ri2 = improve_face(rim_r2)
-                        # ins_y(rim_ri2)
-                          
-                        # progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        # combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
-                        # ins_y(combined_result_image)
-# ============================================================================
-                        print("=================================")
-                        print(f"Start Darken {iinsim} / {tinsim}")
-                        print("=================================")
                         progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        from blend_modes import darken_only
-                        def add_alpha_channel(image):
-                            height, width = image.shape[:2]
-                            # Create an alpha channel with full opacity for every pixel
-                            alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
-                            return np.concatenate((image, alpha_channel), axis=-1)
-                        # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
-                        def darken(bg,fg, opacity):
-                            background_img_float = bg.astype(float)  # Convert bg to float
-                            foreground_img_float = fg.astype(float)  # Convert fg to float
-                            background_img_float = add_alpha_channel(background_img_float)
-                            foreground_img_float = add_alpha_channel(foreground_img_float)
-                            blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
-                            blended = blended_img_float.astype(np.uint8)
-                            # Assuming rim_red has shape (height, width, 4)
-                            blended_no_alpha = blended[:, :, :3]  # Select the first 3 channels (RGB)
-                            return blended_no_alpha
-                      
-                        rim_ri1d = darken(rim_r1, rim_ri1, ins_dn) # inswapped darkened with inswapped enhanced
+                        rim_ri1d = darken(rim_r1, rim_ri1, ins_dn)
                         ins_y(rim_ri1d)
-                        # rim_rid = darken(rim_r, rim_i, ins_dn) # restored darkened with inswapped
-                        # ins_y(rim_rid)
-                        # rim_red = darken(rim_r, rim_re, ins_dn) # restored darkened with restored enhanced
-                        # ins_y(rim_red)
-                        # combined_result_image = cv2.hconcat([rim_ied, rim_rid, rim_red])
-                        # ins_y(combined_result_image)
-                        print("==================================")
-                        print(f"Finish Darken {iinsim} / {tinsim}")
-                        print("==================================")
-                        # print("=====================================================")
-                        # print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
-                        # print("=====================================================")
-                        # progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        # # combined_result_image = cv2.hconcat([rim_i, rim_ie, rim_ied, rim_r, rim_re, rim_rid, rim_red, resized_sim])
-                        # combined_result_image = cv2.hconcat([rim_i, rim_r, rim_rd])
-                        # ins_y(combined_result_image)
-                        # print("====================================================")
-                        # print(f"Finish Horizontal Concatenation {iinsim} / {tinsim}")
-                        # print("====================================================")
+                        rim_ri2d = darken(rim_r2, rim_ri2, ins_dn)
+                        ins_y(rim_ri2d)
+                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_ri1, rim_ri1d, resized_sim])
+                        ins_y(combined_result_image)
+# ============================================================================
 
                 del task['c'], task['uc'], positive_cond, negative_cond  # Save memory
 
