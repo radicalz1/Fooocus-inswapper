@@ -1152,10 +1152,11 @@ def worker():
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        if img.shape != face_mask.shape:
-                            inpaint_mask = draw_face_mask(img)
-                        else:
-                            inpaint_mask = face_mask
+                        inpaint_mask = face_mask
+                        # if img.shape != face_mask.shape:
+                        #     inpaint_mask = draw_face_mask(img)
+                        # else:
+                        #     inpaint_mask = face_mask
                         H, W = inpaint_image.shape[:2]  # Get image height and width
                         inpaint_image = HWC3(inpaint_image)
                         modules.config.downloading_upscale_model()
