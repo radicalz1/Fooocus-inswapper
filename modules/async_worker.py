@@ -1266,12 +1266,14 @@ def worker():
                           
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         # rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r1 = np.array(face_restoration(cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR), True, True, 1, 1, upsampler, codeformer_net, device))
+                        print(f"Type of img: {type(rim)}")
+                        rim_r1 = np.array(face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device))
                         ins_y(rim_r1)
                         # rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
                         # ins_y(rim_r2)
                           
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
+                        print(f"Type of img: {type(rim_r1)}")
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
                         # rim_ri2 = improve_face(rim_r2)
