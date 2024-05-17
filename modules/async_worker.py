@@ -1298,6 +1298,7 @@ def worker():
                         print(f"Type of img: {type(rim)}")
                         # print(f"Image before restoration: {rim}")
                         rim_r1 = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
+                        rim_r1 = cv2.cvtColor(np.array(rim_r1), cv2.COLOR_BGR2RGB)
                         print(f"Type of img: {type(rim_r1)} ")
                         print(f"D Type of img: {rim_r1.dtype} ")
                         ins_y(rim_r1)
