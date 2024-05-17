@@ -1265,8 +1265,8 @@ def worker():
                         ins_y(resized_sim)
                           
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
-                        rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
-                        rim_r1, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
+                        # rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
+                        rim_r1 = np.array(face_restoration(cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR), True, True, 1, 1, upsampler, codeformer_net, device))
                         ins_y(rim_r1)
                         # rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
                         # ins_y(rim_r2)
@@ -1278,7 +1278,7 @@ def worker():
                         # ins_y(rim_ri2)
                           
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim_r1, rim_i, rim_ri1, resized_sim])
+                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
                         ins_y(combined_result_image)
 # ============================================================================
                         print("=================================")
