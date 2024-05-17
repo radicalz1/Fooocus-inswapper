@@ -1089,7 +1089,7 @@ def worker():
                     def ins_y(img):
                         # log(img, d, metadata_parser, output_format)
                         ins_yield_result(async_task, img)
-                    ins_y(imgs[-1])
+                    ins_y(ins_imgs[-1])
                    
                     tinsim = len(ins_sims)
 
@@ -1139,11 +1139,11 @@ def worker():
                             new_y2 = int(min(black_image.shape[0], y2 + enlargement_height / 2))  # Avoid exceeding image height
                             # Draw rectangle with adjusted coordinates
                             cv2.rectangle(black_image, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), cv2.FILLED)
-                        result_image = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
-                        return result_image
+                        face_mask = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
+                        return face_mask
 
-                    # face_mask = draw_face_mask(imgs[-1])
-                    # ins_y(face_mask)
+                    face_mask = draw_face_mask(imgs[-1])
+                    ins_y(face_mask)
 
                     print("=====================")
                     print(f"Finish Mask Creation")
@@ -1152,8 +1152,8 @@ def worker():
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        inpaint_mask = draw_face_mask(img)
-                        # inpaint_mask = face_mask
+                        # inpaint_mask = draw_face_mask(img)
+                        inpaint_mask = face_mask
                         # if img.shape != face_mask.shape:
                         #     inpaint_mask = draw_face_mask(img)
                         # else:
@@ -1227,18 +1227,23 @@ def worker():
                         original_sim_height, original_sim_width = source_img.shape[:2]
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         target_height, target_width = target_img.shape[:2]
+                        print(f'sim shape {source_img.shape[:2]}, sim aspect ratio {aspect_ratio_sim}, tim shape {target_img.shape[:2]}')
                         if aspect_ratio_sim > 1:  # if wide image
-                          target_width = rim_width
-                          res_sim_height = int(target_width / aspect_ratio_sim)
-                          diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
-                          # Add black padding (assuming black padding)
-                          padding_top = int(diff_sim_height / 2)
-                          padding_bottom = diff_sim_height - padding_top
-                          resized_sim = cv2.copyMakeBorder(cv2.resize(source_img, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
-                                                           padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
+                            # target_width = rim_width
+                            res_sim_height = int(target_width / aspect_ratio_sim)
+                            diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
+                            # Add black padding (assuming black padding)
+                            padding = int(diff_sim_height / 2)
+                            # padding_bottom = diff_sim_height - padding_top
+                            print(f'res sim height {res_sim_height}, diff_sim_height {diff_sim_height}, padding {padding}')
+                            resized_sim = cv2.copyMakeBorder(cv2.resize(source_img, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
+                                                           padding, padding, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
-                          target_width = int(target_height * aspect_ratio_sim)
-                          resized_sim = cv2.resize(source_img, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                            target_width = int(target_height * aspect_ratio_sim)
+                            print(f'target_width {target_width}')
+                            resized_sim = cv2.resize(source_img, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                        ins_y(resized_sim)
+                        return resized_sim
 
                     for item in ins_imgs:
                       for idx, image in enumerate(ins_sims):
