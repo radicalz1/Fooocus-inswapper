@@ -45,4 +45,3 @@ controlnet_aux
 
 # Adds
 blend_modes
-face-recognition
