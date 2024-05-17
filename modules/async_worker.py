@@ -1272,11 +1272,12 @@ def worker():
                         print(f"Start Resizing Inswap Source Image {iinsim} / {tinsim}")
                         print("=================================")
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
+                        print("sim shape:", sim.shape, "dtype:", sim.dtype)
+                        print("rim shape:", rim.shape, "dtype:", rim.dtype)
+                        print("rim_i shape:", rim_i.shape, "dtype:", rim_i.dtype)
                         resized_sim=resize_inswap_source(sim, rim)
                         ins_y(resized_sim)
 
-                        print("rim shape:", rim.shape, "dtype:", rim.dtype)
-                        print("rim_i shape:", rim_i.shape, "dtype:", rim_i.dtype)
                         print("resized_sim shape:", resized_sim.shape, "dtype:", resized_sim.dtype)
 
                         combined_result_image = cv2.hconcat([rim, rim_i, resized_sim])
