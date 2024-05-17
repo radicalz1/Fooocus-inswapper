@@ -1142,7 +1142,7 @@ def worker():
                         result_image = cv2.cvtColor(black_image, cv2.COLOR_BGR2GRAY)
                         return result_image
 
-                    face_mask = draw_face_mask(imgs[-1])
+                    # face_mask = draw_face_mask(imgs[-1])
                     # ins_y(face_mask)
 
                     print("=====================")
@@ -1152,7 +1152,8 @@ def worker():
                     def improve_face(img):
                         inpaint_image = img
                         steps=ins_en_steps
-                        inpaint_mask = face_mask
+                        inpaint_mask = draw_face_mask(img)
+                        # inpaint_mask = face_mask
                         # if img.shape != face_mask.shape:
                         #     inpaint_mask = draw_face_mask(img)
                         # else:
@@ -1275,6 +1276,7 @@ def worker():
                           
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
                         print(f"Type of img: {type(rim_r1)}")
+                        print(f"Image before restoration: {rim_r1}")
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
                         # rim_ri2 = improve_face(rim_r2)
