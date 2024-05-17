@@ -153,7 +153,7 @@ def face_restoration(img, background_enhance, face_upsample, upscale, codeformer
                 )
 
         restored_img = cv2.cvtColor(restored_img, cv2.COLOR_BGR2RGB)
-        return restored_img, restored_face
+        return restored_img
     except Exception as error:
         print('Global exception', error)
         return None, None
