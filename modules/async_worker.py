@@ -1226,17 +1226,17 @@ def worker():
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         target_height, target_width = target_img.shape[:2]
                         if aspect_ratio_sim > 1:  # if wide image
-                          target_width = rim_width
+                          # target_width = rim_width
                           res_sim_height = int(target_width / aspect_ratio_sim)
                           diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
                           # Add black padding (assuming black padding)
                           padding_top = int(diff_sim_height / 2)
                           padding_bottom = diff_sim_height - padding_top
-                          resized_sim = cv2.copyMakeBorder(cv2.resize(sim, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
+                          resized_sim = cv2.copyMakeBorder(cv2.resize(source_img, (target_width, res_sim_height), interpolation=cv2.INTER_AREA),
                                                            padding_top, padding_bottom, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
                         if aspect_ratio_sim <= 1:  # if square / portrait image, no need to pad anything
                           target_width = int(target_height * aspect_ratio_sim)
-                          resized_sim = cv2.resize(sim, (target_width, target_height), interpolation=cv2.INTER_AREA)
+                          resized_sim = cv2.resize(source_img, (target_width, target_height), interpolation=cv2.INTER_AREA)
 
                     for item in ins_imgs:
                       for idx, image in enumerate(ins_sims):
@@ -1256,62 +1256,63 @@ def worker():
                         # print(f"Type of img: {type(rim)}")
                         rim = np.array(rim)  # Convert to NumPy array before returning
                         ins_y(rim)
-                        rim_i = improve_face(cv2.cvtColor(rim, cv2.COLOR_BGR2RGB))                          
+                        rim_i = improve_face(rim)                          
                         ins_y(rim_i)
                           
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         resized_sim=resize_inswap_source(sim, rim)
+                        ins_y(resized_sim)
                           
                         progressbar(async_task, 13, f'Start Restoration {iinsim} / {tinsim}')
                         rim = cv2.cvtColor(np.array(rim), cv2.COLOR_RGB2BGR)
                         rim_r1, face = face_restoration(rim, True, True, 1, 1, upsampler, codeformer_net, device)
                         ins_y(rim_r1)
-                        rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
-                        ins_y(rim_r2)
+                        # rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
+                        # ins_y(rim_r2)
                           
                         progressbar(async_task, 13, f'Start Improve Face {iinsim} / {tinsim}')
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
-                        rim_ri2 = improve_face(rim_r2)
-                        ins_y(rim_ri2)
+                        # rim_ri2 = improve_face(rim_r2)
+                        # ins_y(rim_ri2)
                           
                         progressbar(async_task, 13, f'Start Horizontal Concatenation {iinsim} / {tinsim}')
-                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
+                        combined_result_image = cv2.hconcat([rim_r1, rim_i, rim_ri1, resized_sim])
                         ins_y(combined_result_image)
 # ============================================================================
-                        # print("=================================")
-                        # print(f"Start Darken {iinsim} / {tinsim}")
-                        # print("=================================")
-                        # progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
-                        # from blend_modes import darken_only
-                        # def add_alpha_channel(image):
-                        #     height, width = image.shape[:2]
-                        #     # Create an alpha channel with full opacity for every pixel
-                        #     alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
-                        #     return np.concatenate((image, alpha_channel), axis=-1)
-                        # # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
-                        # def darken(bg,fg, opacity):
-                        #     background_img_float = rim_r.astype(float)  # Convert bg to float
-                        #     foreground_img_float = rim_re.astype(float)  # Convert fg to float
-                        #     background_img_float = add_alpha_channel(background_img_float)
-                        #     foreground_img_float = add_alpha_channel(foreground_img_float)
-                        #     blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
-                        #     blended = blended_img_float.astype(np.uint8)
-                        #     # Assuming rim_red has shape (height, width, 4)
-                        #     blended_no_alpha = blended[:, :, :3]  # Select the first 3 channels (RGB)
-                        #     return blended_no_alpha
+                        print("=================================")
+                        print(f"Start Darken {iinsim} / {tinsim}")
+                        print("=================================")
+                        progressbar(async_task, 13, f'Start Darken {iinsim} / {tinsim}')
+                        from blend_modes import darken_only
+                        def add_alpha_channel(image):
+                            height, width = image.shape[:2]
+                            # Create an alpha channel with full opacity for every pixel
+                            alpha_channel = np.ones((height, width, 1), dtype=image.dtype) * 255
+                            return np.concatenate((image, alpha_channel), axis=-1)
+                        # background_img_float = add_alpha_channel(cv2.imread('bg.jpg', -1).astype(float))
+                        def darken(bg,fg, opacity):
+                            background_img_float = rim_r.astype(float)  # Convert bg to float
+                            foreground_img_float = rim_re.astype(float)  # Convert fg to float
+                            background_img_float = add_alpha_channel(background_img_float)
+                            foreground_img_float = add_alpha_channel(foreground_img_float)
+                            blended_img_float = darken_only(background_img_float, foreground_img_float, opacity)
+                            blended = blended_img_float.astype(np.uint8)
+                            # Assuming rim_red has shape (height, width, 4)
+                            blended_no_alpha = blended[:, :, :3]  # Select the first 3 channels (RGB)
+                            return blended_no_alpha
                       
-                        # rim_ied = darken(rim_i, rim_ie, ins_dn) # inswapped darkened with inswapped enhanced
-                        # ins_y(rim_ied)
+                        rim_ri1d = darken(rim_r1, rim_ri1, ins_dn) # inswapped darkened with inswapped enhanced
+                        ins_y(rim_ri1d)
                         # rim_rid = darken(rim_r, rim_i, ins_dn) # restored darkened with inswapped
                         # ins_y(rim_rid)
                         # rim_red = darken(rim_r, rim_re, ins_dn) # restored darkened with restored enhanced
                         # ins_y(rim_red)
                         # combined_result_image = cv2.hconcat([rim_ied, rim_rid, rim_red])
                         # ins_y(combined_result_image)
-                        # print("==================================")
-                        # print(f"Finish Darken {iinsim} / {tinsim}")
-                        # print("==================================")
+                        print("==================================")
+                        print(f"Finish Darken {iinsim} / {tinsim}")
+                        print("==================================")
                         # print("=====================================================")
                         # print(f"Start Horizontal Concatenation {iinsim} / {tinsim}")
                         # print("=====================================================")
