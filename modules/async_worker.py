@@ -1038,47 +1038,47 @@ def worker():
                     # ======================
                     # START LOG REQUIREMENTS
                     # ======================
-                    # progressbar(async_task, 13, '=== Start INSWAPPER : Log Requirements')
-                    # d = [('Prompt', 'prompt', task['log_positive_prompt']),
-                    #      ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
-                    #      ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
-                    #      ('Styles', 'styles', str(raw_style_selections)),
-                    #      ('Performance', 'performance', performance_selection.value)]
-                    # if performance_selection.steps() != steps:
-                    #     d.append(('Steps', 'steps', steps))
-                    # d += [('Resolution', 'resolution', str((width, height))),
-                    #       ('Guidance Scale', 'guidance_scale', guidance_scale),
-                    #       ('Sharpness', 'sharpness', sharpness),
-                    #       ('ADM Guidance', 'adm_guidance', str((
-                    #           modules.patch.patch_settings[pid].positive_adm_scale,
-                    #           modules.patch.patch_settings[pid].negative_adm_scale,
-                    #           modules.patch.patch_settings[pid].adm_scaler_end))),
-                    #       ('Base Model', 'base_model', base_model_name),
-                    #       ('Refiner Model', 'refiner_model', refiner_model_name),
-                    #       ('Refiner Switch', 'refiner_switch', refiner_switch)]
-                    # if refiner_model_name != 'None':
-                    #     if overwrite_switch > 0:
-                    #         d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
-                    #     if refiner_swap_method != flags.refiner_swap_method:
-                    #         d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
-                    # if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
-                    #     d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
-                    # d.append(('Sampler', 'sampler', sampler_name))
-                    # d.append(('Scheduler', 'scheduler', scheduler_name))
-                    # d.append(('Seed', 'seed', str(task['task_seed'])))
-                    # if freeu_enabled:
-                    #     d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
-                    # for li, (n, w) in enumerate(loras):
-                    #     if n != 'None':
-                    #         d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
-                    # metadata_parser = None
-                    # if save_metadata_to_images:
-                    #     metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
-                    #     metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
-                    #                              task['log_negative_prompt'], task['negative'],
-                    #                              steps, base_model_name, refiner_model_name, loras)
-                    # d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
-                    # d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
+                    progressbar(async_task, 13, '=== Start INSWAPPER : Log Requirements')
+                    d = [('Prompt', 'prompt', task['log_positive_prompt']),
+                         ('Negative Prompt', 'negative_prompt', task['log_negative_prompt']),
+                         ('Fooocus V2 Expansion', 'prompt_expansion', task['expansion']),
+                         ('Styles', 'styles', str(raw_style_selections)),
+                         ('Performance', 'performance', performance_selection.value)]
+                    if performance_selection.steps() != steps:
+                        d.append(('Steps', 'steps', steps))
+                    d += [('Resolution', 'resolution', str((width, height))),
+                          ('Guidance Scale', 'guidance_scale', guidance_scale),
+                          ('Sharpness', 'sharpness', sharpness),
+                          ('ADM Guidance', 'adm_guidance', str((
+                              modules.patch.patch_settings[pid].positive_adm_scale,
+                              modules.patch.patch_settings[pid].negative_adm_scale,
+                              modules.patch.patch_settings[pid].adm_scaler_end))),
+                          ('Base Model', 'base_model', base_model_name),
+                          ('Refiner Model', 'refiner_model', refiner_model_name),
+                          ('Refiner Switch', 'refiner_switch', refiner_switch)]
+                    if refiner_model_name != 'None':
+                        if overwrite_switch > 0:
+                            d.append(('Overwrite Switch', 'overwrite_switch', overwrite_switch))
+                        if refiner_swap_method != flags.refiner_swap_method:
+                            d.append(('Refiner Swap Method', 'refiner_swap_method', refiner_swap_method))
+                    if modules.patch.patch_settings[pid].adaptive_cfg != modules.config.default_cfg_tsnr:
+                        d.append(('CFG Mimicking from TSNR', 'adaptive_cfg', modules.patch.patch_settings[pid].adaptive_cfg))
+                    d.append(('Sampler', 'sampler', sampler_name))
+                    d.append(('Scheduler', 'scheduler', scheduler_name))
+                    d.append(('Seed', 'seed', str(task['task_seed'])))
+                    if freeu_enabled:
+                        d.append(('FreeU', 'freeu', str((freeu_b1, freeu_b2, freeu_s1, freeu_s2))))
+                    for li, (n, w) in enumerate(loras):
+                        if n != 'None':
+                            d.append((f'LoRA {li + 1}', f'lora_combined_{li + 1}', f'{n} : {w}'))
+                    metadata_parser = None
+                    if save_metadata_to_images:
+                        metadata_parser = modules.meta_parser.get_metadata_parser(metadata_scheme)
+                        metadata_parser.set_data(task['log_positive_prompt'], task['positive'],
+                                                 task['log_negative_prompt'], task['negative'],
+                                                 steps, base_model_name, refiner_model_name, loras)
+                    d.append(('Metadata Scheme', 'metadata_scheme', metadata_scheme.value if save_metadata_to_images else save_metadata_to_images))
+                    d.append(('Version', 'version', 'Fooocus v' + fooocus_version.version))
                     # ====================
                     # END LOG REQUIREMENTS
                     # ====================
@@ -1087,7 +1087,7 @@ def worker():
                     ins_imgs.extend(imgs)
 
                     def ins_y(img):
-                        # log(img, d, metadata_parser, output_format)
+                        log(img, d, metadata_parser, output_format)
                         ins_yield_result(async_task, img)
                     ins_y(ins_imgs[-1])
                    
@@ -1143,7 +1143,7 @@ def worker():
                         return face_mask
 
                     face_mask = draw_face_mask(imgs[-1])
-                    ins_y(face_mask)
+                    # ins_y(face_mask)
 
                     print("=====================")
                     print(f"Finish Mask Creation")
@@ -1242,7 +1242,6 @@ def worker():
                             target_width = int(target_height * aspect_ratio_sim)
                             print(f'target_width {target_width}')
                             resized_sim = cv2.resize(source_img, (target_width, target_height), interpolation=cv2.INTER_AREA)
-                        ins_y(resized_sim)
                         return resized_sim
 
                     for item in ins_imgs:
@@ -1268,9 +1267,9 @@ def worker():
                         print("=================================")
                         rim_i = improve_face(rim)                          
                         ins_y(rim_i)
-                        combined_result_image = cv2.hconcat([rim, rim_i])
-                        ins_y(combined_result_image)
-                        print("=================================")
+                        # combined_result_image = cv2.hconcat([rim, rim_i])
+                        # ins_y(combined_result_image)
+                        # print("=================================")
                         print(f"Finish Inswap Improve Face {iinsim} / {tinsim}")
                         print("=================================")
                         print("=================================")
@@ -1281,12 +1280,12 @@ def worker():
                         print("rim shape:", rim.shape, "dtype:", rim.dtype)
                         print("rim_i shape:", rim_i.shape, "dtype:", rim_i.dtype)
                         resized_sim=resize_inswap_source(sim, rim)
-                        ins_y(resized_sim)
+                        # ins_y(resized_sim)
 
-                        print("resized_sim shape:", resized_sim.shape, "dtype:", resized_sim.dtype)
+                        # print("resized_sim shape:", resized_sim.shape, "dtype:", resized_sim.dtype)
 
-                        combined_result_image = cv2.hconcat([rim, rim_i, resized_sim])
-                        ins_y(combined_result_image)
+                        # combined_result_image = cv2.hconcat([rim, rim_i, resized_sim])
+                        # ins_y(combined_result_image)
                         print("=================================")
                         print(f"Finish Resizing Inswap Source Image {iinsim} / {tinsim}")
                         print("=================================")
@@ -1302,8 +1301,8 @@ def worker():
                         print(f"Type of img: {type(rim_r1)} ")
                         print(f"D Type of img: {rim_r1.dtype} ")
                         ins_y(rim_r1)
-                        combined_result_image = cv2.hconcat([rim, rim_i, rim_r1, resized_sim])
-                        ins_y(combined_result_image)
+                        # combined_result_image = cv2.hconcat([rim, rim_i, rim_r1, resized_sim])
+                        # ins_y(combined_result_image)
                         # rim_r2, face = face_restoration(rim, True, True, 2, 1, upsampler, codeformer_net, device)
                         # ins_y(rim_r2)
                         print("=================================")
@@ -1317,7 +1316,7 @@ def worker():
                         print(f"Image before restoration: {rim_r1}")
                         rim_ri1 = improve_face(rim_r1)
                         ins_y(rim_ri1)
-                        combined_result_image = cv2.hconcat([rim, rim_i, rim_r1, rim_ri1, resized_sim])
+                        combined_result_image = cv2.hconcat([rim, rim_r1, rim_i, rim_ri1, resized_sim])
                         ins_y(combined_result_image)
                         # rim_ri2 = improve_face(rim_r2)
                         # ins_y(rim_ri2)
