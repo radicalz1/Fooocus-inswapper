@@ -1228,7 +1228,7 @@ def worker():
                         aspect_ratio_sim = original_sim_width / original_sim_height
                         target_height, target_width = target_img.shape[:2]
                         if aspect_ratio_sim > 1:  # if wide image
-                          # target_width = rim_width
+                          target_width = rim_width
                           res_sim_height = int(target_width / aspect_ratio_sim)
                           diff_sim_height = max(0, target_height - res_sim_height)  # Ensure non-negative diff
                           # Add black padding (assuming black padding)
@@ -1274,6 +1274,11 @@ def worker():
                         progressbar(async_task, 13, f'Start Resizing Inswap Source Image {iinsim} / {tinsim}')
                         resized_sim=resize_inswap_source(sim, rim)
                         ins_y(resized_sim)
+
+                        print("rim shape:", rim.shape, "dtype:", rim.dtype)
+                        print("rim_i shape:", rim_i.shape, "dtype:", rim_i.dtype)
+                        print("resized_sim shape:", resized_sim.shape, "dtype:", resized_sim.dtype)
+
                         combined_result_image = cv2.hconcat([rim, rim_i, resized_sim])
                         ins_y(combined_result_image)
                         print("=================================")
