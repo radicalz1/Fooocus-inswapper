@@ -126,7 +126,7 @@ def worker():
         rows = float(len(results)) / float(cols)
         rows = int(math.ceil(rows))
 
-        wall = np.zeros(shape=(H * rows, W * cols, C), =np.uint8)
+        wall = np.zeros(shape=(H * rows, W * cols, C), dtype=np.uint8)
 
         for y in range(rows):
             for x in range(cols):
